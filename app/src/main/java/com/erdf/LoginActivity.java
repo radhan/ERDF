@@ -3,31 +3,32 @@ package com.erdf;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.erdf.classe.technique.ConnexionBDD;
 import com.erdf.classe.technique.GetResponse;
+import com.erdf.classe.technique.ParserJSON;
 
 import java.util.ArrayList;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class LoginActivity extends Activity implements GetResponse {
 
 
-    private static final int REQUEST_SIGNUP = 0;
+    @InjectView(R.id.email) EditText userText ;
+    @InjectView(R.id.password) EditText passwordText ;
+    @InjectView(R.id.loginButton) Button loginButton ;
 
     //Variable qui sert à voir si la connexion est OK ou non
     String statutConnexion = null ;
     ConnexionBDD oConnexion ;
-
-    TextView login;
-    TextView pass;
-    Button loginButton;
 
 
     @Override
@@ -35,10 +36,21 @@ public class LoginActivity extends Activity implements GetResponse {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        login = (TextView)findViewById(R.id.email);
-        pass = (TextView)findViewById(R.id.password);
-        loginButton = (Button)findViewById(R.id.loginButton);
+        //Préférences de l'application - Utilisateur déjà connecté ou non
+        SharedPreferences connexionPref = getSharedPreferences("connexion", 0);
+        SharedPreferences.Editor ed = connexionPref.edit();
+        if(!connexionPref.contains("statut")){
+            ed.putBoolean("statut", false);
+            ed.apply();
+        } else if(connexionPref.getBoolean("statut", false)) {
+            Intent intent = new Intent(this, FicheActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+        }
 
+        //NE PAS OUBLIER SI ON UTILISE ButterKnife
+        ButterKnife.inject(this);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
 
@@ -47,7 +59,6 @@ public class LoginActivity extends Activity implements GetResponse {
                 login();
             }
         });
-
     }
 
 
@@ -60,13 +71,16 @@ public class LoginActivity extends Activity implements GetResponse {
 
         loginButton.setEnabled(false);
 
+        String user = userText.getText().toString();
+        String password = passwordText.getText().toString();
+
         ArrayList<String> nomParams = new ArrayList<>() ;
         nomParams.add("login") ;
         nomParams.add("password") ;
 
         ArrayList<String> valeurParams = new ArrayList<>() ;
-        valeurParams.add((String)login.getText()) ;
-        valeurParams.add((String)pass.getText()) ;
+        valeurParams.add(user) ;
+        valeurParams.add(password) ;
 
         oConnexion = new ConnexionBDD(nomParams, valeurParams, "Connexion", LoginActivity.this);
         oConnexion.getResponse = this;
@@ -98,21 +112,21 @@ public class LoginActivity extends Activity implements GetResponse {
     public boolean validate() {
         boolean valid = true;
 
-        String slogin = (String) login.getText();
-        String spass = (String) pass.getText();
+        String user = userText.getText().toString();
+        String password = passwordText.getText().toString();
 
-        if (slogin.isEmpty()) {
-            login.setError("Entrer un nom d'utilisateur valide");
+        if (user.isEmpty()) {
+            userText.setError("Entrer un nom d'utilisateur valide");
             valid = false;
         } else {
-            login.setError(null);
+            userText.setError(null);
         }
 
-        if (spass.isEmpty() || spass.length() < 4) {
-            pass.setError("Entrer un mot de passe ayant au moins 4 caractères alphanumériques");
+        if (password.isEmpty() || password.length() < 4) {
+            passwordText.setError("Entrer un mot de passe ayant au moins 4 caractères alphanumériques");
             valid = false;
         } else {
-            pass.setError(null);
+            passwordText.setError(null);
         }
 
         return valid;
@@ -120,6 +134,30 @@ public class LoginActivity extends Activity implements GetResponse {
 
     @Override
     public Void getData(String resultatJson) {
+        if(oConnexion.isJSON()) {
+            statutConnexion = "OK" ;
+            ParserJSON oParser = new ParserJSON(resultatJson);
+
+            //Préférences de l'application - Utilisateur déjà connecté ou non
+            SharedPreferences connexionPref = getSharedPreferences("connexion", 0);
+            SharedPreferences.Editor ed;
+            ed = connexionPref.edit();
+            ed.putBoolean("statut", true);
+            ed.putInt("idUtilisateur", oParser.getInt("ID_UTILISATEUR"));
+            ed.putString("nomUtilisateur", oParser.getString("NOM"));
+            ed.putString("prenomUtilisateur", oParser.getString("PRENOM"));
+            ed.putString("emailUtilisateur", oParser.getString("EMAIL"));
+            ed.putString("typeUtilisateur", oParser.getString("TYPE"));
+            ed.putString("modoUtilisateur", oParser.getString("MODERATEUR"));
+
+            ed.apply();
+        }
+        if (statutConnexion != null && statutConnexion.contains("OK")) {
+            onLoginSuccess();
+        } else {
+            onLoginFailed();
+        }
+
         return null;
     }
 }
