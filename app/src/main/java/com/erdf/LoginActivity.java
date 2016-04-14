@@ -143,12 +143,11 @@ public class LoginActivity extends Activity implements GetResponse {
             SharedPreferences.Editor ed;
             ed = connexionPref.edit();
             ed.putBoolean("statut", true);
-            ed.putInt("idUtilisateur", oParser.getInt("ID_UTILISATEUR"));
-            ed.putString("nomUtilisateur", oParser.getString("NOM"));
-            ed.putString("prenomUtilisateur", oParser.getString("PRENOM"));
-            ed.putString("emailUtilisateur", oParser.getString("EMAIL"));
-            ed.putString("typeUtilisateur", oParser.getString("TYPE"));
-            ed.putString("modoUtilisateur", oParser.getString("MODERATEUR"));
+            ed.putInt("idUtilisateur", oParser.getInt("com_id"));
+            ed.putString("nomUtilisateur", oParser.getString("use_nom"));
+            ed.putString("prenomUtilisateur", oParser.getString("use_prenom"));
+            ed.putString("emailUtilisateur", oParser.getString("use_email"));
+            ed.putString("fonctionUtilisateur", oParser.getString("fon_libelle"));
 
             ed.apply();
         }
