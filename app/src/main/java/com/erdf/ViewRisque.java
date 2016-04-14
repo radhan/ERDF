@@ -10,6 +10,7 @@ public class ViewRisque {
     public CheckBox checkbox ;
     public String titre ;
     public String sousTitre ;
+    public boolean selected ;
 
     public ViewRisque() {
     }
@@ -56,5 +57,13 @@ public class ViewRisque {
 
     public void setSousTitre(String sousTitre) {
         this.sousTitre = sousTitre;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 }

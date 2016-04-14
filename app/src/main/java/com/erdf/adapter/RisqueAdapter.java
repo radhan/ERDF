@@ -1,25 +1,36 @@
 package com.erdf.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.erdf.R;
 import com.erdf.ViewRisque;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Radhan on 15/03/2016.
  */
-public class RisqueAdapter  extends ArrayAdapter<ViewRisque> {
+public class RisqueAdapter extends ArrayAdapter<ViewRisque> {
 
-    public RisqueAdapter(Context context, List<ViewRisque> risques) {
+    private final List<ViewRisque> risques ;
+    private final Activity context;
+    boolean checkAll_flag = false;
+    boolean checkItem_flag = false;
+
+    public RisqueAdapter(Activity context, List<ViewRisque> risques) {
         super(context, 0, risques);
+        this.context = context ;
+        this.risques = risques ;
     }
 
     @Override
@@ -35,14 +46,36 @@ public class RisqueAdapter  extends ArrayAdapter<ViewRisque> {
             viewHolder.checkbox = (CheckBox) convertView.findViewById(R.id.checkbox);
             viewHolder.titre = (TextView) convertView.findViewById(R.id.titre);
             viewHolder.soustitre = (TextView) convertView.findViewById(R.id.soustitre);
+
+            viewHolder.checkbox = (CheckBox) convertView.findViewById(R.id.checkbox);
+            viewHolder.checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    int getPosition = (Integer) buttonView.getTag();
+                    risques.get(getPosition).setSelected(buttonView.isChecked());
+
+                    View row = (View) buttonView.getParent();
+                    if (isChecked) {
+                        row.setBackgroundResource(android.R.color.holo_red_light);
+                    } else {
+                        row.setBackgroundResource(android.R.color.transparent);
+                    }
+                }
+            });
             convertView.setTag(viewHolder);
+            convertView.setTag(R.id.titre, viewHolder.titre);
+            convertView.setTag(R.id.soustitre, viewHolder.soustitre);
+            convertView.setTag(R.id.checkbox, viewHolder.checkbox);
+        } else {
+            viewHolder = (RisqueViewHolder) convertView.getTag();
         }
-        //getItem(position) va récupérer l'item [position] de la List
-        final ViewRisque risques = getItem(position);
+        viewHolder.checkbox.setTag(position);
 
         //remplir la vue
-        viewHolder.titre.setText(risques.getTitre());
-        viewHolder.soustitre.setText(risques.getSousTitre());
+        viewHolder.titre.setText(getItem(position).getTitre());
+        viewHolder.soustitre.setText(getItem(position).getSousTitre());
+        viewHolder.checkbox.setChecked(getItem(position).isSelected());
 
         return convertView;
     }

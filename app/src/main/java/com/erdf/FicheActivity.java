@@ -43,7 +43,6 @@ public class FicheActivity extends AppCompatActivity implements GetResponse {
         oConnexion = new ConnexionBDD("Risque", FicheActivity.this);
         oConnexion.getResponse = FicheActivity.this;
         oConnexion.execute();
-
     }
 
     @Override
@@ -56,7 +55,6 @@ public class FicheActivity extends AppCompatActivity implements GetResponse {
                 ViewRisque vRisque = new ViewRisque(oFiche.getString("ris_titre"), oFiche.getString("ris_resume"));
                 lesRisques.add(vRisque);
             }
-
         }
 
         if(!lesRisques.isEmpty()) {
@@ -66,16 +64,13 @@ public class FicheActivity extends AppCompatActivity implements GetResponse {
 
             listviewRisque.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView parent, View view, int position, long id) {
-                    CheckBox box = (CheckBox) view.findViewById(R.id.checkbox);
-
-                    if (box.isChecked()) {
-                        box.setChecked(false) ;
-                    } else {
-                        box.setChecked(true) ;
+                    if (view != null) {
+                        CheckBox checkBox = (CheckBox)view.findViewById(R.id.checkbox);
+                        checkBox.setChecked(!checkBox.isChecked());
                     }
                 }
             });
-            listviewRisque.setItemsCanFocus(true) ;
+
         }
 
         return null ;
