@@ -32,13 +32,11 @@ public class FicheActivity extends AppCompatActivity implements GetResponse {
         //Configuration button de renvoie
         Button btnEnvoyer = (Button) findViewById(R.id.button) ;
         btnEnvoyer.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(FicheActivity.this, LoginActivity.class));
-            }
 
-        } );
+            }
+        });
 
         oConnexion = new ConnexionBDD("Risque", FicheActivity.this);
         oConnexion.getResponse = FicheActivity.this;
