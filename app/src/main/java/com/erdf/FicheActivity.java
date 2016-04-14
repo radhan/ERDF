@@ -67,12 +67,6 @@ public class FicheActivity extends AppCompatActivity implements GetResponse {
         oConnexion.getResponse = FicheActivity.this;
         oConnexion.execute();
 
-        //On récupère la date et l'heure
-        getDate() ;
-
-        //On va chercher la localisation
-        getLocalisation() ;
-
         InternetDetection inter = new InternetDetection(getApplicationContext());
 
         Boolean isInternetPresent = inter.isConnectingToInternet(); // true or false
@@ -81,6 +75,11 @@ public class FicheActivity extends AppCompatActivity implements GetResponse {
 
         if(isInternetPresent)
         {
+            //On récupère la date et l'heure
+            getDate() ;
+
+            //On va chercher la localisation
+            getLocalisation() ;
             AdressInput.setVisibility(View.GONE);
 
         }
