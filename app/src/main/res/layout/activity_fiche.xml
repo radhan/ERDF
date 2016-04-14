@@ -20,9 +20,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Numéro : "
+        android:id="@+id/tNumero"
+        android:layout_below="@id/tDate"
+        android:layout_marginTop="10dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Adresse : "
         android:id="@+id/tAdresse"
-        android:layout_below="@id/tDate"
+        android:layout_below="@id/tNumero"
         android:layout_marginTop="10dp" />
 
     <EditText
