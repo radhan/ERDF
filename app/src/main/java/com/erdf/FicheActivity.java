@@ -7,11 +7,13 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.erdf.adapter.RisqueAdapter;
 import com.erdf.classe.technique.ConnexionBDD;
 import com.erdf.classe.technique.GetResponse;
+import com.erdf.classe.technique.InternetDetection;
 import com.erdf.classe.technique.ParserJSON;
 
 import java.util.ArrayList;
@@ -23,6 +25,7 @@ public class FicheActivity extends AppCompatActivity implements GetResponse {
     ListView listviewRisque ;
 
     ConnexionBDD oConnexion ;
+    private EditText AdressInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +44,25 @@ public class FicheActivity extends AppCompatActivity implements GetResponse {
         oConnexion = new ConnexionBDD("Risque", FicheActivity.this);
         oConnexion.getResponse = FicheActivity.this;
         oConnexion.execute();
+
+        InternetDetection inter = new InternetDetection(getApplicationContext());
+
+        Boolean isInternetPresent = inter.isConnectingToInternet(); // true or false
+
+        AdressInput = (EditText) findViewById(R.id.iAdress);
+
+        if(isInternetPresent)
+        {
+            AdressInput.setVisibility(View.GONE);
+
+        }
+        else {
+
+            AdressInput.setVisibility(View.VISIBLE);
+
+        }
+
+
     }
 
     @Override

@@ -20,19 +20,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Numéro : "
-        android:id="@+id/tNumero"
+        android:text="Adresse : "
+        android:id="@+id/tAdresse"
         android:layout_below="@id/tDate"
         android:layout_marginTop="10dp" />
 
-    <TextView
+    <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Adresse : "
-        android:id="@+id/tAdresse"
-        android:layout_below="@id/tNumero"
-        android:layout_marginTop="10dp" />
+        android:id="@+id/iAdress"
+        android:layout_marginBottom="50dp"
+        android:layout_toRightOf="@+id/tAdresse"
+        android:layout_alignTop="@+id/tAdresse" />
 
     <ListView
         android:layout_width="wrap_content"
@@ -52,6 +51,8 @@
         android:layout_alignEnd="@+id/listView"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+
 
 
 </RelativeLayout>
