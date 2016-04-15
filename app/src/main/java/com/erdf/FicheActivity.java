@@ -39,11 +39,12 @@ public class FicheActivity extends AppCompatActivity implements GetResponse {
     ListView listviewRisque ;
 
     ConnexionBDD oConnexion ;
-    private EditText AdressInput;
 
     @InjectView(R.id.tDate) TextView dateText ;
     @InjectView(R.id.tNumero) TextView numeroText ;
     @InjectView(R.id.tAdresse) TextView adresseText ;
+    @InjectView(R.id.sAdresse) EditText AdressInput ;
+    @InjectView(R.id.button) Button btnEnvoyer ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +55,6 @@ public class FicheActivity extends AppCompatActivity implements GetResponse {
         ButterKnife.inject(this) ;
 
         //Configuration button de renvoie
-        Button btnEnvoyer = (Button) findViewById(R.id.button) ;
         btnEnvoyer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -67,37 +67,39 @@ public class FicheActivity extends AppCompatActivity implements GetResponse {
         oConnexion.getResponse = FicheActivity.this;
         oConnexion.execute();
 
-        InternetDetection inter = new InternetDetection(getApplicationContext());
+        //On récupère la date et l'heure
+        getDate() ;
 
+        //On regarde si on dispose d'une connexion internet
+        InternetDetection inter = new InternetDetection(getApplicationContext());
         Boolean isInternetPresent = inter.isConnectingToInternet(); // true or false
 
-        AdressInput = (EditText) findViewById(R.id.iAdress);
-
-        if(isInternetPresent)
-        {
-            //On récupère la date et l'heure
-            getDate() ;
-
-            //On va chercher la localisation
-            getLocalisation() ;
-            AdressInput.setVisibility(View.GONE);
-
+        //S'il dispose d'une connexion internet
+        if(isInternetPresent) {
+            //Si le GPS est activé, alors on va chercher la localisation
+            final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            if(manager.isProviderEnabled( LocationManager.GPS_PROVIDER)) {
+                getLocalisation() ;
+                AdressInput.setVisibility(View.GONE);
+            }
+            else {
+                AdressInput.setVisibility(View.VISIBLE);
+            }
         }
         else {
-
             AdressInput.setVisibility(View.VISIBLE);
-
         }
-
 
     }
 
+    //Méthode qui récupère la date
     private void getDate() {
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         Date date = new Date();
         dateText.setText("Date : " + dateFormat.format(date));
     }
 
+    //Méthode qui récupère la localisation
     private void getLocalisation() {
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -112,21 +114,19 @@ public class FicheActivity extends AppCompatActivity implements GetResponse {
             }
 
             public void onProviderDisabled(String arg0) {
-                // TODO Auto-generated method stub
             }
 
             public void onProviderEnabled(String arg0) {
-                // TODO Auto-generated method stub
             }
 
             public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-                // TODO Auto-generated method stub
             }
         };
 
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListener);
     }
 
+    //Méthode permettant d'avoir l'adresse
     private void getAdresse(Location location) {
         double latitude = location.getLatitude();
         double longitude = location.getLongitude();
@@ -138,7 +138,6 @@ public class FicheActivity extends AppCompatActivity implements GetResponse {
                 adresseText.setText("Adresse : " + localisation.get(0).getAddressLine(0) + ", " + localisation.get(0).getLocality() + ", " + localisation.get(0).getPostalCode()) ;
             }
         } catch (IOException e1) {
-            // TODO Auto-generated catch block
             e1.printStackTrace();
         }
     }

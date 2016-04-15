@@ -44,11 +44,20 @@ public class LoginActivity extends Activity implements GetResponse {
             ed.putBoolean("statut", false);
             ed.apply();
         } else if(connexionPref.getBoolean("statut", false)) {
-            Intent intent = new Intent(this, FicheActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            Log.i("LoginActivity", "Connexion - OK") ;
-            startActivity(intent);
-            finish();
+
+            if(connexionPref.getString("fonctionUtilisateur", "Inconnu").equals("Administrateur")) {
+                Intent intent = new Intent(this, AdminActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                Log.i("LoginActivity", "Connexion Admin - OK") ;
+                startActivity(intent);
+                finish();
+            } else {
+                Intent intent = new Intent(this, FicheActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                Log.i("LoginActivity", "Connexion - OK") ;
+                startActivity(intent);
+                finish();
+            }
         }
 
         //NE PAS OUBLIER SI ON UTILISE ButterKnife

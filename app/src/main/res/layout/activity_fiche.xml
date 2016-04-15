@@ -37,10 +37,18 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/iAdress"
-        android:layout_marginBottom="50dp"
-        android:layout_toRightOf="@+id/tAdresse"
-        android:layout_alignTop="@+id/tAdresse" />
+        android:id="@+id/sAdresse"
+        android:layout_below="@+id/tNumero"
+        android:layout_alignRight="@+id/listView"
+        android:layout_toRightOf="@+id/tAdresse" />
+
+    <Button
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/bAdresse"
+        android:layout_below="@id/tNumero"
+        android:layout_alignRight="@id/sAdresse"
+        android:background="@drawable/ic_edit_black_48dp" />
 
     <ListView
         android:layout_width="wrap_content"
