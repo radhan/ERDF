@@ -33,7 +33,7 @@ import java.util.Locale;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-public class FicheActivity extends AppCompatActivity implements GetResponse {
+public class FicheActivity extends BaseActivity implements GetResponse {
 
     List<ViewRisque> lesRisques = new ArrayList<>() ;
     ListView listviewRisque ;

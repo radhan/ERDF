@@ -46,10 +46,10 @@ public class LoginActivity extends Activity implements GetResponse {
         } else if(connexionPref.getBoolean("statut", false)) {
 
             if(connexionPref.getString("fonctionUtilisateur", "Inconnu").equals("Administrateur")) {
-                Intent intent = new Intent(this, AdminActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                //Intent intent = new Intent(this, AdminActivity.class);
+                //intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 Log.i("LoginActivity", "Connexion Admin - OK") ;
-                startActivity(intent);
+                //startActivity(intent);
                 finish();
             } else {
                 Intent intent = new Intent(this, FicheActivity.class);
