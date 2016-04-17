@@ -7,12 +7,10 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -41,9 +39,8 @@ public class FicheActivity extends BaseActivity implements GetResponse {
     ConnexionBDD oConnexion ;
 
     @InjectView(R.id.tDate) TextView dateText ;
-    @InjectView(R.id.tNumero) TextView numeroText ;
-    @InjectView(R.id.tAdresse) TextView adresseText ;
-    @InjectView(R.id.sAdresse) EditText AdressInput ;
+    @InjectView(R.id.tChantier) TextView chantierText ;
+    @InjectView(R.id.sAdresse) TextView adresseText ;
     @InjectView(R.id.button) Button btnEnvoyer ;
 
     @Override
@@ -80,14 +77,14 @@ public class FicheActivity extends BaseActivity implements GetResponse {
             final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             if(manager.isProviderEnabled( LocationManager.GPS_PROVIDER)) {
                 getLocalisation() ;
-                AdressInput.setVisibility(View.GONE);
+                adresseText.setEnabled(false);
             }
             else {
-                AdressInput.setVisibility(View.VISIBLE);
+                adresseText.setEnabled(true);
             }
         }
         else {
-            AdressInput.setVisibility(View.VISIBLE);
+            adresseText.setEnabled(true);
         }
 
     }
@@ -135,7 +132,7 @@ public class FicheActivity extends BaseActivity implements GetResponse {
         try {
             localisation = maLocalisation.getFromLocation(latitude, longitude, 1);
             if(localisation.size() == 1) {
-                adresseText.setText("Adresse : " + localisation.get(0).getAddressLine(0) + ", " + localisation.get(0).getLocality() + ", " + localisation.get(0).getPostalCode()) ;
+                adresseText.setText(localisation.get(0).getAddressLine(0) + ", " + localisation.get(0).getLocality() + ", " + localisation.get(0).getPostalCode()) ;
             }
         } catch (IOException e1) {
             e1.printStackTrace();

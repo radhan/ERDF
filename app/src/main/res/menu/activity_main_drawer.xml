@@ -6,15 +6,41 @@
             android:id="@+id/nav_accueil"
             android:icon="@drawable/ic_home_white_48dp"
             android:title="Accueil" />
+
         <item
-            android:id="@+id/nav_saisirfiche"
-            android:icon="@drawable/ic_edit_black_48dp"
-            android:title="Saisir une fiche" />
+            android:id="@+id/nav_gestion_fiche"
+            android:title="Gestion des fiches">
+
+            <menu>
+                <item
+                    android:id="@+id/nav_saisir_fiche"
+                    android:icon="@drawable/ic_edit_black_48dp"
+                    android:title="Saisir une fiche" />
+                <item
+                    android:id="@+id/nav_liste_fiches"
+                    android:icon="@drawable/ic_event_black_48dp"
+                    android:title="Liste des fiches"
+                    android:visible="false" />
+            </menu>
+        </item>
+
         <item
             android:id="@+id/nav_gestion_utilisateur"
-            android:icon="@drawable/ic_group_black_48dp"
             android:title="Gestion des utilisateurs"
-            android:visible="false"/>
+            android:visible="false">
+
+            <menu>
+                <item
+                    android:id="@+id/nav_ajouter_utilisateur"
+                    android:icon="@drawable/ic_person_add_black_48dp"
+                    android:title="Ajouter un utilisateur" />
+                <item
+                    android:id="@+id/nav_liste_utilisateurs"
+                    android:icon="@drawable/ic_group_black_48dp"
+                    android:title="Liste des utilisateurs" />
+            </menu>
+        </item>
+
         <item
             android:id="@+id/nav_deconnexion"
             android:icon="@drawable/ic_settings_power_white_48dp"

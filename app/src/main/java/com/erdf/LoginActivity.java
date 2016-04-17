@@ -44,20 +44,11 @@ public class LoginActivity extends Activity implements GetResponse {
             ed.putBoolean("statut", false);
             ed.apply();
         } else if(connexionPref.getBoolean("statut", false)) {
-
-            if(connexionPref.getString("fonctionUtilisateur", "Inconnu").equals("Administrateur")) {
-                //Intent intent = new Intent(this, AdminActivity.class);
-                //intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                Log.i("LoginActivity", "Connexion Admin - OK") ;
-                //startActivity(intent);
-                finish();
-            } else {
-                Intent intent = new Intent(this, FicheActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                Log.i("LoginActivity", "Connexion - OK") ;
-                startActivity(intent);
-                finish();
-            }
+            Intent intent = new Intent(this, AccueilActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            Log.i("LoginActivity", "Connexion - OK") ;
+            startActivity(intent);
+            finish();
         }
 
         //NE PAS OUBLIER SI ON UTILISE ButterKnife
@@ -157,7 +148,7 @@ public class LoginActivity extends Activity implements GetResponse {
             ed.putInt("idUtilisateur", oParser.getInt("com_id"));
             ed.putString("nomUtilisateur", oParser.getString("use_nom"));
             ed.putString("prenomUtilisateur", oParser.getString("use_prenom"));
-            ed.putString("emailUtilisateur", oParser.getString("use_email"));
+            ed.putString("emailUtilisateur", oParser.getString("use_mail"));
             ed.putString("fonctionUtilisateur", oParser.getString("fon_libelle"));
 
             ed.apply();

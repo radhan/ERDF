@@ -46,8 +46,9 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
         //Récupération du type d'utilisateur
         SharedPreferences connexionPref = getSharedPreferences("connexion", 0) ;
 
-        if (connexionPref.getString("typeUtilisateur", "Inconnu").equals("Administrateur")) {
+        if (connexionPref.getString("fonctionUtilisateur", "Inconnu").equals("Administrateur")) {
             navigationView.getMenu().findItem(R.id.nav_gestion_utilisateur).setVisible(true) ;
+            navigationView.getMenu().findItem(R.id.nav_liste_fiches).setVisible(true) ;
         }
     }
 
@@ -83,14 +84,21 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         if (id == R.id.nav_accueil) {
+            startActivity(new Intent(BaseActivity.this, AccueilActivity.class));
+            finish();
+
+        } else if (id == R.id.nav_saisir_fiche) {
             startActivity(new Intent(BaseActivity.this, FicheActivity.class));
             finish();
-        } else if (id == R.id.nav_saisirfiche) {
-            startActivity(new Intent(BaseActivity.this, FicheActivity.class));
-            finish();
-        } else if (id == R.id.nav_gestion_utilisateur) {
+
+        } else if (id == R.id.nav_ajouter_utilisateur) {
             //startActivity(new Intent(BaseActivity.this, AddUserActivity.class));
             finish();
+
+        } else if (id == R.id.nav_liste_utilisateurs) {
+            //startActivity(new Intent(BaseActivity.this, AddUserActivity.class));
+            finish();
+
         } else if (id == R.id.nav_deconnexion) {
             AlertDialog.Builder builder = new AlertDialog.Builder(BaseActivity.this);
             AlertDialog dialog = builder.create();

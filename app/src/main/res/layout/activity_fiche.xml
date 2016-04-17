@@ -21,8 +21,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Numéro : "
-        android:id="@+id/tNumero"
+        android:text="Chantier : "
+        android:id="@+id/tChantier"
         android:layout_below="@id/tDate"
         android:layout_marginTop="10dp" />
 
@@ -32,14 +32,14 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Adresse : "
         android:id="@+id/tAdresse"
-        android:layout_below="@id/tNumero"
+        android:layout_below="@id/tChantier"
         android:layout_marginTop="10dp" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/sAdresse"
-        android:layout_below="@+id/tNumero"
+        android:layout_below="@+id/tChantier"
         android:layout_alignRight="@+id/listView"
         android:layout_toRightOf="@+id/tAdresse" />
 
@@ -47,7 +47,7 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:id="@+id/bAdresse"
-        android:layout_below="@id/tNumero"
+        android:layout_below="@id/tChantier"
         android:layout_alignRight="@id/sAdresse"
         android:background="@drawable/ic_edit_black_48dp" />
 
