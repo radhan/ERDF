@@ -98,6 +98,9 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.nav_liste_utilisateurs) {
             //startActivity(new Intent(BaseActivity.this, AddUserActivity.class));
             finish();
+        }else if (id == R.id.nav_liste_fiches) {
+            startActivity(new Intent(BaseActivity.this, ListeFicheActivity.class));
+            finish();
 
         } else if (id == R.id.nav_deconnexion) {
             AlertDialog.Builder builder = new AlertDialog.Builder(BaseActivity.this);

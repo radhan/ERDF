@@ -32,7 +32,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".BaseActivity" />
-        <activity android:name=".AccueilActivity"></activity>
+        <activity android:name=".AccueilActivity" />
+        <activity android:name=".ListeFicheActivity" />
+        <activity android:name=".FicheDetailActivity"></activity>
     </application>
 
 </manifest>
