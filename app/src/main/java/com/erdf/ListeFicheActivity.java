@@ -1,29 +1,24 @@
 package com.erdf;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.CheckBox;
+import android.os.Handler;
+import android.util.Log;
 import android.widget.ListView;
 
 import com.erdf.adapter.FicheAdapter;
-import com.erdf.adapter.RisqueAdapter;
-import com.erdf.classe.technique.ConnexionBDD;
-import com.erdf.classe.technique.GetResponse;
-import com.erdf.classe.technique.ParserJSON;
+import com.erdf.classe.DAO.FicheDAO;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import butterknife.ButterKnife;
 
 
 
-public class ListeFicheActivity extends BaseActivity implements GetResponse {
+public class ListeFicheActivity extends BaseActivity {
 
     List<ViewFiche> lesFiches = new ArrayList<>() ;
     ListView listviewFiches ;
-    ConnexionBDD oConnexion ;
 
 
     @Override
@@ -35,35 +30,27 @@ public class ListeFicheActivity extends BaseActivity implements GetResponse {
         ButterKnife.inject(this) ;
 
         //On récupère la liste des risques
-        oConnexion = new ConnexionBDD("ListeFiche", ListeFicheActivity.this);
-        oConnexion.getResponse = this;
-        oConnexion.execute();
-
+        getListeFiches() ;
     }
 
 
+    private void getListeFiches() {
+        final FicheDAO uneFicheDAO = new FicheDAO(this) ;
 
-    @Override
-    public Void getData(String resultatJson) {
-        if(oConnexion.isJSON()) {
-            ParserJSON oParser = new ParserJSON(resultatJson) ;
-            for (int i = 1; i < oParser.getOJSON().length() + 1; i++) {
-                ParserJSON oFiche = new ParserJSON(oParser.getOJSON(), Integer.toString(i)) ;
-
-                ViewFiche vFiches = new ViewFiche(oFiche.getString("cha_nrue"), oFiche.getString("cha_rue"), oFiche.getString("cha_codepo"), oFiche.getString("cha_ville"),  oFiche.getString("fic_date"));
-                lesFiches.add(vFiches);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                for (int i = 0; i < uneFicheDAO.getListeFiche().size(); i++) {
+                    ViewFiche vFiches = new ViewFiche(uneFicheDAO.getListeFiche().get(i).getUnChantier().getNumRue(), uneFicheDAO.getListeFiche().get(i).getUnChantier().getRue(), uneFicheDAO.getListeFiche().get(i).getUnChantier().getCodePostal(), uneFicheDAO.getListeFiche().get(i).getUnChantier().getVille(),  uneFicheDAO.getListeFiche().get(i).getDate());
+                    lesFiches.add(vFiches);
+                    Log.i("TestDAO", uneFicheDAO.getListeFiche().get(i).getDate());
+                }
+                if(!lesFiches.isEmpty()) {
+                    listviewFiches = (ListView) findViewById(R.id.listFiche);
+                    FicheAdapter adapter = new FicheAdapter(ListeFicheActivity.this, lesFiches);
+                    listviewFiches.setAdapter(adapter);
+                }
             }
-        }
-
-        if(!lesFiches.isEmpty()) {
-            listviewFiches = (ListView) findViewById(R.id.listFiche);
-            FicheAdapter adapter = new FicheAdapter(ListeFicheActivity.this, lesFiches);
-            listviewFiches.setAdapter(adapter);
-        }
-
-        return null ;
+        }, 1000);
     }
-
-
-
 }

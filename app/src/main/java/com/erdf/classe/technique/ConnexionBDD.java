@@ -151,10 +151,6 @@ public class ConnexionBDD extends AsyncTask<Void, String, String>  {
         }
     }
 
-    public String getResultatJson() {
-        return(this.resultatJson) ;
-    }
-
     public boolean isJSON() {
         boolean isJson = false ;
         if(this.resultatJson != null && this.resultatJson.contains("{")) {
@@ -203,8 +199,9 @@ public class ConnexionBDD extends AsyncTask<Void, String, String>  {
 
         final String CONNEXION_URL      = Domaine + "connexion.php" ;
         final String RISQUE_URL         = Domaine + "getAllRisques.php" ;
-        final String LISTE_FICHE_URL    = Domaine + "getAllFiches.php" ;
+        final String FICHE_URL          = Domaine + "getAllFiches.php" ;
         final String INFO_FICHE_URL     = Domaine + "getInfoFiche.php" ;
+        final String CHANTIER_URL       = Domaine + "getAllChantiers.php" ;
 
         switch(besoin)
         {
@@ -216,12 +213,16 @@ public class ConnexionBDD extends AsyncTask<Void, String, String>  {
                 URL = RISQUE_URL ;
             break ;
 
-            case "ListeFiche" :
-                URL = LISTE_FICHE_URL ;
+            case "Fiche" :
+                URL = FICHE_URL ;
             break ;
 
             case "InfoFiche" :
                 URL = INFO_FICHE_URL ;
+            break ;
+
+            case "Chantier" :
+                URL = CHANTIER_URL ;
             break ;
         }
 

@@ -7,18 +7,21 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.erdf.adapter.RisqueAdapter;
-import com.erdf.classe.technique.ConnexionBDD;
-import com.erdf.classe.technique.GetResponse;
+import com.erdf.classe.DAO.ChantierDAO;
+import com.erdf.classe.DAO.RisqueDAO;
 import com.erdf.classe.technique.InternetDetection;
-import com.erdf.classe.technique.ParserJSON;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -31,16 +34,19 @@ import java.util.Locale;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-public class FicheActivity extends BaseActivity implements GetResponse {
+public class FicheActivity extends BaseActivity implements AdapterView.OnItemSelectedListener {
 
     List<ViewRisque> lesRisques = new ArrayList<>() ;
     ListView listviewRisque ;
 
-    ConnexionBDD oConnexion ;
+    ArrayList<String> idChantiers = new ArrayList<>() ;
+    ArrayList<String> lesChantiers = new ArrayList<>();
 
     @InjectView(R.id.tDate) TextView dateText ;
-    @InjectView(R.id.tChantier) TextView chantierText ;
+    @InjectView(R.id.sChantier) TextView chantierText ;
+    @InjectView(R.id.spinnerChantier) Spinner spinnerChantier ;
     @InjectView(R.id.sAdresse) TextView adresseText ;
+    @InjectView(R.id.bAdresse) Button btnAdresse ;
     @InjectView(R.id.button) Button btnEnvoyer ;
 
     @Override
@@ -51,6 +57,17 @@ public class FicheActivity extends BaseActivity implements GetResponse {
         //NE PAS OUBLIER SI ON UTILISE ButterKnife
         ButterKnife.inject(this) ;
 
+        //
+        spinnerChantier.setOnItemSelectedListener(this) ;
+
+        //Configuration button d'edition
+        btnAdresse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adresseText.setEnabled(!adresseText.isEnabled());
+            }
+        });
+
         //Configuration button de renvoie
         btnEnvoyer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,10 +76,9 @@ public class FicheActivity extends BaseActivity implements GetResponse {
             }
         });
 
-        //On récupère la liste des risques
-        oConnexion = new ConnexionBDD("Risque", FicheActivity.this);
-        oConnexion.getResponse = FicheActivity.this;
-        oConnexion.execute();
+        //On récupère la liste des risques et des chantiers
+        getRisques() ;
+        getChantiers() ;
 
         //On récupère la date et l'heure
         getDate() ;
@@ -87,6 +103,15 @@ public class FicheActivity extends BaseActivity implements GetResponse {
             adresseText.setEnabled(true);
         }
 
+    }
+
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        chantierText.setText(idChantiers.get(position));
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        chantierText.setText(0);
     }
 
     //Méthode qui récupère la date
@@ -139,34 +164,54 @@ public class FicheActivity extends BaseActivity implements GetResponse {
         }
     }
 
-    @Override
-    public Void getData(String resultatJson) {
-        if(oConnexion.isJSON()) {
-            ParserJSON oParser = new ParserJSON(resultatJson) ;
-            for (int i = 1; i < oParser.getOJSON().length() + 1; i++) {
-                ParserJSON oFiche = new ParserJSON(oParser.getOJSON(), Integer.toString(i)) ;
+    //On récupère la liste des risques
+    public void getRisques() {
+        final RisqueDAO unRisqueDAO = new RisqueDAO(this) ;
 
-                ViewRisque vRisque = new ViewRisque(oFiche.getString("ris_titre"), oFiche.getString("ris_resume"));
-                lesRisques.add(vRisque);
-            }
-        }
-
-        if(!lesRisques.isEmpty()) {
-            listviewRisque = (ListView) findViewById(R.id.listView);
-            RisqueAdapter adapter = new RisqueAdapter(FicheActivity.this, lesRisques);
-            listviewRisque.setAdapter(adapter);
-
-            listviewRisque.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                public void onItemClick(AdapterView parent, View view, int position, long id) {
-                    if (view != null) {
-                        CheckBox checkBox = (CheckBox)view.findViewById(R.id.checkbox);
-                        checkBox.setChecked(!checkBox.isChecked());
-                    }
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                for (int i = 0; i < unRisqueDAO.getListeRisque().size(); i++) {
+                    ViewRisque vRisque = new ViewRisque(unRisqueDAO.getListeRisque().get(i).getTitre(), unRisqueDAO.getListeRisque().get(i).getResume());
+                    lesRisques.add(vRisque);
+                    Log.i("TestDAO", unRisqueDAO.getListeRisque().get(i).getTitre());
                 }
-            });
+                if (!lesRisques.isEmpty()) {
+                    listviewRisque = (ListView) findViewById(R.id.listView);
+                    RisqueAdapter adapter = new RisqueAdapter(FicheActivity.this, lesRisques);
+                    listviewRisque.setAdapter(adapter);
 
-        }
+                    listviewRisque.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        public void onItemClick(AdapterView parent, View view, int position, long id) {
+                            if (view != null) {
+                                CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
+                                checkBox.setChecked(!checkBox.isChecked());
+                            }
+                        }
+                    });
+                }
+            }
+        }, 1000);
+    }
 
-        return null ;
+    //Méthode qui récupère la liste des chantiers
+    public void getChantiers() {
+        final ChantierDAO unChantierDAO = new ChantierDAO(this) ;
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                for (int i = 0; i < unChantierDAO.getListeChantier().size(); i++) {
+                    idChantiers.add(unChantierDAO.getListeChantier().get(i).getCode());
+                    lesChantiers.add(unChantierDAO.getListeChantier().get(i).getLibelle());
+                    Log.i("TestDAO", unChantierDAO.getListeChantier().get(i).getLibelle());
+                }
+                if(!lesChantiers.isEmpty()) {
+                    ArrayAdapter<String> adapter_section = new ArrayAdapter<>(FicheActivity.this, android.R.layout.simple_spinner_item, lesChantiers);
+                    adapter_section.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spinnerChantier.setAdapter(adapter_section);
+                }
+            }
+        }, 1000);
     }
 }

@@ -30,6 +30,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/sChantier"
+        android:visibility="gone"/>
+
+    <Spinner
+        android:id="@+id/spinnerChantier"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tDate"
+        android:layout_toRightOf="@id/tChantier"
+        android:layout_marginTop="12dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Adresse : "
         android:id="@+id/tAdresse"
         android:layout_below="@id/tChantier"
