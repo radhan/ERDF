@@ -42,7 +42,7 @@ public class RisqueDAO implements GetResponse {
             ParserJSON oParser = new ParserJSON(resultatJson) ;
             for (int i = 1; i < oParser.getOJSON().length() + 1; i++) {
                 ParserJSON oRisque = new ParserJSON(oParser.getOJSON(), Integer.toString(i)) ;
-                Risque unRisque = new Risque(oRisque.getString("ris_titre"), oRisque.getString("ris_resume")) ;
+                Risque unRisque = new Risque(oRisque.getString("ris_id"), oRisque.getString("ris_titre"), oRisque.getString("ris_resume"), oRisque.getBoolean("ris_supprimer")) ;
                 addRisque(unRisque) ;
             }
         }

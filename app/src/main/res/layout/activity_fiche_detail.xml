@@ -21,14 +21,6 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="l'adresse"
-        android:id="@+id/aAdresse"
-        android:layout_alignBottom="@+id/tAdresse"
-        android:layout_toRightOf="@+id/tAdresse" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:text="Date :"
         android:id="@+id/tDate"
         android:layout_below="@+id/tAdresse"
@@ -37,26 +29,10 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="la date"
-        android:id="@+id/aAdresse"
-        android:layout_alignBottom="@+id/tDate"
-        android:layout_toRightOf="@+id/tDate" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:text="Technicien : "
         android:id="@+id/tTechnicien"
         android:layout_below="@+id/tDate"
         android:layout_alignParentLeft="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="le techn"
-        android:id="@+id/textView2"
-        android:layout_alignTop="@+id/tTechnicien"
-        android:layout_toRightOf="@+id/aAdresse" />
 
 
 </RelativeLayout>

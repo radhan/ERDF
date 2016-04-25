@@ -174,7 +174,6 @@ public class FicheActivity extends BaseActivity implements AdapterView.OnItemSel
                 for (int i = 0; i < unRisqueDAO.getListeRisque().size(); i++) {
                     ViewRisque vRisque = new ViewRisque(unRisqueDAO.getListeRisque().get(i).getTitre(), unRisqueDAO.getListeRisque().get(i).getResume());
                     lesRisques.add(vRisque);
-                    Log.i("TestDAO", unRisqueDAO.getListeRisque().get(i).getTitre());
                 }
                 if (!lesRisques.isEmpty()) {
                     listviewRisque = (ListView) findViewById(R.id.listView);
@@ -204,7 +203,6 @@ public class FicheActivity extends BaseActivity implements AdapterView.OnItemSel
                 for (int i = 0; i < unChantierDAO.getListeChantier().size(); i++) {
                     idChantiers.add(unChantierDAO.getListeChantier().get(i).getCode());
                     lesChantiers.add(unChantierDAO.getListeChantier().get(i).getLibelle());
-                    Log.i("TestDAO", unChantierDAO.getListeChantier().get(i).getLibelle());
                 }
                 if(!lesChantiers.isEmpty()) {
                     ArrayAdapter<String> adapter_section = new ArrayAdapter<>(FicheActivity.this, android.R.layout.simple_spinner_item, lesChantiers);

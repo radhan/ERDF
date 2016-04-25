@@ -10,17 +10,19 @@ public class Chantier {
     private String rue ;
     private String ville ;
     private String codePostal ;
+    private boolean supprimer ;
 
     public Chantier() {
     }
 
-    public Chantier(String code, String libelle, String numRue, String rue, String ville, String codePostal) {
+    public Chantier(String code, String libelle, String numRue, String rue, String ville, String codePostal, boolean supprimer) {
         this.code = code;
         this.libelle = libelle;
         this.numRue = numRue;
         this.rue = rue;
         this.ville = ville;
         this.codePostal = codePostal;
+        this.supprimer = supprimer ;
     }
 
     public String getCode() {
@@ -69,5 +71,13 @@ public class Chantier {
 
     public void setCodePostal(String codePostal) {
         this.codePostal = codePostal;
+    }
+
+    public boolean isSupprimer() {
+        return supprimer;
+    }
+
+    public void setSupprimer(boolean supprimer) {
+        this.supprimer = supprimer;
     }
 }

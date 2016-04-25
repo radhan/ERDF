@@ -5,13 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.erdf.R;
 import com.erdf.ViewFiche;
-import com.erdf.ViewRisque;
 
 import java.util.List;
 

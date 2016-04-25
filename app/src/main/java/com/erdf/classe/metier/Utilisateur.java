@@ -4,19 +4,31 @@ package com.erdf.classe.metier;
  * Created by Radhan on 24/04/2016.
  */
 public class Utilisateur {
+    private String id ;
     private String nom ;
     private String prenom ;
     private String mail ;
     private Fonction uneFonction ;
+    private boolean supprimer ;
 
     public Utilisateur() {
     }
 
-    public Utilisateur(String nom, String prenom, String mail, Fonction uneFonction) {
+    public Utilisateur(String id, String nom, String prenom, String mail, Fonction uneFonction, boolean supprimer) {
+        this.id = id;
         this.nom = nom;
         this.prenom = prenom;
         this.mail = mail;
         this.uneFonction = uneFonction;
+        this.supprimer = supprimer;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getNom() {
@@ -49,5 +61,13 @@ public class Utilisateur {
 
     public void setUneFonction(Fonction uneFonction) {
         this.uneFonction = uneFonction;
+    }
+
+    public boolean isSupprimer() {
+        return supprimer;
+    }
+
+    public void setSupprimer(boolean supprimer) {
+        this.supprimer = supprimer;
     }
 }

@@ -42,7 +42,7 @@ public class ChantierDAO implements GetResponse {
             ParserJSON oParser = new ParserJSON(resultatJson) ;
             for (int i = 1; i < oParser.getOJSON().length() + 1; i++) {
                 ParserJSON oChantier = new ParserJSON(oParser.getOJSON(), Integer.toString(i)) ;
-                Chantier unChantier = new Chantier(oChantier.getString("cha_code"), oChantier.getString("cha_libelle"), oChantier.getString("cha_nrue"), oChantier.getString("cha_rue"), oChantier.getString("cha_ville"), oChantier.getString("cha_codepo")) ;
+                Chantier unChantier = new Chantier(oChantier.getString("cha_code"), oChantier.getString("cha_libelle"), oChantier.getString("cha_nrue"), oChantier.getString("cha_rue"), oChantier.getString("cha_ville"), oChantier.getString("cha_codepo"), oChantier.getBoolean("cha_supprimer")) ;
                 addChantier(unChantier) ;
             }
         }

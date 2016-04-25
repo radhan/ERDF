@@ -67,7 +67,9 @@ public class ParserJSON {
 
     public boolean getBoolean(String nom) {
         try {
-            return oJSON.getBoolean(nom) ;
+            int intError = oJSON.getInt(nom);
+            boolean error = (intError > 0) ? true : false;
+            return(error) ;
         }catch (JSONException e) {
             Log.e(TAG, "Exception JSON.getBoolean inattendue", e);
             return false ;
