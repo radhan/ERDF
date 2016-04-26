@@ -1,6 +1,9 @@
 package com.erdf.classe.DAO;
 
 import android.app.Activity;
+import android.content.Context;
+import android.widget.Toast;
+
 import com.erdf.classe.metier.Chantier;
 import com.erdf.classe.metier.Fiche;
 import com.erdf.classe.metier.Fonction;
@@ -20,6 +23,7 @@ public class FicheDAO implements GetResponse {
     private ArrayList<Risque> listeRisque ;
     ConnexionBDD oConnexion, oConnexion1 ;
     private String statusJson ;
+    private Context context ;
 
     public FicheDAO() {
     }
@@ -32,6 +36,7 @@ public class FicheDAO implements GetResponse {
         oConnexion.getResponse = this;
         oConnexion.execute();
         this.statusJson = "Recupere";
+        this.context = pActivite.getApplicationContext() ;
     }
 
     public ArrayList<Fiche> getListeFiche() {

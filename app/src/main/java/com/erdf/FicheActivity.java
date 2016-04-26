@@ -17,6 +17,7 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.erdf.adapter.RisqueAdapter;
 import com.erdf.classe.DAO.ChantierDAO;
@@ -265,4 +266,5 @@ public class FicheActivity extends BaseActivity implements AdapterView.OnItemSel
         FicheDAO uneFicheDAO =  new FicheDAO() ;
         uneFicheDAO.setFiche(this, uneFiche);
     }
+
 }

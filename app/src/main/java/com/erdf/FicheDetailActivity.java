@@ -60,6 +60,11 @@ public class FicheDetailActivity extends BaseActivity {
             lesRisques.add(vRisque);
         }
 
+        /*for (int i = 0; i < 7; i++) {
+            ViewRisqueNc vRisque = new ViewRisqueNc( "Risque routier", "quand tu conduis !");
+            lesRisques.add(vRisque);
+        }*/
+
         if (!lesRisques.isEmpty()) {
             RisqueNcAdapter adapter = new RisqueNcAdapter( FicheDetailActivity.this, lesRisques);
             listviewRisque.setAdapter(adapter);
