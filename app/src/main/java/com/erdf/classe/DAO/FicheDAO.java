@@ -1,7 +1,6 @@
 package com.erdf.classe.DAO;
 
 import android.app.Activity;
-
 import com.erdf.classe.metier.Chantier;
 import com.erdf.classe.metier.Fiche;
 import com.erdf.classe.metier.Fonction;
@@ -18,6 +17,7 @@ import java.util.ArrayList;
  */
 public class FicheDAO implements GetResponse {
     private ArrayList<Fiche> listeFiche ;
+    private ArrayList<Risque> listeRisque ;
     ConnexionBDD oConnexion, oConnexion1 ;
     private String statusJson ;
 
@@ -25,6 +25,9 @@ public class FicheDAO implements GetResponse {
     }
 
     public FicheDAO(Activity pActivite) {
+        if(this.listeRisque == null) {
+            this.listeRisque = new ArrayList<>() ;
+        }
         oConnexion = new ConnexionBDD("Fiche", pActivite);
         oConnexion.getResponse = this;
         oConnexion.execute();
@@ -89,13 +92,17 @@ public class FicheDAO implements GetResponse {
                     //On déclare l'objet utilisateur
                     Utilisateur unUtilisateur = new Utilisateur(oFiche.getString("use_id"), oFiche.getString("use_nom"), oFiche.getString("use_prenom"), oFiche.getString("use_mail"), uneFonction, oFiche.getBoolean("use_supprimer"));
 
-                    if(oFiche.getString("ris_id") != null) {
-
-                        //On déclare l'objet risque
-                        Risque unRisque = new Risque(oFiche.getString("ris_id"), oFiche.getString("ris_titre"), oFiche.getString("ris_resume"), oFiche.getBoolean("ris_supprimer"));
+                    if(oFiche.getInt("nbRisque") > 0) {
+                        for (int j = 0; j < oFiche.getInt("nbRisque"); j++) {
+                            ParserJSON oRisque = new ParserJSON(oFiche.getOJSON(), Integer.toString(j));
+                            //On déclare l'objet risque
+                            Risque unRisque = new Risque(oRisque.getString("ris_id"), oRisque.getString("ris_titre"), oRisque.getString("ris_resume"), oRisque.getBoolean("ris_supprimer"));
+                            listeRisque.add(unRisque) ;
+                        }
                     }
 
                     Fiche uneFiche = new Fiche(oFiche.getString("fic_id"), unChantier, unUtilisateur, oFiche.getString("fic_date"), oFiche.getBoolean("fic_supprimer"));
+                    uneFiche.setListeRisque(listeRisque);
                     addFiche(uneFiche);
                 }
             }
