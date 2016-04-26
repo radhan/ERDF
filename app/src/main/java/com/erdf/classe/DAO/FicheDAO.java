@@ -17,16 +17,18 @@ import java.util.ArrayList;
  */
 public class FicheDAO implements GetResponse {
     private ArrayList<Fiche> listeFiche ;
-    private Activity activite ;
     ConnexionBDD oConnexion, oConnexion1 ;
     private String statusJson ;
 
+    public FicheDAO(Activity pActivity, Fiche uneFiche) {
+        setFiche(pActivity, uneFiche);
+    }
+
     public FicheDAO(Activity pActivite) {
-        this.activite = pActivite ;
-            oConnexion = new ConnexionBDD("Fiche", this.activite);
-            oConnexion.getResponse = this;
-            oConnexion.execute();
-            this.statusJson = "Recupere";
+        oConnexion = new ConnexionBDD("Fiche", pActivite);
+        oConnexion.getResponse = this;
+        oConnexion.execute();
+        this.statusJson = "Recupere";
     }
 
     public ArrayList<Fiche> getListeFiche() {
@@ -40,7 +42,7 @@ public class FicheDAO implements GetResponse {
         this.listeFiche.add(uneFiche) ;
     }
 
-    public void setFiche(Fiche uneFiche) {
+    public void setFiche(Activity pActivity, Fiche uneFiche) {
         ArrayList<String> nomParams = new ArrayList<>() ;
         nomParams.add("chantier") ;
         nomParams.add("utilisateur") ;
@@ -51,7 +53,7 @@ public class FicheDAO implements GetResponse {
         valeurParams.add(uneFiche.getUnUtilisateur().getId()) ;
         valeurParams.add(uneFiche.getDate());
 
-        oConnexion1 = new ConnexionBDD(nomParams, valeurParams, "SaisirFiche", this.activite);
+        oConnexion1 = new ConnexionBDD(nomParams, valeurParams, "SaisirFiche", pActivity);
         oConnexion1.getResponse = this ;
         oConnexion1.execute() ;
 

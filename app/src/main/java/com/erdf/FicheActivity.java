@@ -20,7 +20,11 @@ import android.widget.TextView;
 
 import com.erdf.adapter.RisqueAdapter;
 import com.erdf.classe.DAO.ChantierDAO;
+import com.erdf.classe.DAO.FicheDAO;
 import com.erdf.classe.DAO.RisqueDAO;
+import com.erdf.classe.metier.Chantier;
+import com.erdf.classe.metier.Fiche;
+import com.erdf.classe.metier.Utilisateur;
 import com.erdf.classe.technique.ConnexionBDD;
 import com.erdf.classe.technique.GetResponse;
 import com.erdf.classe.technique.InternetDetection;
@@ -54,6 +58,7 @@ public class FicheActivity extends BaseActivity implements AdapterView.OnItemSel
     @InjectView(R.id.button) Button btnEnvoyer ;
 
     ConnexionBDD oConnexion ;
+    Fiche uneFiche ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +68,10 @@ public class FicheActivity extends BaseActivity implements AdapterView.OnItemSel
         //NE PAS OUBLIER SI ON UTILISE ButterKnife
         ButterKnife.inject(this) ;
 
-        //
+        //On déclare l'objet fiche
+        uneFiche = new Fiche() ;
+
+        //On définie le selected listener
         spinnerChantier.setOnItemSelectedListener(this) ;
 
         //Configuration button d'edition
@@ -224,22 +232,29 @@ public class FicheActivity extends BaseActivity implements AdapterView.OnItemSel
         SharedPreferences connexionPref = getSharedPreferences("connexion", 0);
         int idUtilisateur = connexionPref.getInt("idUtilisateur", 1) ;
 
-        //SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        //String dateString = fmt.format(inputDate) ;
+        SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        Date inputDate = null;
+        try {
+            inputDate = fmt.parse(dateText.getText().toString());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
-        ArrayList<String> nomParams = new ArrayList<>() ;
-        nomParams.add("chantier") ;
-        nomParams.add("utilisateur") ;
-        nomParams.add("date") ;
+        // Create the MySQL datetime string
+        fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String dateString = fmt.format(inputDate);
 
-        ArrayList<String> valeurParams = new ArrayList<>() ;
-        valeurParams.add(chantierText.getText().toString()) ;
-        valeurParams.add(Integer.toString(idUtilisateur)) ;
-        valeurParams.add(dateText.getText().toString());
+        Chantier unChantier = new Chantier() ;
+        unChantier.setCode(chantierText.getText().toString()) ;
 
-        oConnexion = new ConnexionBDD(nomParams, valeurParams, "SaisirFiche", FicheActivity.this);
-        oConnexion.getResponse = this ;
-        oConnexion.execute() ;
+        Utilisateur unUtilisateur = new Utilisateur() ;
+        unUtilisateur.setId(Integer.toString(idUtilisateur)) ;
+
+        uneFiche.setUnChantier(unChantier) ;
+        uneFiche.setUnUtilisateur(unUtilisateur) ;
+        uneFiche.setDate(dateString) ;
+
+        FicheDAO uneFicheDAO =  new FicheDAO(this, uneFiche) ;
     }
 
     @Override
