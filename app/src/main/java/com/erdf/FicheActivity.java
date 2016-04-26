@@ -24,11 +24,10 @@ import com.erdf.classe.DAO.FicheDAO;
 import com.erdf.classe.DAO.RisqueDAO;
 import com.erdf.classe.metier.Chantier;
 import com.erdf.classe.metier.Fiche;
+import com.erdf.classe.metier.Risque;
 import com.erdf.classe.metier.Utilisateur;
 import com.erdf.classe.technique.ConnexionBDD;
-import com.erdf.classe.technique.GetResponse;
 import com.erdf.classe.technique.InternetDetection;
-import com.erdf.classe.technique.ParserJSON;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -42,7 +41,7 @@ import java.util.Locale;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-public class FicheActivity extends BaseActivity implements AdapterView.OnItemSelectedListener, GetResponse {
+public class FicheActivity extends BaseActivity implements AdapterView.OnItemSelectedListener {
 
     List<ViewRisque> lesRisques = new ArrayList<>() ;
     ListView listviewRisque ;
@@ -57,8 +56,8 @@ public class FicheActivity extends BaseActivity implements AdapterView.OnItemSel
     @InjectView(R.id.bAdresse) Button btnAdresse ;
     @InjectView(R.id.button) Button btnEnvoyer ;
 
-    ConnexionBDD oConnexion ;
     Fiche uneFiche ;
+    ArrayList<Risque> listeRisques = new ArrayList<>() ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -199,6 +198,14 @@ public class FicheActivity extends BaseActivity implements AdapterView.OnItemSel
                             if (view != null) {
                                 CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
                                 checkBox.setChecked(!checkBox.isChecked());
+
+                                Risque unRisque = new Risque(unRisqueDAO.getListeRisque().get(position).getId(), unRisqueDAO.getListeRisque().get(position).getTitre(), unRisqueDAO.getListeRisque().get(position).getResume(), unRisqueDAO.getListeRisque().get(position).isSupprimer()) ;
+
+                                if(checkBox.isChecked()) {
+                                    listeRisques.add(unRisque) ;
+                                } else {
+                                    listeRisques.remove(unRisque) ;
+                                }
                             }
                         }
                     });
@@ -253,17 +260,9 @@ public class FicheActivity extends BaseActivity implements AdapterView.OnItemSel
         uneFiche.setUnChantier(unChantier) ;
         uneFiche.setUnUtilisateur(unUtilisateur) ;
         uneFiche.setDate(dateString) ;
+        uneFiche.setListeRisque(listeRisques);
 
-        FicheDAO uneFicheDAO =  new FicheDAO(this, uneFiche) ;
-    }
-
-    @Override
-    public Void getData(String resultatJson) {
-
-        if(oConnexion.isJSON()) {
-            ParserJSON oParser = new ParserJSON(resultatJson);
-        }
-
-        return null;
+        FicheDAO uneFicheDAO =  new FicheDAO() ;
+        uneFicheDAO.setFiche(this, uneFiche);
     }
 }
