@@ -1,6 +1,9 @@
 package com.erdf.classe.DAO;
 
 import android.app.Activity;
+import android.content.Context;
+import android.widget.Toast;
+
 import com.erdf.classe.metier.Chantier;
 import com.erdf.classe.metier.Fiche;
 import com.erdf.classe.metier.Fonction;
@@ -20,6 +23,7 @@ public class FicheDAO implements GetResponse {
     private ArrayList<Risque> listeRisque ;
     ConnexionBDD oConnexion, oConnexion1 ;
     private String statusJson ;
+    private Context context ;
 
     public FicheDAO() {
     }
@@ -32,6 +36,7 @@ public class FicheDAO implements GetResponse {
         oConnexion.getResponse = this;
         oConnexion.execute();
         this.statusJson = "Recupere";
+        this.context = pActivite.getApplicationContext() ;
     }
 
     public ArrayList<Fiche> getListeFiche() {
@@ -83,6 +88,8 @@ public class FicheDAO implements GetResponse {
                 for (int i = 1; i < oParser.getOJSON().length() + 1; i++) {
                     ParserJSON oFiche = new ParserJSON(oParser.getOJSON(), Integer.toString(i));
 
+                    listeRisque.clear() ;
+
                     //On déclare l'objet chantier
                     Chantier unChantier = new Chantier(oFiche.getString("cha_code"), oFiche.getString("cha_libelle"), oFiche.getString("cha_nrue"), oFiche.getString("cha_rue"), oFiche.getString("cha_ville"), oFiche.getString("cha_codepo"), oFiche.getBoolean("cha_supprimer"));
 
@@ -110,9 +117,9 @@ public class FicheDAO implements GetResponse {
             if(oConnexion1.isJSON()) {
                 ParserJSON oParser = new ParserJSON(resultatJson) ;
                 if (oParser.getString("RESULTAT").contains("OK")) {
-                   // Toast.makeText(AddEntrepriseActivity.this, "Ajout d'une fiche réussi", Toast.LENGTH_SHORT).show() ;
+                   Toast.makeText(this.context, "Ajout d'une fiche réussi", Toast.LENGTH_SHORT).show() ;
                 } else {
-                   // Toast.makeText(AddEntrepriseActivity.this, "Erreur lors de l'ajout", Toast.LENGTH_SHORT).show() ;
+                   Toast.makeText(this.context, "Erreur lors de l'ajout", Toast.LENGTH_SHORT).show() ;
                 }
             }
         }

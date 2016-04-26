@@ -55,15 +55,15 @@ public class FicheDetailActivity extends BaseActivity {
         List<ViewRisqueNc> lesRisques = new ArrayList<>() ;
 
 
-    /*    for (int i = 0; i < titre.size(); i++) {
+        for (int i = 0; i < titre.size(); i++) {
             ViewRisqueNc vRisque = new ViewRisqueNc( titre.get(i), soustitre.get(i));
             lesRisques.add(vRisque);
-        }*/
+        }
 
-        for (int i = 0; i < 7; i++) {
+        /*for (int i = 0; i < 7; i++) {
             ViewRisqueNc vRisque = new ViewRisqueNc( "Risque routier", "quand tu conduis !");
             lesRisques.add(vRisque);
-        }
+        }*/
 
         if (!lesRisques.isEmpty()) {
             RisqueNcAdapter adapter = new RisqueNcAdapter( FicheDetailActivity.this, lesRisques);
