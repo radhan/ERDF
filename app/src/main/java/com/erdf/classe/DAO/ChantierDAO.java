@@ -33,8 +33,6 @@ public class ChantierDAO implements GetResponse {
         this.listeChantier.add(unChantier) ;
     }
 
-
-
     @Override
     public Void getData(String resultatJson) {
 

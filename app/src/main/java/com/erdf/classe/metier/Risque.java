@@ -1,5 +1,7 @@
 package com.erdf.classe.metier;
 
+import java.util.ArrayList;
+
 /**
  * Created by Radhan on 24/04/2016.
  */
@@ -8,6 +10,7 @@ public class Risque {
     private String titre ;
     private String resume ;
     private boolean supprimer ;
+    private ArrayList<Fiche> listeFiche = new ArrayList<>() ;
 
     public Risque() {
     }
@@ -49,5 +52,13 @@ public class Risque {
 
     public void setSupprimer(boolean supprimer) {
         this.supprimer = supprimer;
+    }
+
+    public ArrayList<Fiche> getListeFiche() {
+        return listeFiche;
+    }
+
+    public void setListeFiche(ArrayList<Fiche> listeFiche) {
+        this.listeFiche = listeFiche;
     }
 }
