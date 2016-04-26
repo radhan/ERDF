@@ -9,6 +9,7 @@ import android.widget.ListView;
 
 import com.erdf.adapter.FicheAdapter;
 import com.erdf.classe.DAO.FicheDAO;
+import com.erdf.classe.metier.Risque;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,11 +62,23 @@ public class ListeFicheActivity extends BaseActivity implements AdapterView.OnIt
 
         String adresse = uneFicheDAO.getListeFiche().get(position).getUnChantier().getNumRue() + " " + uneFicheDAO.getListeFiche().get(position).getUnChantier().getRue() + ", " + uneFicheDAO.getListeFiche().get(position).getUnChantier().getVille() + ", " + uneFicheDAO.getListeFiche().get(position).getUnChantier().getCodePostal() ;
         String technicien = uneFicheDAO.getListeFiche().get(position).getUnUtilisateur().getNom() + " " + uneFicheDAO.getListeFiche().get(position).getUnUtilisateur().getPrenom() ;
+        ArrayList<Risque> risques = uneFicheDAO.getListeFiche().get(position).getListeRisque();
+        ArrayList<String> titre = new ArrayList<>() ;
+        ArrayList<String> soustitre =  new ArrayList<>();
+
+        for (int i = 0; i < risques.size(); i++) {
+
+            Risque risque = risques.get(i);
+            titre.add(risque.getTitre());
+            soustitre.add(risque.getResume());
+        }
 
         //Cela fonctionne plus ou moins comme une HashMap, on entre une clef et sa valeur en face
         objetBdl.putString("dateFiche", uneFicheDAO.getListeFiche().get(position).getDate());
         objetBdl.putString("adresseFiche", adresse);
         objetBdl.putString("technicienFiche", technicien);
+        objetBdl.putStringArrayList("titre", titre);
+        objetBdl.putStringArrayList("soustitre", soustitre);
 
         //On créé l'Intent qui va nous permettre d'afficher l'autre Activity
         Intent intent = new Intent(ListeFicheActivity.this, FicheDetailActivity.class);
