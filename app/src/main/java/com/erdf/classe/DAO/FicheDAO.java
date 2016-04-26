@@ -83,6 +83,8 @@ public class FicheDAO implements GetResponse {
                 for (int i = 1; i < oParser.getOJSON().length() + 1; i++) {
                     ParserJSON oFiche = new ParserJSON(oParser.getOJSON(), Integer.toString(i));
 
+                    listeRisque = new ArrayList<>();
+
                     //On déclare l'objet chantier
                     Chantier unChantier = new Chantier(oFiche.getString("cha_code"), oFiche.getString("cha_libelle"), oFiche.getString("cha_nrue"), oFiche.getString("cha_rue"), oFiche.getString("cha_ville"), oFiche.getString("cha_codepo"), oFiche.getBoolean("cha_supprimer"));
 
