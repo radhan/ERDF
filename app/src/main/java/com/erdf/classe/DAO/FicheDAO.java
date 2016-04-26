@@ -35,7 +35,6 @@ public class FicheDAO implements GetResponse {
             this.listeFiche = new ArrayList<>() ;
         }
         this.listeFiche.add(uneFiche) ;
-        Log.i("addFiche", "Une fiche ajoutée") ;
     }
 
     @Override

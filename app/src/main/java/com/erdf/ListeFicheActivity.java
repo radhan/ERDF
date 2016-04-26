@@ -52,7 +52,7 @@ public class ListeFicheActivity extends BaseActivity implements AdapterView.OnIt
                     listviewFiches.setOnItemClickListener(ListeFicheActivity.this);
                 }
             }
-        }, 1000);
+        }, 2000);
     }
 
     public void onItemClick(AdapterView parentView, View childView, int position, long id) {

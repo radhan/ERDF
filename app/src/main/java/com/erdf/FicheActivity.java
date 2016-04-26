@@ -1,6 +1,7 @@
 package com.erdf;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -8,7 +9,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -21,10 +21,14 @@ import android.widget.TextView;
 import com.erdf.adapter.RisqueAdapter;
 import com.erdf.classe.DAO.ChantierDAO;
 import com.erdf.classe.DAO.RisqueDAO;
+import com.erdf.classe.technique.ConnexionBDD;
+import com.erdf.classe.technique.GetResponse;
 import com.erdf.classe.technique.InternetDetection;
+import com.erdf.classe.technique.ParserJSON;
 
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,7 +38,7 @@ import java.util.Locale;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-public class FicheActivity extends BaseActivity implements AdapterView.OnItemSelectedListener {
+public class FicheActivity extends BaseActivity implements AdapterView.OnItemSelectedListener, GetResponse {
 
     List<ViewRisque> lesRisques = new ArrayList<>() ;
     ListView listviewRisque ;
@@ -42,12 +46,14 @@ public class FicheActivity extends BaseActivity implements AdapterView.OnItemSel
     ArrayList<String> idChantiers = new ArrayList<>() ;
     ArrayList<String> lesChantiers = new ArrayList<>();
 
-    @InjectView(R.id.tDate) TextView dateText ;
+    @InjectView(R.id.sDate) TextView dateText ;
     @InjectView(R.id.sChantier) TextView chantierText ;
     @InjectView(R.id.spinnerChantier) Spinner spinnerChantier ;
     @InjectView(R.id.sAdresse) TextView adresseText ;
     @InjectView(R.id.bAdresse) Button btnAdresse ;
     @InjectView(R.id.button) Button btnEnvoyer ;
+
+    ConnexionBDD oConnexion ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,11 +74,11 @@ public class FicheActivity extends BaseActivity implements AdapterView.OnItemSel
             }
         });
 
-        //Configuration button de renvoie
+        //Configuration button d'envoie
         btnEnvoyer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                setFiche();
             }
         });
 
@@ -118,7 +124,7 @@ public class FicheActivity extends BaseActivity implements AdapterView.OnItemSel
     private void getDate() {
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         Date date = new Date();
-        dateText.setText("Date : " + dateFormat.format(date));
+        dateText.setText(dateFormat.format(date));
     }
 
     //Méthode qui récupère la localisation
@@ -190,7 +196,7 @@ public class FicheActivity extends BaseActivity implements AdapterView.OnItemSel
                     });
                 }
             }
-        }, 1000);
+        }, 2000);
     }
 
     //Méthode qui récupère la liste des chantiers
@@ -210,6 +216,39 @@ public class FicheActivity extends BaseActivity implements AdapterView.OnItemSel
                     spinnerChantier.setAdapter(adapter_section);
                 }
             }
-        }, 1000);
+        }, 2000);
+    }
+
+    public void setFiche() {
+
+        SharedPreferences connexionPref = getSharedPreferences("connexion", 0);
+        int idUtilisateur = connexionPref.getInt("idUtilisateur", 1) ;
+
+        //SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        //String dateString = fmt.format(inputDate) ;
+
+        ArrayList<String> nomParams = new ArrayList<>() ;
+        nomParams.add("chantier") ;
+        nomParams.add("utilisateur") ;
+        nomParams.add("date") ;
+
+        ArrayList<String> valeurParams = new ArrayList<>() ;
+        valeurParams.add(chantierText.getText().toString()) ;
+        valeurParams.add(Integer.toString(idUtilisateur)) ;
+        valeurParams.add(dateText.getText().toString());
+
+        oConnexion = new ConnexionBDD(nomParams, valeurParams, "SaisirFiche", FicheActivity.this);
+        oConnexion.getResponse = this ;
+        oConnexion.execute() ;
+    }
+
+    @Override
+    public Void getData(String resultatJson) {
+
+        if(oConnexion.isJSON()) {
+            ParserJSON oParser = new ParserJSON(resultatJson);
+        }
+
+        return null;
     }
 }

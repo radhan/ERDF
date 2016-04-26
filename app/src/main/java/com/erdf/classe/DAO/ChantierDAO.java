@@ -1,7 +1,6 @@
 package com.erdf.classe.DAO;
 
 import android.app.Activity;
-import android.util.Log;
 
 import com.erdf.classe.metier.Chantier;
 import com.erdf.classe.technique.ConnexionBDD;
@@ -32,8 +31,9 @@ public class ChantierDAO implements GetResponse {
             this.listeChantier = new ArrayList<>() ;
         }
         this.listeChantier.add(unChantier) ;
-        Log.i("addChantier", "Un chantié ajouté") ;
     }
+
+
 
     @Override
     public Void getData(String resultatJson) {

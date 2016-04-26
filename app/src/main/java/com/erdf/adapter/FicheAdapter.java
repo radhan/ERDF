@@ -17,11 +17,8 @@ import java.util.List;
  */
 public class FicheAdapter extends ArrayAdapter<ViewFiche> {
 
-    private final List<ViewFiche> fiches ;
-
     public FicheAdapter(Activity context, List<ViewFiche> fiches) {
         super(context, 0, fiches) ;
-        this.fiches = fiches ;
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.erdf.classe.DAO;
 
 import android.app.Activity;
-import android.util.Log;
 
 import com.erdf.classe.metier.Risque;
 import com.erdf.classe.technique.ConnexionBDD;
@@ -32,7 +31,6 @@ public class RisqueDAO implements GetResponse {
             this.listeRisque = new ArrayList<>() ;
         }
         this.listeRisque.add(unRisque) ;
-        Log.i("addRisque", "Un risque ajouté") ;
     }
 
     @Override

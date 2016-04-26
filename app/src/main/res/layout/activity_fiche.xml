@@ -21,6 +21,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/sDate"
+        android:layout_toRightOf="@id/tDate"
+        android:layout_above="@+id/spinnerChantier"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Chantier : "
         android:id="@+id/tChantier"
         android:layout_below="@id/tDate"
@@ -37,8 +45,8 @@
         android:id="@+id/spinnerChantier"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tDate"
-        android:layout_toRightOf="@id/tChantier"
+        android:layout_below="@+id/tDate"
+        android:layout_toRightOf="@+id/tChantier"
         android:layout_marginTop="12dp"/>
 
     <TextView
