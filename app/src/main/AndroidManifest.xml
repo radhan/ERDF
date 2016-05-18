@@ -16,7 +16,8 @@
         android:icon="@drawable/logo_erdf"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:name="com.erdf.classe.technique.ConnexionControleur">
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -27,7 +28,6 @@
             android:label="@string/title_activity_login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

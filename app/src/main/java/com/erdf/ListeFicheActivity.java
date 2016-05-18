@@ -2,13 +2,13 @@ package com.erdf;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.erdf.adapter.FicheAdapter;
 import com.erdf.classe.DAO.FicheDAO;
+import com.erdf.classe.metier.Fiche;
 import com.erdf.classe.metier.Risque;
 
 import java.util.ArrayList;
@@ -21,7 +21,6 @@ import butterknife.InjectView;
 public class ListeFicheActivity extends BaseActivity implements AdapterView.OnItemClickListener {
 
     List<ViewFiche> lesFiches = new ArrayList<>() ;
-    FicheDAO uneFicheDAO ;
     @InjectView(R.id.listFiche) ListView listviewFiches ;
 
     @Override
@@ -32,37 +31,37 @@ public class ListeFicheActivity extends BaseActivity implements AdapterView.OnIt
         //NE PAS OUBLIER SI ON UTILISE ButterKnife
         ButterKnife.inject(this) ;
 
+        //On synchronise la bdd interne avec la bdd en ligne
+        FicheDAO.syncGetListeFiche(getApplicationContext()) ;
+
         //On récupère la liste des risques
         getListeFiches() ;
     }
 
 
     private void getListeFiches() {
-        uneFicheDAO = new FicheDAO(this) ;
+        ArrayList<Fiche> listeFiche = FicheDAO.getListeFiche(getApplicationContext()) ;
 
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                for (int i = 0; i < uneFicheDAO.getListeFiche().size(); i++) {
-                    ViewFiche vFiches = new ViewFiche(uneFicheDAO.getListeFiche().get(i).getUnChantier().getNumRue(), uneFicheDAO.getListeFiche().get(i).getUnChantier().getRue(), uneFicheDAO.getListeFiche().get(i).getUnChantier().getCodePostal(), uneFicheDAO.getListeFiche().get(i).getUnChantier().getVille(), uneFicheDAO.getListeFiche().get(i).getDate());
-                    lesFiches.add(vFiches);
-                }
-                if (!lesFiches.isEmpty()) {
-                    FicheAdapter adapter = new FicheAdapter(ListeFicheActivity.this, lesFiches);
-                    listviewFiches.setAdapter(adapter);
-                    listviewFiches.setOnItemClickListener(ListeFicheActivity.this);
-                }
-            }
-        }, 2000);
+        for (int i = 0; i < listeFiche.size(); i++) {
+            ViewFiche vFiches = new ViewFiche(listeFiche.get(i).getUnChantier().getNumRue(), listeFiche.get(i).getUnChantier().getRue(), listeFiche.get(i).getUnChantier().getCodePostal(), listeFiche.get(i).getUnChantier().getVille(), listeFiche.get(i).getDate());
+            lesFiches.add(vFiches);
+        }
+        if (!lesFiches.isEmpty()) {
+            FicheAdapter adapter = new FicheAdapter(ListeFicheActivity.this, lesFiches);
+            listviewFiches.setAdapter(adapter);
+            listviewFiches.setOnItemClickListener(ListeFicheActivity.this);
+        }
     }
 
     public void onItemClick(AdapterView parentView, View childView, int position, long id) {
+        ArrayList<Fiche> listeFiche = FicheDAO.getListeFiche(getApplicationContext()) ;
+
         //On créé un objet Bundle, c'est ce qui va nous permetre d'envoyer des données à l'autre Activity
         Bundle objetBdl = new Bundle();
 
-        String adresse = uneFicheDAO.getListeFiche().get(position).getUnChantier().getNumRue() + " " + uneFicheDAO.getListeFiche().get(position).getUnChantier().getRue() + ", " + uneFicheDAO.getListeFiche().get(position).getUnChantier().getVille() + ", " + uneFicheDAO.getListeFiche().get(position).getUnChantier().getCodePostal() ;
-        String technicien = uneFicheDAO.getListeFiche().get(position).getUnUtilisateur().getNom() + " " + uneFicheDAO.getListeFiche().get(position).getUnUtilisateur().getPrenom() ;
-        ArrayList<Risque> risques = uneFicheDAO.getListeFiche().get(position).getListeRisque();
+        String adresse = listeFiche.get(position).getUnChantier().getNumRue() + " " + listeFiche.get(position).getUnChantier().getRue() + ", " + listeFiche.get(position).getUnChantier().getVille() + ", " + listeFiche.get(position).getUnChantier().getCodePostal() ;
+        String technicien = listeFiche.get(position).getUnUtilisateur().getNom() + " " + listeFiche.get(position).getUnUtilisateur().getPrenom() ;
+        ArrayList<Risque> risques = listeFiche.get(position).getListeRisque();
         ArrayList<String> titre = new ArrayList<>() ;
         ArrayList<String> soustitre =  new ArrayList<>();
 
@@ -74,7 +73,7 @@ public class ListeFicheActivity extends BaseActivity implements AdapterView.OnIt
         }
 
         //Cela fonctionne plus ou moins comme une HashMap, on entre une clef et sa valeur en face
-        objetBdl.putString("dateFiche", uneFicheDAO.getListeFiche().get(position).getDate());
+        objetBdl.putString("dateFiche", listeFiche.get(position).getDate());
         objetBdl.putString("adresseFiche", adresse);
         objetBdl.putString("technicienFiche", technicien);
         objetBdl.putStringArrayList("titre", titre);

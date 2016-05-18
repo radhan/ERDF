@@ -17,7 +17,6 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.erdf.adapter.RisqueAdapter;
 import com.erdf.classe.DAO.ChantierDAO;
@@ -27,7 +26,6 @@ import com.erdf.classe.metier.Chantier;
 import com.erdf.classe.metier.Fiche;
 import com.erdf.classe.metier.Risque;
 import com.erdf.classe.metier.Utilisateur;
-import com.erdf.classe.technique.ConnexionBDD;
 import com.erdf.classe.technique.InternetDetection;
 
 import java.io.IOException;
@@ -45,20 +43,21 @@ import butterknife.InjectView;
 public class FicheActivity extends BaseActivity implements AdapterView.OnItemSelectedListener {
 
     List<ViewRisque> lesRisques = new ArrayList<>() ;
-    ListView listviewRisque ;
+    ArrayList<Risque> listeRisques = new ArrayList<>() ;
 
     ArrayList<String> idChantiers = new ArrayList<>() ;
     ArrayList<String> lesChantiers = new ArrayList<>();
 
-    @InjectView(R.id.sDate) TextView dateText ;
-    @InjectView(R.id.sChantier) TextView chantierText ;
-    @InjectView(R.id.spinnerChantier) Spinner spinnerChantier ;
-    @InjectView(R.id.sAdresse) TextView adresseText ;
-    @InjectView(R.id.bAdresse) Button btnAdresse ;
-    @InjectView(R.id.button) Button btnEnvoyer ;
+    @InjectView(R.id.sDate)             TextView dateText       ;
+    @InjectView(R.id.sChantier)         TextView chantierText   ;
+    @InjectView(R.id.spinnerChantier)   Spinner spinnerChantier ;
+    @InjectView(R.id.sAdresse)          TextView adresseText    ;
+    @InjectView(R.id.bAdresse)          Button btnAdresse       ;
+    @InjectView(R.id.button)            Button btnEnvoyer       ;
+    @InjectView(R.id.listView)          ListView listviewRisque ;
 
     Fiche uneFiche ;
-    ArrayList<Risque> listeRisques = new ArrayList<>() ;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +69,9 @@ public class FicheActivity extends BaseActivity implements AdapterView.OnItemSel
 
         //On déclare l'objet fiche
         uneFiche = new Fiche() ;
+
+        //On met à jour la bdd interne pour les risques
+        //RisqueDAO.syncGetListeRisque(getApplicationContext()) ;
 
         //On définie le selected listener
         spinnerChantier.setOnItemSelectedListener(this) ;
@@ -180,39 +182,36 @@ public class FicheActivity extends BaseActivity implements AdapterView.OnItemSel
 
     //On récupère la liste des risques
     public void getRisques() {
-        final RisqueDAO unRisqueDAO = new RisqueDAO(this) ;
 
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                for (int i = 0; i < unRisqueDAO.getListeRisque().size(); i++) {
-                    ViewRisque vRisque = new ViewRisque(unRisqueDAO.getListeRisque().get(i).getTitre(), unRisqueDAO.getListeRisque().get(i).getResume());
-                    lesRisques.add(vRisque);
-                }
-                if (!lesRisques.isEmpty()) {
-                    listviewRisque = (ListView) findViewById(R.id.listView);
-                    RisqueAdapter adapter = new RisqueAdapter(FicheActivity.this, lesRisques);
-                    listviewRisque.setAdapter(adapter);
+        final ArrayList<Risque> listeRisque = RisqueDAO.getListeRisque(getApplicationContext()) ;
 
-                    listviewRisque.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        public void onItemClick(AdapterView parent, View view, int position, long id) {
-                            if (view != null) {
-                                CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
-                                checkBox.setChecked(!checkBox.isChecked());
+        for (int i = 0; i < listeRisque.size() ; i++) {
+            ViewRisque vRisque = new ViewRisque(listeRisque.get(i).getTitre(), listeRisque.get(i).getResume());
+            lesRisques.add(vRisque);
+        }
 
-                                Risque unRisque = new Risque(unRisqueDAO.getListeRisque().get(position).getId(), unRisqueDAO.getListeRisque().get(position).getTitre(), unRisqueDAO.getListeRisque().get(position).getResume(), unRisqueDAO.getListeRisque().get(position).isSupprimer()) ;
+        if (!lesRisques.isEmpty()) {
+            listviewRisque = (ListView) findViewById(R.id.listView);
+            RisqueAdapter adapter = new RisqueAdapter(FicheActivity.this, lesRisques);
+            listviewRisque.setAdapter(adapter);
 
-                                if(checkBox.isChecked()) {
-                                    listeRisques.add(unRisque) ;
-                                } else {
-                                    listeRisques.remove(unRisque) ;
-                                }
-                            }
+            listviewRisque.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                public void onItemClick(AdapterView parent, View view, int position, long id) {
+                    if (view != null) {
+                        CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
+                        checkBox.setChecked(!checkBox.isChecked());
+
+                        Risque unRisque = new Risque(listeRisque.get(position).getId(), listeRisque.get(position).getTitre(), listeRisque.get(position).getResume(), listeRisque.get(position).isSupprimer()) ;
+
+                        if(checkBox.isChecked()) {
+                            listeRisques.add(unRisque) ;
+                        } else {
+                            listeRisques.remove(unRisque) ;
                         }
-                    });
+                    }
                 }
-            }
-        }, 2000);
+            });
+        }
     }
 
     //Méthode qui récupère la liste des chantiers
@@ -263,8 +262,7 @@ public class FicheActivity extends BaseActivity implements AdapterView.OnItemSel
         uneFiche.setDate(dateString) ;
         uneFiche.setListeRisque(listeRisques);
 
-        FicheDAO uneFicheDAO =  new FicheDAO() ;
-        uneFicheDAO.setFiche(this, uneFiche);
+        FicheDAO.setUneFiche(getApplicationContext(), uneFiche);
     }
 
 }

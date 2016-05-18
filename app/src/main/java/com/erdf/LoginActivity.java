@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.erdf.classe.DAO.FicheDAO;
+import com.erdf.classe.DAO.RisqueDAO;
 import com.erdf.classe.technique.ConnexionBDD;
 import com.erdf.classe.technique.GetResponse;
 import com.erdf.classe.technique.ParserJSON;
@@ -53,6 +55,10 @@ public class LoginActivity extends Activity implements GetResponse {
 
         //NE PAS OUBLIER SI ON UTILISE ButterKnife
         ButterKnife.inject(this);
+
+        //On synchronise la bdd interne avec la bdd en ligne
+        FicheDAO.syncGetListeFiche(getApplicationContext()) ;
+        RisqueDAO.syncGetListeRisque(getApplicationContext()) ;
 
         loginButton.setOnClickListener(new View.OnClickListener() {
 
