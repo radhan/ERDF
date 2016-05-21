@@ -21,27 +21,37 @@ public class SessionManager {
     int PRIVATE_MODE = 0;
 
     // Shared preferences file name
-    private static final String PREF_NAME = "ERDFLogin";
-
-    private static final String KEY_IS_LOGGEDIN = "isLoggedIn";
+    private static final String PREF_NOM        = "ERDFLogin"       ;
+    private static final String KEY_CONNECTE    = "connexion"       ;
+    private static final String KEY_USER_ID     = "idUtilisateur"   ;
 
     public SessionManager(Context context) {
         this._context = context;
-        pref = _context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
+        pref = _context.getSharedPreferences(PREF_NOM, PRIVATE_MODE);
         editor = pref.edit();
     }
 
-    public void setLogin(boolean isLoggedIn) {
+    public void setLogin(boolean pConnecte) {
 
-        editor.putBoolean(KEY_IS_LOGGEDIN, isLoggedIn);
+        editor.putBoolean(KEY_CONNECTE, pConnecte);
 
         // commit changes
         editor.commit();
 
-        Log.d(TAG, "User login session modified!");
+        Log.d(TAG, "Session de connexion modifié !");
     }
 
-    public boolean isLoggedIn(){
-        return pref.getBoolean(KEY_IS_LOGGEDIN, false);
+    public boolean isConnecte(){
+        return pref.getBoolean(KEY_CONNECTE, false);
+    }
+
+    public void setIdUtilisateur(String pIdUtilisateur) {
+
+        editor.putString(KEY_USER_ID, pIdUtilisateur);
+
+        // commit changes
+        editor.commit();
+
+        Log.d(TAG, "Id Utilisateur de la session modifié !");
     }
 }

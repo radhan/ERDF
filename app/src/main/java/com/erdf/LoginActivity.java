@@ -3,36 +3,29 @@ package com.erdf;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.erdf.classe.DAO.ChantierDAO;
+import com.erdf.classe.DAO.CompteDAO;
 import com.erdf.classe.DAO.FicheDAO;
 import com.erdf.classe.DAO.FonctionDAO;
 import com.erdf.classe.DAO.RisqueDAO;
 import com.erdf.classe.DAO.UtilisateurDAO;
-
-import java.util.ArrayList;
+import com.erdf.classe.technique.SessionManager;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-public class LoginActivity extends Activity implements GetResponse {
+public class LoginActivity extends Activity {
 
 
-    @InjectView(R.id.email) EditText userText ;
-    @InjectView(R.id.password) EditText passwordText ;
-    @InjectView(R.id.loginButton) Button loginButton ;
-
-    //Variable qui sert à voir si la connexion est OK ou non
-    String statutConnexion = null ;
-    ConnexionBDD oConnexion ;
-
+    @InjectView(R.id.email) EditText userText;
+    @InjectView(R.id.password) EditText passwordText;
+    @InjectView(R.id.loginButton) Button loginButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,15 +33,11 @@ public class LoginActivity extends Activity implements GetResponse {
         setContentView(R.layout.activity_login);
 
         //Préférences de l'application - Utilisateur déjà connecté ou non
-        SharedPreferences connexionPref = getSharedPreferences("connexion", 0);
-        SharedPreferences.Editor ed = connexionPref.edit();
-        if(!connexionPref.contains("statut")){
-            ed.putBoolean("statut", false);
-            ed.apply();
-        } else if(connexionPref.getBoolean("statut", false)) {
+        SessionManager session = new SessionManager(getApplicationContext());
+        if (session.isConnecte()) {
             Intent intent = new Intent(this, AccueilActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            Log.i("LoginActivity", "Connexion - OK") ;
+            Log.i("LoginActivity", "Connexion - OK");
             startActivity(intent);
             finish();
         }
@@ -57,11 +46,11 @@ public class LoginActivity extends Activity implements GetResponse {
         ButterKnife.inject(this);
 
         //On synchronise la bdd interne avec la bdd en ligne
-        FicheDAO.syncGetListeFiche(getApplicationContext()) ;
-        RisqueDAO.syncGetListeRisque(getApplicationContext()) ;
-        ChantierDAO.syncGetListeChantier(getApplicationContext()) ;
-        UtilisateurDAO.syncGetListeUtilisateur(getApplicationContext()) ;
-        FonctionDAO.syncGetListeFonction(getApplicationContext()) ;
+        FicheDAO.syncGetListeFiche(getApplicationContext());
+        RisqueDAO.syncGetListeRisque(getApplicationContext());
+        ChantierDAO.syncGetListeChantier(getApplicationContext());
+        UtilisateurDAO.syncGetListeUtilisateur(getApplicationContext());
+        FonctionDAO.syncGetListeFonction(getApplicationContext());
 
         loginButton.setOnClickListener(new View.OnClickListener() {
 
@@ -76,48 +65,19 @@ public class LoginActivity extends Activity implements GetResponse {
     public void login() {
 
         if (!validate()) {
-            onLoginFailed();
             return;
         }
-
-        loginButton.setEnabled(false);
 
         String user = userText.getText().toString();
         String password = passwordText.getText().toString();
 
-        ArrayList<String> nomParams = new ArrayList<>() ;
-        nomParams.add("login") ;
-        nomParams.add("password") ;
-
-        ArrayList<String> valeurParams = new ArrayList<>() ;
-        valeurParams.add(user) ;
-        valeurParams.add(password) ;
-
-        oConnexion = new ConnexionBDD(nomParams, valeurParams, "Connexion", LoginActivity.this);
-        oConnexion.getResponse = this;
-        oConnexion.execute();
+        CompteDAO.Connexion(getApplicationContext(), user, password);
     }
 
 
     @Override
     public void onBackPressed() {
         moveTaskToBack(true);
-    }
-
-    public void onLoginSuccess() {
-        loginButton.setEnabled(true);
-
-        Intent intent = new Intent(this, FicheActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-        finish();
-
-        Toast.makeText(getBaseContext(), "Vous êtes connecté !", Toast.LENGTH_LONG).show();
-    }
-
-    public void onLoginFailed() {
-        Toast.makeText(getBaseContext(), "Identifiants incorrect !", Toast.LENGTH_LONG).show();
-        loginButton.setEnabled(true);
     }
 
     public boolean validate() {
@@ -141,33 +101,5 @@ public class LoginActivity extends Activity implements GetResponse {
         }
 
         return valid;
-    }
-
-    @Override
-    public Void getData(String resultatJson) {
-        if(oConnexion.isJSON()) {
-            statutConnexion = "OK" ;
-            ParserJSON oParser = new ParserJSON(resultatJson);
-
-            //Préférences de l'application - Utilisateur déjà connecté ou non
-            SharedPreferences connexionPref = getSharedPreferences("connexion", 0);
-            SharedPreferences.Editor ed;
-            ed = connexionPref.edit();
-            ed.putBoolean("statut", true);
-            ed.putInt("idUtilisateur", oParser.getInt("com_id"));
-            ed.putString("nomUtilisateur", oParser.getString("use_nom"));
-            ed.putString("prenomUtilisateur", oParser.getString("use_prenom"));
-            ed.putString("emailUtilisateur", oParser.getString("use_mail"));
-            ed.putString("fonctionUtilisateur", oParser.getString("fon_libelle"));
-
-            ed.apply();
-        }
-        if (statutConnexion != null && statutConnexion.contains("OK")) {
-            onLoginSuccess();
-        } else {
-            onLoginFailed();
-        }
-
-        return null;
     }
 }

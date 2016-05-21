@@ -147,7 +147,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + "(" + KEY_FICHE_RISQUE_FICHE + " VARCHAR(10), "
             + KEY_FICHE_RISQUE_RISQUE + " VARCHAR(10), "
             + KEY_CREATED_AT + " DATETIME, "
-            + "PRIMARY KEY(" + KEY_FICHE_RISQUE_FICHE + ", " + KEY_FICHE_RISQUE_RISQUE + ")" ;
+            + "PRIMARY KEY(" + KEY_FICHE_RISQUE_FICHE + ", " + KEY_FICHE_RISQUE_RISQUE + "))" ;
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -163,7 +163,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_UTILISATEUR)    ;
         db.execSQL(CREATE_TABLE_FICHE)          ;
         db.execSQL(CREATE_TABLE_COMPTE)         ;
-        //db.execSQL(CREATE_TABLE_FICHE_RISQUE)   ;
+        db.execSQL(CREATE_TABLE_FICHE_RISQUE)   ;
     }
 
     @Override
@@ -175,7 +175,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_UTILISATEUR)     ;
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_FICHE)           ;
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_COMPTE)          ;
-       // db.execSQL("DROP TABLE IF EXISTS " + TABLE_FICHE_RISQUE)    ;
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_FICHE_RISQUE)    ;
 
         // create new tables
         onCreate(db);
