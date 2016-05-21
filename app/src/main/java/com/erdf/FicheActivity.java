@@ -8,10 +8,8 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
@@ -19,7 +17,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.erdf.adapter.RisqueAdapter;
-import com.erdf.classe.DAO.ChantierDAO;
 import com.erdf.classe.DAO.FicheDAO;
 import com.erdf.classe.DAO.RisqueDAO;
 import com.erdf.classe.metier.Chantier;
@@ -46,7 +43,6 @@ public class FicheActivity extends BaseActivity implements AdapterView.OnItemSel
     ArrayList<Risque> listeRisques = new ArrayList<>() ;
 
     ArrayList<String> idChantiers = new ArrayList<>() ;
-    ArrayList<String> lesChantiers = new ArrayList<>();
 
     @InjectView(R.id.sDate)             TextView dateText       ;
     @InjectView(R.id.sChantier)         TextView chantierText   ;
@@ -70,9 +66,6 @@ public class FicheActivity extends BaseActivity implements AdapterView.OnItemSel
         //On déclare l'objet fiche
         uneFiche = new Fiche() ;
 
-        //On met à jour la bdd interne pour les risques
-        //RisqueDAO.syncGetListeRisque(getApplicationContext()) ;
-
         //On définie le selected listener
         spinnerChantier.setOnItemSelectedListener(this) ;
 
@@ -94,7 +87,6 @@ public class FicheActivity extends BaseActivity implements AdapterView.OnItemSel
 
         //On récupère la liste des risques et des chantiers
         getRisques() ;
-        //getChantiers() ;
 
         //On récupère la date et l'heure
         getDate() ;
@@ -213,26 +205,6 @@ public class FicheActivity extends BaseActivity implements AdapterView.OnItemSel
             });
         }
     }
-
-    //Méthode qui récupère la liste des chantiers
-    /*public void getChantiers() {
-        final ChantierDAO unChantierDAO = new ChantierDAO(this) ;
-
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                for (int i = 0; i < unChantierDAO.getListeChantier().size(); i++) {
-                    idChantiers.add(unChantierDAO.getListeChantier().get(i).getCode());
-                    lesChantiers.add(unChantierDAO.getListeChantier().get(i).getLibelle());
-                }
-                if(!lesChantiers.isEmpty()) {
-                    ArrayAdapter<String> adapter_section = new ArrayAdapter<>(FicheActivity.this, android.R.layout.simple_spinner_item, lesChantiers);
-                    adapter_section.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    spinnerChantier.setAdapter(adapter_section);
-                }
-            }
-        }, 2000);
-    }*/
 
     public void setFiche() {
 

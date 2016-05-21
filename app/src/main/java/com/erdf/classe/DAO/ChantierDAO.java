@@ -60,7 +60,7 @@ public class ChantierDAO {
                 try {
 
                     // On parcours les données reçues
-                    for(int i = 1; i < response.length() ; i++) {
+                    for(int i = 1; i < response.length() + 1; i++) {
                         JSONObject oChantier = response.getJSONObject(Integer.toString(i)) ;
                         boolean supprimer = oChantier.getInt("cha_supprimer") > 0 ;
                         Chantier unChantier = new Chantier(oChantier.getString("cha_code"), oChantier.getString("cha_libelle"), oChantier.getString("cha_nrue"), oChantier.getString("cha_rue"), oChantier.getString("cha_ville"), oChantier.getString("cha_codepo"), supprimer) ;

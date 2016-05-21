@@ -61,7 +61,7 @@ public class RisqueDAO {
                 try {
 
                     // On parcours les données reçues
-                    for(int i = 1; i < response.length() ; i++) {
+                    for(int i = 1; i < response.length() + 1; i++) {
                         JSONObject oRisque = response.getJSONObject(Integer.toString(i)) ;
                         boolean supprimer = oRisque.getInt("ris_supprimer") > 0 ;
                         Risque unRisque = new Risque(oRisque.getString("ris_id"), oRisque.getString("ris_titre"), oRisque.getString("ris_resume"), supprimer);

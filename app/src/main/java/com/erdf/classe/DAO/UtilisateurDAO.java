@@ -61,7 +61,7 @@ public class UtilisateurDAO {
                 try {
 
                     // On parcours les données reçues
-                    for(int i = 1; i < response.length() ; i++) {
+                    for(int i = 1; i < response.length() + 1; i++) {
                         JSONObject oUtilisateur = response.getJSONObject(Integer.toString(i)) ;
 
                         //On déclare l'objet fonction

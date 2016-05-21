@@ -1,8 +1,14 @@
 package com.erdf;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
+
+import com.erdf.classe.DAO.UtilisateurDAO;
+import com.erdf.classe.metier.Utilisateur;
+import com.erdf.classe.technique.SessionManager;
+
+import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -19,7 +25,9 @@ public class AccueilActivity extends BaseActivity {
         //NE PAS OUBLIER SI ON UTILISE ButterKnife
         ButterKnife.inject(this) ;
 
-        SharedPreferences connexionPref = getSharedPreferences("connexion", 0);
-        bienvenueText.setText("Bienvenue " + connexionPref.getString("prenomUtilisateur", "Inconnu") + " " + connexionPref.getString("nomUtilisateur", "Inconnu") + " !") ;
+        SessionManager session = new SessionManager(getApplicationContext()) ;
+        Utilisateur unUtilisateur = UtilisateurDAO.getUnUtilisateur(getApplicationContext(), session.getIdUtilisateur()) ;
+
+        bienvenueText.setText("Bienvenue " + unUtilisateur.getPrenom() + " " + unUtilisateur.getNom() + " !") ;
     }
 }

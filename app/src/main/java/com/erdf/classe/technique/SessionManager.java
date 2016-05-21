@@ -45,6 +45,10 @@ public class SessionManager {
         return pref.getBoolean(KEY_CONNECTE, false);
     }
 
+    public void deconnexion() {
+        editor.clear().apply();
+    }
+
     public void setIdUtilisateur(String pIdUtilisateur) {
 
         editor.putString(KEY_USER_ID, pIdUtilisateur);
@@ -53,5 +57,9 @@ public class SessionManager {
         editor.commit();
 
         Log.d(TAG, "Id Utilisateur de la session modifié !");
+    }
+
+    public String getIdUtilisateur() {
+        return pref.getString(KEY_USER_ID, "Inconnu") ;
     }
 }

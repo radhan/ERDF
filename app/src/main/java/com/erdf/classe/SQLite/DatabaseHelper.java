@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.erdf.classe.DAO.FonctionDAO;
 import com.erdf.classe.metier.Chantier;
 import com.erdf.classe.metier.Fiche;
 import com.erdf.classe.metier.Fonction;
@@ -569,6 +570,41 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Log.d(TAG, "Un utilisateur a été ajouté !") ;
     }
 
+    public Utilisateur getUnUtilisateur(String code) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String selectQuery = "SELECT  * FROM " + TABLE_UTILISATEUR + " " +
+                             "WHERE " + KEY_UTI_ID + " = " + code + " ;" ;
+
+        Log.d(TAG, selectQuery);
+
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if (c != null) {
+            c.moveToFirst();
+        }
+
+        Utilisateur unUtilisateur = new Utilisateur() ;
+
+        assert c != null;
+        if(c.getCount() > 0) {
+            Fonction uneFonction = getUneFonction(c.getString(c.getColumnIndex(KEY_UTI_FONCTION))) ;
+
+            unUtilisateur.setId(c.getString((c.getColumnIndex(KEY_UTI_ID)))) ;
+            unUtilisateur.setNom((c.getString(c.getColumnIndex(KEY_UTI_NOM))));
+            unUtilisateur.setPrenom((c.getString(c.getColumnIndex(KEY_UTI_PRENOM))));
+            unUtilisateur.setMail((c.getString(c.getColumnIndex(KEY_UTI_EMAIL)))) ;
+            unUtilisateur.setUneFonction(uneFonction) ;
+            boolean supprimerUti = c.getInt(c.getColumnIndex(KEY_UTI_SUPPRIMER)) > 0 ;
+            unUtilisateur.setSupprimer(supprimerUti) ;
+            unUtilisateur.setCreatedAt(c.getString(c.getColumnIndex(KEY_CREATED_AT))) ;
+        }
+
+        db.close() ;
+
+        return unUtilisateur ;
+    }
+
     public ArrayList<Utilisateur> getAllUtilisateurs() {
         ArrayList<Utilisateur> lesUtilisateurs = new ArrayList<>() ;
         String selectQuery = "SELECT * FROM " + TABLE_UTILISATEUR + " ;" ;
@@ -597,37 +633,5 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close() ;
 
         return lesUtilisateurs ;
-    }
-
-    public Utilisateur getUnUtilisateur(String code) {
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        String selectQuery = "SELECT  * FROM " + TABLE_UTILISATEUR + " " +
-                             "WHERE " + KEY_UTI_ID + " = " + code + " ;" ;
-
-        Log.d(TAG, selectQuery);
-
-        Cursor c = db.rawQuery(selectQuery, null);
-
-        if (c != null) {
-            c.moveToFirst();
-        }
-
-        Utilisateur unUtilisateur = new Utilisateur() ;
-
-        assert c != null;
-        if(c.getCount() > 0) {
-            unUtilisateur.setId(c.getString((c.getColumnIndex(KEY_UTI_ID)))) ;
-            unUtilisateur.setNom((c.getString(c.getColumnIndex(KEY_UTI_NOM))));
-            unUtilisateur.setPrenom((c.getString(c.getColumnIndex(KEY_UTI_PRENOM))));
-            unUtilisateur.setMail((c.getString(c.getColumnIndex(KEY_UTI_EMAIL)))) ;
-            boolean supprimer = c.getInt(c.getColumnIndex(KEY_UTI_SUPPRIMER)) > 0 ;
-            unUtilisateur.setSupprimer(supprimer) ;
-            unUtilisateur.setCreatedAt(c.getString(c.getColumnIndex(KEY_CREATED_AT))) ;
-        }
-
-        db.close() ;
-
-        return unUtilisateur ;
     }
 }

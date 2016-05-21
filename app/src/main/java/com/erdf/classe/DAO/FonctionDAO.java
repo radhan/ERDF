@@ -61,7 +61,7 @@ public class FonctionDAO {
                 try {
 
                     // On parcours les données reçues
-                    for(int i = 1; i < response.length() ; i++) {
+                    for(int i = 1; i < response.length() + 1; i++) {
                         JSONObject oFonction = response.getJSONObject(Integer.toString(i)) ;
                         boolean supprimer = oFonction.getInt("fon_supprimer") > 0 ;
                         Fonction uneFonction = new Fonction(oFonction.getString("fon_id"), oFonction.getString("fon_libelle"), supprimer);
