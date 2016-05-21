@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.erdf.classe.metier.Chantier;
 import com.erdf.classe.metier.Fiche;
+import com.erdf.classe.metier.Fonction;
 import com.erdf.classe.metier.Risque;
 import com.erdf.classe.metier.Utilisateur;
 
@@ -188,34 +189,104 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return dateFormat.format(date);
     }
 
+    /*
+        ------------------------------------------------------------------
+                                    CHANTIER
+        ------------------------------------------------------------------
+    */
 
-    public Chantier getChantier(String chantier_code) {
+    public void setUnChantier(Chantier unChantier) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues() ;
+        values.put(KEY_CHANTIER_CODE, unChantier.getCode()) ;
+        values.put(KEY_CHANTIER_LIBELLE, unChantier.getLibelle()) ;
+        values.put(KEY_CHANTIER_NUMRUE, unChantier.getNumRue()) ;
+        values.put(KEY_CHANTIER_RUE, unChantier.getRue()) ;
+        values.put(KEY_CHANTIER_VILLE, unChantier.getVille()) ;
+        values.put(KEY_CHANTIER_CODEPOSTAL, unChantier.getCodePostal()) ;
+        values.put(KEY_CHANTIER_SUPPRIMER, unChantier.isSupprimer()) ;
+        values.put(KEY_CREATED_AT, getDateTime()) ;
+
+        // insert row
+        db.insertWithOnConflict(TABLE_CHANTIER, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+        db.close() ;
+
+        Log.d(TAG, "Un chantier a été ajouté !") ;
+    }
+
+    public ArrayList<Chantier> getAllChantiers() {
+        ArrayList<Chantier> lesChantiers = new ArrayList<>() ;
+        String selectQuery = "SELECT * FROM " + TABLE_CHANTIER + " ;" ;
+
+        Log.d(TAG, selectQuery);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        // Ajout de chaque ligne à la liste
+        if (c.moveToFirst()) {
+            do {
+                Chantier unChantier = new Chantier();
+                unChantier.setCode(c.getString(c.getColumnIndex(KEY_CHANTIER_CODE))) ;
+                unChantier.setLibelle((c.getString(c.getColumnIndex(KEY_CHANTIER_LIBELLE)))) ;
+                unChantier.setNumRue((c.getString(c.getColumnIndex(KEY_CHANTIER_NUMRUE))));
+                unChantier.setRue((c.getString(c.getColumnIndex(KEY_CHANTIER_RUE))));
+                unChantier.setVille((c.getString(c.getColumnIndex(KEY_CHANTIER_VILLE))));
+                unChantier.setCodePostal((c.getString(c.getColumnIndex(KEY_CHANTIER_CODEPOSTAL)))) ;
+                boolean supprimer = c.getInt(c.getColumnIndex(KEY_CHANTIER_SUPPRIMER)) > 0 ;
+                unChantier.setSupprimer(supprimer);
+                unChantier.setCreatedAt(c.getString(c.getColumnIndex(KEY_CREATED_AT))) ;
+
+                // Ajouter à la liste des risques
+                lesChantiers.add(unChantier);
+            } while (c.moveToNext());
+        }
+
+        db.close() ;
+
+        return lesChantiers ;
+    }
+
+    public Chantier getUnChantier(String code) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String selectQuery = "SELECT  * FROM " + TABLE_CHANTIER
-                            + " WHERE " + KEY_CHANTIER_CODE + " = " + chantier_code + " ;" ;
+        String selectQuery = "SELECT * FROM " + TABLE_CHANTIER + " " +
+                             "WHERE " + KEY_CHANTIER_CODE + " = " + code + " ;" ;
 
-        Log.e(TAG, selectQuery);
+        Log.d(TAG, selectQuery);
 
         Cursor c = db.rawQuery(selectQuery, null);
 
-        if (c != null)
+        if (c != null) {
             c.moveToFirst();
+        }
 
         Chantier unChantier = new Chantier();
         assert c != null;
-        unChantier.setCode(c.getString(c.getColumnIndex(KEY_CHANTIER_CODE))) ;
-        unChantier.setLibelle((c.getString(c.getColumnIndex(KEY_CHANTIER_LIBELLE)))) ;
-        unChantier.setNumRue((c.getString(c.getColumnIndex(KEY_CHANTIER_NUMRUE)))) ;
-        unChantier.setRue((c.getString(c.getColumnIndex(KEY_CHANTIER_RUE)))) ;
-        unChantier.setVille((c.getString(c.getColumnIndex(KEY_CHANTIER_VILLE)))) ;
-        unChantier.setCodePostal((c.getString(c.getColumnIndex(KEY_CHANTIER_CODEPOSTAL)))) ;
-        boolean supprimer = c.getInt(c.getColumnIndex(KEY_CHANTIER_SUPPRIMER)) > 0 ;
-        unChantier.setSupprimer(supprimer);
-        //unChantier.setCreatedAt(c.getString(c.getColumnIndex(KEY_CREATED_AT))) ;
+
+        if(c.getCount() > 0) {
+            unChantier.setCode(c.getString(c.getColumnIndex(KEY_CHANTIER_CODE)));
+            unChantier.setLibelle((c.getString(c.getColumnIndex(KEY_CHANTIER_LIBELLE))));
+            unChantier.setNumRue((c.getString(c.getColumnIndex(KEY_CHANTIER_NUMRUE))));
+            unChantier.setRue((c.getString(c.getColumnIndex(KEY_CHANTIER_RUE))));
+            unChantier.setVille((c.getString(c.getColumnIndex(KEY_CHANTIER_VILLE))));
+            unChantier.setCodePostal((c.getString(c.getColumnIndex(KEY_CHANTIER_CODEPOSTAL))));
+            boolean supprimer = c.getInt(c.getColumnIndex(KEY_CHANTIER_SUPPRIMER)) > 0;
+            unChantier.setSupprimer(supprimer);
+            unChantier.setCreatedAt(c.getString(c.getColumnIndex(KEY_CREATED_AT)));
+        }
+
+        db.close() ;
 
         return unChantier ;
     }
+
+    /*
+        ------------------------------------------------------------------
+                                    RISQUE
+        ------------------------------------------------------------------
+    */
 
     public void setUnRisque(Risque unRisque) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -258,6 +329,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             } while (c.moveToNext());
         }
 
+        db.close() ;
+
         return lesRisques ;
     }
 
@@ -287,8 +360,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             unRisque.setCreatedAt(c.getString(c.getColumnIndex(KEY_CREATED_AT)));
         }
 
+        db.close() ;
+
         return unRisque;
     }
+
+    /*
+        ------------------------------------------------------------------
+                                    FICHE
+        ------------------------------------------------------------------
+    */
 
     public void setUneFiche(Fiche uneFiche) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -331,7 +412,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Utilisateur unUtilisateur = new Utilisateur();
             unUtilisateur.setId(c.getString(c.getColumnIndex(KEY_FICHE_UTI)));
 
-
             uneFiche.setId(c.getString((c.getColumnIndex(KEY_FICHE_ID))));
             uneFiche.setUnChantier(unChantier);
             uneFiche.setUnUtilisateur(unUtilisateur);
@@ -341,12 +421,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             uneFiche.setCreatedAt(c.getString(c.getColumnIndex(KEY_CREATED_AT))) ;
         }
 
+        db.close() ;
+
         return uneFiche ;
     }
 
     public ArrayList<Fiche> getAllFiches() {
         ArrayList<Fiche> lesFiches = new ArrayList<>() ;
-        String selectQuery = "SELECT * FROM " + TABLE_FICHE + " ;"  ;
+
+        String selectQuery = "SELECT * FROM " + TABLE_FICHE + " ;" ;
 
         Log.d(TAG, selectQuery);
 
@@ -356,6 +439,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // Ajout de chaque ligne à la liste
         if (c.moveToFirst()) {
             do {
+
                 Chantier unChantier = new Chantier() ;
                 unChantier.setCode(c.getString(c.getColumnIndex(KEY_FICHE_CHANTIER))) ;
 
@@ -375,29 +459,175 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             } while (c.moveToNext());
         }
 
+        db.close() ;
+
         return lesFiches ;
     }
 
+    /*
+        ------------------------------------------------------------------
+                                    FONCTION
+        ------------------------------------------------------------------
+    */
 
-    /*public String createFiche(Fiche uneFiche, String[] risque_ids) {
-        SQLiteDatabase db = this.getWritableDatabase() ;
+    public void setUneFonction(Fonction uneFonction) {
+        SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues() ;
-        values.put(KEY_FICHE_ID, uneFiche.getId()) ;
-        values.put(KEY_FICHE_CHANTIER, uneFiche.getUnChantier().getCode()) ;
-        values.put(KEY_FICHE_UTI, uneFiche.getUnUtilisateur().getId()) ;
-        values.put(KEY_FICHE_DATE, uneFiche.getDate()) ;
-        values.put(KEY_FICHE_SUPPRIMER, uneFiche.isSupprimer()) ;
-        values.put(KEY_CREATED_AT, getDateTime());
+        values.put(KEY_FONCTION_ID, uneFonction.getId()) ;
+        values.put(KEY_FONCTION_LIBELLE, uneFonction.getLibelle()) ;
+        values.put(KEY_FONCTION_SUPPRIMER, uneFonction.isSupprimer()) ;
+        values.put(KEY_CREATED_AT, getDateTime()) ;
 
         // insert row
-        String fiche_id = db.insert(TABLE_FICHE, null, values);
+        db.insertWithOnConflict(TABLE_FONCTION, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+        db.close() ;
 
-        // insert tag_ids
-        for (long tag_id : tag_ids) {
-            createTodoTag(todo_id, tag_id);
+        Log.d(TAG, "Une fonction a été ajoutée !") ;
+    }
+
+    public ArrayList<Fonction> getAllFonctions() {
+        ArrayList<Fonction> lesFonctions = new ArrayList<>() ;
+        String selectQuery = "SELECT * FROM " + TABLE_FONCTION + " ;" ;
+
+        Log.d(TAG, selectQuery);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        // Ajout de chaque ligne à la liste
+        if (c.moveToFirst()) {
+            do {
+                Fonction uneFonction = new Fonction() ;
+                uneFonction.setId(c.getString((c.getColumnIndex(KEY_FONCTION_ID)))) ;
+                uneFonction.setLibelle((c.getString(c.getColumnIndex(KEY_FONCTION_LIBELLE)))) ;
+                boolean supprimer = c.getInt(c.getColumnIndex(KEY_FONCTION_SUPPRIMER)) > 0 ;
+                uneFonction.setSupprimer(supprimer) ;
+
+                // Ajouter à la liste des risques
+                lesFonctions.add(uneFonction);
+            } while (c.moveToNext());
         }
 
-        return fiche_id;
-    }*/
+        db.close() ;
+
+        return lesFonctions ;
+    }
+
+    public Fonction getUneFonction(String code) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String selectQuery = "SELECT  * FROM " + TABLE_FONCTION + " " +
+                             "WHERE " + KEY_FONCTION_ID + " = " + code + " ;" ;
+
+        Log.d(TAG, selectQuery);
+
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if (c != null) {
+            c.moveToFirst();
+        }
+
+        Fonction uneFonction = new Fonction() ;
+
+        assert c != null;
+        if(c.getCount() > 0) {
+            uneFonction.setId(c.getString((c.getColumnIndex(KEY_FONCTION_ID)))) ;
+            uneFonction.setLibelle((c.getString(c.getColumnIndex(KEY_FONCTION_LIBELLE)))) ;
+            boolean supprimer = c.getInt(c.getColumnIndex(KEY_FONCTION_SUPPRIMER)) > 0 ;
+            uneFonction.setSupprimer(supprimer) ;
+            uneFonction.setCreatedAt(c.getString(c.getColumnIndex(KEY_CREATED_AT))) ;
+        }
+
+        db.close() ;
+
+        return uneFonction ;
+    }
+
+    /*
+        ------------------------------------------------------------------
+                                    UTILISATEUR
+        ------------------------------------------------------------------
+    */
+
+    public void setUnUtilisateur(Utilisateur unUtilisateur) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues() ;
+        values.put(KEY_UTI_ID, unUtilisateur.getId()) ;
+        values.put(KEY_UTI_NOM, unUtilisateur.getNom()) ;
+        values.put(KEY_UTI_PRENOM, unUtilisateur.getPrenom()) ;
+        values.put(KEY_UTI_EMAIL, unUtilisateur.getMail()) ;
+        values.put(KEY_UTI_FONCTION, unUtilisateur.getUneFonction().getId()) ;
+        values.put(KEY_UTI_SUPPRIMER, unUtilisateur.isSupprimer()) ;
+        values.put(KEY_CREATED_AT, getDateTime()) ;
+
+        // insert row
+        db.insertWithOnConflict(TABLE_UTILISATEUR, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+        db.close() ;
+
+        Log.d(TAG, "Un utilisateur a été ajouté !") ;
+    }
+
+    public ArrayList<Utilisateur> getAllUtilisateurs() {
+        ArrayList<Utilisateur> lesUtilisateurs = new ArrayList<>() ;
+        String selectQuery = "SELECT * FROM " + TABLE_UTILISATEUR + " ;" ;
+
+        Log.d(TAG, selectQuery);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        // Ajout de chaque ligne à la liste
+        if (c.moveToFirst()) {
+            do {
+                Utilisateur unUtilisateur = new Utilisateur() ;
+                unUtilisateur.setId(c.getString((c.getColumnIndex(KEY_UTI_ID)))) ;
+                unUtilisateur.setNom((c.getString(c.getColumnIndex(KEY_UTI_NOM)))) ;
+                unUtilisateur.setPrenom((c.getString(c.getColumnIndex(KEY_UTI_PRENOM)))) ;
+                unUtilisateur.setMail((c.getString(c.getColumnIndex(KEY_UTI_EMAIL)))) ;
+                boolean supprimer = c.getInt(c.getColumnIndex(KEY_UTI_SUPPRIMER)) > 0 ;
+                unUtilisateur.setSupprimer(supprimer) ;
+
+                // Ajouter à la liste des risques
+                lesUtilisateurs.add(unUtilisateur) ;
+            } while (c.moveToNext());
+        }
+
+        db.close() ;
+
+        return lesUtilisateurs ;
+    }
+
+    public Utilisateur getUnUtilisateur(String code) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String selectQuery = "SELECT  * FROM " + TABLE_UTILISATEUR + " " +
+                             "WHERE " + KEY_UTI_ID + " = " + code + " ;" ;
+
+        Log.d(TAG, selectQuery);
+
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if (c != null) {
+            c.moveToFirst();
+        }
+
+        Utilisateur unUtilisateur = new Utilisateur() ;
+
+        assert c != null;
+        if(c.getCount() > 0) {
+            unUtilisateur.setId(c.getString((c.getColumnIndex(KEY_UTI_ID)))) ;
+            unUtilisateur.setNom((c.getString(c.getColumnIndex(KEY_UTI_NOM))));
+            unUtilisateur.setPrenom((c.getString(c.getColumnIndex(KEY_UTI_PRENOM))));
+            unUtilisateur.setMail((c.getString(c.getColumnIndex(KEY_UTI_EMAIL)))) ;
+            boolean supprimer = c.getInt(c.getColumnIndex(KEY_UTI_SUPPRIMER)) > 0 ;
+            unUtilisateur.setSupprimer(supprimer) ;
+            unUtilisateur.setCreatedAt(c.getString(c.getColumnIndex(KEY_CREATED_AT))) ;
+        }
+
+        db.close() ;
+
+        return unUtilisateur ;
+    }
 }

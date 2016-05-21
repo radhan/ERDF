@@ -6,13 +6,16 @@ package com.erdf.classe.metier;
 public class Fonction {
     private String id ;
     private String libelle ;
+    private boolean supprimer ;
+    private String createdAt ;
 
     public Fonction() {
     }
 
-    public Fonction(String id, String libelle) {
+    public Fonction(String id, String libelle, boolean supprimer) {
         this.id = id;
         this.libelle = libelle;
+        this.supprimer = supprimer ;
     }
 
     public String getId() {
@@ -29,5 +32,21 @@ public class Fonction {
 
     public void setLibelle(String libelle) {
         this.libelle = libelle;
+    }
+
+    public boolean isSupprimer() {
+        return supprimer;
+    }
+
+    public void setSupprimer(boolean supprimer) {
+        this.supprimer = supprimer;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
     }
 }

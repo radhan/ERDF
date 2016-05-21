@@ -10,6 +10,7 @@ public class Utilisateur {
     private String mail ;
     private Fonction uneFonction ;
     private boolean supprimer ;
+    private String createdAt ;
 
     public Utilisateur() {
     }
@@ -69,5 +70,13 @@ public class Utilisateur {
 
     public void setSupprimer(boolean supprimer) {
         this.supprimer = supprimer;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
     }
 }

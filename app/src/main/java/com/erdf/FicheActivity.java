@@ -94,7 +94,7 @@ public class FicheActivity extends BaseActivity implements AdapterView.OnItemSel
 
         //On récupère la liste des risques et des chantiers
         getRisques() ;
-        getChantiers() ;
+        //getChantiers() ;
 
         //On récupère la date et l'heure
         getDate() ;
@@ -215,7 +215,7 @@ public class FicheActivity extends BaseActivity implements AdapterView.OnItemSel
     }
 
     //Méthode qui récupère la liste des chantiers
-    public void getChantiers() {
+    /*public void getChantiers() {
         final ChantierDAO unChantierDAO = new ChantierDAO(this) ;
 
         Handler handler = new Handler();
@@ -232,7 +232,7 @@ public class FicheActivity extends BaseActivity implements AdapterView.OnItemSel
                 }
             }
         }, 2000);
-    }
+    }*/
 
     public void setFiche() {
 

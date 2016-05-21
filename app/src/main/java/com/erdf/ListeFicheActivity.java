@@ -2,14 +2,19 @@ package com.erdf;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.erdf.adapter.FicheAdapter;
+import com.erdf.classe.DAO.ChantierDAO;
 import com.erdf.classe.DAO.FicheDAO;
+import com.erdf.classe.DAO.UtilisateurDAO;
+import com.erdf.classe.metier.Chantier;
 import com.erdf.classe.metier.Fiche;
 import com.erdf.classe.metier.Risque;
+import com.erdf.classe.metier.Utilisateur;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,12 +43,16 @@ public class ListeFicheActivity extends BaseActivity implements AdapterView.OnIt
         getListeFiches() ;
     }
 
-
     private void getListeFiches() {
+        //On récupère la liste de fiche
         ArrayList<Fiche> listeFiche = FicheDAO.getListeFiche(getApplicationContext()) ;
 
-        for (int i = 0; i < listeFiche.size(); i++) {
-            ViewFiche vFiches = new ViewFiche(listeFiche.get(i).getUnChantier().getNumRue(), listeFiche.get(i).getUnChantier().getRue(), listeFiche.get(i).getUnChantier().getCodePostal(), listeFiche.get(i).getUnChantier().getVille(), listeFiche.get(i).getDate());
+        for(Fiche uneFiche : listeFiche) {
+            //Pour chaque fiches on récupère le chantier
+            Chantier unChantier = ChantierDAO.getUnChantier(getApplicationContext(), uneFiche.getUnChantier().getCode()) ;
+
+            Log.i("ListeFicheAct", "Code : " + unChantier.getCode()) ;
+            ViewFiche vFiches = new ViewFiche(unChantier.getNumRue(), unChantier.getRue(), unChantier.getCodePostal(), unChantier.getVille(), uneFiche.getDate()) ;
             lesFiches.add(vFiches);
         }
         if (!lesFiches.isEmpty()) {
@@ -55,21 +64,22 @@ public class ListeFicheActivity extends BaseActivity implements AdapterView.OnIt
 
     public void onItemClick(AdapterView parentView, View childView, int position, long id) {
         ArrayList<Fiche> listeFiche = FicheDAO.getListeFiche(getApplicationContext()) ;
+        Chantier unChantier = ChantierDAO.getUnChantier(getApplicationContext(), listeFiche.get(position).getId()) ;
+        Utilisateur unUtilisateur = UtilisateurDAO.getUnUtilisateur(getApplicationContext(), listeFiche.get(position).getId()) ;
 
         //On créé un objet Bundle, c'est ce qui va nous permetre d'envoyer des données à l'autre Activity
         Bundle objetBdl = new Bundle();
 
-        String adresse = listeFiche.get(position).getUnChantier().getNumRue() + " " + listeFiche.get(position).getUnChantier().getRue() + ", " + listeFiche.get(position).getUnChantier().getVille() + ", " + listeFiche.get(position).getUnChantier().getCodePostal() ;
-        String technicien = listeFiche.get(position).getUnUtilisateur().getNom() + " " + listeFiche.get(position).getUnUtilisateur().getPrenom() ;
-        ArrayList<Risque> risques = listeFiche.get(position).getListeRisque();
+        String adresse = unChantier.getNumRue() + " " + unChantier.getRue() + ", " + unChantier.getVille() + ", " + unChantier.getCodePostal() ;
+        String technicien = unUtilisateur.getNom() + " " + unUtilisateur.getPrenom() ;
+
+        ArrayList<Risque> listeRisque = listeFiche.get(position).getListeRisque();
         ArrayList<String> titre = new ArrayList<>() ;
         ArrayList<String> soustitre =  new ArrayList<>();
 
-        for (int i = 0; i < risques.size(); i++) {
-
-            Risque risque = risques.get(i);
-            titre.add(risque.getTitre());
-            soustitre.add(risque.getResume());
+        for (Risque unRisque : listeRisque) {
+            titre.add(unRisque.getTitre());
+            soustitre.add(unRisque.getResume());
         }
 
         //Cela fonctionne plus ou moins comme une HashMap, on entre une clef et sa valeur en face

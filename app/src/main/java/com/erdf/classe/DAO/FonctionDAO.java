@@ -8,7 +8,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.erdf.classe.SQLite.DatabaseHelper;
-import com.erdf.classe.metier.Chantier;
+import com.erdf.classe.metier.Fonction;
 import com.erdf.classe.technique.ConnexionControleur;
 
 import org.json.JSONException;
@@ -17,41 +17,42 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 /**
- * Created by Radhan on 19/04/2016.
+ * Created by Radhan on 24/04/2016.
  */
-public class ChantierDAO {
-    private static String TAG = ChantierDAO.class.getSimpleName() ;
+public class FonctionDAO {
+    private static String TAG = FonctionDAO.class.getSimpleName() ;
     private static DatabaseHelper db ;
-    static String urlAllChantiers = "http://comment-telecharger.eu/ERDF/getAllChantiers.php" ;
+    static String urlAllFonctions = "http://comment-telecharger.eu/ERDF/getAllFonctions.php" ;
 
-    private ChantierDAO() {
+    private FonctionDAO() {
 
     }
 
-   public static ArrayList<Chantier> getListeChantier(Context unContext) {
+    public static ArrayList<Fonction> getListeFonction(Context unContext) {
         // SQLite database handler
         db = new DatabaseHelper(unContext) ;
 
-        return db.getAllChantiers() ;
+        return db.getAllFonctions() ;
     }
 
-    public static Chantier getUnChantier(Context unContext, String code) {
+    public static Fonction getUneFonction(Context unContext, String code) {
         // SQLite database handler
         db = new DatabaseHelper(unContext) ;
 
-        return db.getUnChantier(code) ;
+        return db.getUneFonction(code) ;
     }
 
-    public static void setUnChantier(Context unContext, Chantier unChantier) {
+    public static void setUneFonction(Context unContext, Fonction uneFonction) {
         // SQLite database handler
         db = new DatabaseHelper(unContext) ;
 
-        db.setUnChantier(unChantier) ;
+        db.setUneFonction(uneFonction) ;
     }
 
-    public static void syncGetListeChantier(final Context unContext) {
+    public static void syncGetListeFonction(final Context unContext) {
 
-        final JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, urlAllChantiers, null, new Response.Listener<JSONObject>() {
+
+        final JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, urlAllFonctions, null, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
@@ -61,10 +62,10 @@ public class ChantierDAO {
 
                     // On parcours les données reçues
                     for(int i = 1; i < response.length() ; i++) {
-                        JSONObject oChantier = response.getJSONObject(Integer.toString(i)) ;
-                        boolean supprimer = oChantier.getInt("cha_supprimer") > 0 ;
-                        Chantier unChantier = new Chantier(oChantier.getString("cha_code"), oChantier.getString("cha_libelle"), oChantier.getString("cha_nrue"), oChantier.getString("cha_rue"), oChantier.getString("cha_ville"), oChantier.getString("cha_codepo"), supprimer) ;
-                        setUnChantier(unContext, unChantier) ;
+                        JSONObject oFonction = response.getJSONObject(Integer.toString(i)) ;
+                        boolean supprimer = oFonction.getInt("fon_supprimer") > 0 ;
+                        Fonction uneFonction = new Fonction(oFonction.getString("fon_id"), oFonction.getString("fon_libelle"), supprimer);
+                        setUneFonction(unContext, uneFonction) ;
                     }
 
                 } catch (JSONException e) {
@@ -82,4 +83,5 @@ public class ChantierDAO {
         // On ajoute la requête à la file d'attente
         ConnexionControleur.getInstance().addToRequestQueue(jsonObjReq);
     }
+
 }

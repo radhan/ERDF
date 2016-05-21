@@ -14,8 +14,8 @@ public class ViewFiche {
 
     public ViewFiche(String nrue, String rue, String codepo, String ville, String sousTitre) {
 
-        this.titre = nrue+" "+rue+" "+codepo+" "+ville ;
-        this.sousTitre = sousTitre;
+        this.titre = nrue + " " + rue + " " + codepo + " " + ville ;
+        this.sousTitre = sousTitre ;
     }
 
     public ViewFiche(int id, String titre, String sousTitre) {

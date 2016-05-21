@@ -1,18 +1,11 @@
 package com.erdf;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.erdf.adapter.FicheAdapter;
 import com.erdf.adapter.RisqueNcAdapter;
-import com.erdf.classe.technique.ConnexionBDD;
-import com.erdf.classe.technique.GetResponse;
-import com.erdf.classe.technique.ParserJSON;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -51,34 +51,33 @@ public class FicheDAO {
         return db.getUneFiche(code) ;
     }
 
-    public static void setUneFiche(final Context unContext, final Fiche uneFiche) {
-        // SQLite database handler
-        db = new DatabaseHelper(unContext);
+    public static void setUneFiche(final Context pContext, final Fiche uneFiche) {
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, urlSetFiche, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
 
-                Log.d(TAG, response);
+                Log.d(TAG, response) ;
                 try {
 
                     JSONObject oJson = new JSONObject(response) ;
                     if(oJson.getString("RESULTAT").equals("OK")) {
-                        Toast.makeText(unContext, "Ajout d'une fiche réussi", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(pContext, "Ajout d'une fiche réussi", Toast.LENGTH_SHORT).show() ;
+                        syncGetListeFiche(pContext) ;
                     }
                     else {
-                        Toast.makeText(unContext, "Erreur lors de l'ajout", Toast.LENGTH_SHORT).show() ;
+                        Toast.makeText(pContext, "Erreur lors de l'ajout", Toast.LENGTH_SHORT).show() ;
                     }
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    e.printStackTrace() ;
                 }
             }
         }, new Response.ErrorListener() {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(unContext, error.toString(), Toast.LENGTH_SHORT).show() ;
+                Toast.makeText(pContext, error.toString(), Toast.LENGTH_SHORT).show() ;
             }
         })
         {
@@ -108,9 +107,9 @@ public class FicheDAO {
         ConnexionControleur.getInstance().addToRequestQueue(stringRequest);
     }
 
-    public static void syncGetListeFiche(final Context unContext) {
+    public static void syncGetListeFiche(Context pContext) {
         // SQLite database handler
-        db = new DatabaseHelper(unContext) ;
+        db = new DatabaseHelper(pContext) ;
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, urlAllFiches, null, new Response.Listener<JSONObject>() {
 
@@ -120,22 +119,26 @@ public class FicheDAO {
 
                 try {
 
+                    ArrayList<Risque> listeRisque = new ArrayList<>() ;
+
                     // On parcours les données reçues
                     for (int i = 1; i < response.length() + 1; i++) {
                         JSONObject oFiche = response.getJSONObject(Integer.toString(i)) ;
-                        ArrayList<Risque> listeRisque = new ArrayList<>() ;
+                        listeRisque.clear() ;
 
                         //On déclare l'objet chantier
                         boolean supprimerChantier = oFiche.getInt("cha_supprimer") > 0 ;
                         Chantier unChantier = new Chantier(oFiche.getString("cha_code"), oFiche.getString("cha_libelle"), oFiche.getString("cha_nrue"), oFiche.getString("cha_rue"), oFiche.getString("cha_ville"), oFiche.getString("cha_codepo"), supprimerChantier);
 
                         //On déclare l'objet fonction
-                        Fonction uneFonction = new Fonction(oFiche.getString("fon_id"), oFiche.getString("fon_libelle"));
+                        boolean supprimerFonction = oFiche.getInt("fon_supprimer") > 0 ;
+                        Fonction uneFonction = new Fonction(oFiche.getString("fon_id"), oFiche.getString("fon_libelle"), supprimerFonction);
 
                         //On déclare l'objet utilisateur
                         boolean supprimerUtilisateur = oFiche.getInt("use_supprimer") > 0 ;
                         Utilisateur unUtilisateur = new Utilisateur(oFiche.getString("use_id"), oFiche.getString("use_nom"), oFiche.getString("use_prenom"), oFiche.getString("use_mail"), uneFonction, supprimerUtilisateur);
 
+                        //Si le nombre de risques dans le fiche est supérieur à 0
                         if(oFiche.getInt("nbRisque") > 0) {
                             for (int j = 0; j < oFiche.getInt("nbRisque"); j++) {
                                 JSONObject oRisque = oFiche.getJSONObject(Integer.toString(j)) ;
@@ -151,7 +154,7 @@ public class FicheDAO {
                         Fiche uneFiche = new Fiche(oFiche.getString("fic_id"), unChantier, unUtilisateur, oFiche.getString("fic_date"), supprimerFiche) ;
                         uneFiche.setListeRisque(listeRisque);
 
-                        db.setUneFiche(uneFiche);
+                        db.setUneFiche(uneFiche) ;
                     }
 
                 } catch (JSONException e) {
