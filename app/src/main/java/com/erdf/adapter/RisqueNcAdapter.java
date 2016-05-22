@@ -8,17 +8,16 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.erdf.R;
-import com.erdf.ViewFiche;
-import com.erdf.ViewRisqueNc;
+import com.erdf.classe.metier.Risque;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by Radhan on 15/03/2016.
  */
-public class RisqueNcAdapter extends ArrayAdapter<ViewRisqueNc> {
+public class RisqueNcAdapter extends ArrayAdapter<Risque> {
 
-    public RisqueNcAdapter(Activity context, List<ViewRisqueNc> risques) {
+    public RisqueNcAdapter(Activity context, ArrayList<Risque> risques) {
         super(context, 0, risques) ;
     }
 
@@ -43,7 +42,7 @@ public class RisqueNcAdapter extends ArrayAdapter<ViewRisqueNc> {
 
         //remplir la vue
         viewHolder.titre.setText(getItem(position).getTitre());
-        viewHolder.soustitre.setText(getItem(position).getSousTitre());
+        viewHolder.soustitre.setText(getItem(position).getResume());
 
         return convertView;
     }

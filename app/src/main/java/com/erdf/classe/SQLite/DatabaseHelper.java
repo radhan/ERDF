@@ -7,9 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.erdf.classe.DAO.FonctionDAO;
 import com.erdf.classe.metier.Chantier;
 import com.erdf.classe.metier.Fiche;
+import com.erdf.classe.metier.FicheRisque;
 import com.erdf.classe.metier.Fonction;
 import com.erdf.classe.metier.Risque;
 import com.erdf.classe.metier.Utilisateur;
@@ -66,29 +66,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String KEY_FONCTION_SUPPRIMER  = "fon_supprimer"   ;
 
     // UTILISATEUR Table - column names
-    private static final String KEY_UTI_ID              = "use_id"          ;
-    private static final String KEY_UTI_NOM             = "use_nom"         ;
-    private static final String KEY_UTI_PRENOM          = "use_prenom"      ;
-    private static final String KEY_UTI_EMAIL           = "use_mail"        ;
-    private static final String KEY_UTI_FONCTION        = "use_fonction"    ;
-    private static final String KEY_UTI_SUPPRIMER       = "use_supprimer"   ;
+    private static final String KEY_UTI_ID                  = "use_id"          ;
+    private static final String KEY_UTI_NOM                 = "use_nom"         ;
+    private static final String KEY_UTI_PRENOM              = "use_prenom"      ;
+    private static final String KEY_UTI_EMAIL               = "use_mail"        ;
+    private static final String KEY_UTI_FONCTION            = "use_fonction"    ;
+    private static final String KEY_UTI_SUPPRIMER           = "use_supprimer"   ;
 
     // FICHE Table - column names
-    private static final String KEY_FICHE_ID            = "fic_id"          ;
-    private static final String KEY_FICHE_CHANTIER      = "fic_chantier"    ;
-    private static final String KEY_FICHE_UTI           = "fic_user"        ;
-    private static final String KEY_FICHE_DATE          = "fic_date"        ;
-    private static final String KEY_FICHE_SUPPRIMER     = "fic_supprimer"   ;
+    private static final String KEY_FICHE_ID                = "fic_id"          ;
+    private static final String KEY_FICHE_CHANTIER          = "fic_chantier"    ;
+    private static final String KEY_FICHE_UTI               = "fic_user"        ;
+    private static final String KEY_FICHE_DATE              = "fic_date"        ;
+    private static final String KEY_FICHE_SUPPRIMER         = "fic_supprimer"   ;
 
     // COMPTE Table - column names
-    private static final String KEY_COMPTE_ID           = "com_id"          ;
-    private static final String KEY_COMPTE_LOGIN        = "com_login"       ;
-    private static final String KEY_COMPTE_PASS         = "com_pass"        ;
-    private static final String KEY_COMPTE_SUPPRIMER    = "com_supprimer"   ;
+    private static final String KEY_COMPTE_ID               = "com_id"          ;
+    private static final String KEY_COMPTE_LOGIN            = "com_login"       ;
+    private static final String KEY_COMPTE_PASS             = "com_pass"        ;
+    private static final String KEY_COMPTE_SUPPRIMER        = "com_supprimer"   ;
 
     // FICHE_RISQUE Table - column names
-    private static final String KEY_FICHE_RISQUE_FICHE  = "fri_fiche"       ;
-    private static final String KEY_FICHE_RISQUE_RISQUE = "fri_risque"      ;
+    private static final String KEY_FICHE_RISQUE_FICHE      = "fri_fiche"       ;
+    private static final String KEY_FICHE_RISQUE_RISQUE     = "fri_risque"      ;
+    private static final String KEY_FICHE_RISQUE_SUPPRIMER  = "fri_supprimer"   ;
+
 
     // Chantier table create statement
     private static final String CREATE_TABLE_CHANTIER = "CREATE TABLE " + TABLE_CHANTIER
@@ -147,6 +149,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String CREATE_TABLE_FICHE_RISQUE = "CREATE TABLE " + TABLE_FICHE_RISQUE
             + "(" + KEY_FICHE_RISQUE_FICHE + " VARCHAR(10), "
             + KEY_FICHE_RISQUE_RISQUE + " VARCHAR(10), "
+            + KEY_FICHE_RISQUE_SUPPRIMER + " TINYINT(1), "
             + KEY_CREATED_AT + " DATETIME, "
             + "PRIMARY KEY(" + KEY_FICHE_RISQUE_FICHE + ", " + KEY_FICHE_RISQUE_RISQUE + "))" ;
 
@@ -322,8 +325,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 unRisque.setId(c.getString((c.getColumnIndex(KEY_RISQUE_ID)))) ;
                 unRisque.setTitre((c.getString(c.getColumnIndex(KEY_RISQUE_TITRE)))) ;
                 unRisque.setResume((c.getString(c.getColumnIndex(KEY_RISQUE_RESUME)))) ;
-                boolean supprimer = c.getInt(c.getColumnIndex(KEY_RISQUE_SUPPRIMER)) > 0;
+                boolean supprimer = c.getInt(c.getColumnIndex(KEY_RISQUE_SUPPRIMER)) > 0 ;
                 unRisque.setSupprimer(supprimer) ;
+                unRisque.setCreatedAt(c.getString(c.getColumnIndex(KEY_CREATED_AT))) ;
 
                 // Ajouter à la liste des risques
                 lesRisques.add(unRisque);
@@ -338,8 +342,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Risque getUnRisque(String code) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String selectQuery = "SELECT  * FROM " + TABLE_RISQUE
-                          + " WHERE " + KEY_RISQUE_ID + " = " + code + " ;" ;
+        String selectQuery = "SELECT  * FROM " + TABLE_RISQUE + " " +
+                             "WHERE " + KEY_RISQUE_ID + " = " + code + " ;" ;
 
         Log.d(TAG, selectQuery);
 
@@ -380,6 +384,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_FICHE_CHANTIER, uneFiche.getUnChantier().getCode()) ;
         values.put(KEY_FICHE_UTI, uneFiche.getUnUtilisateur().getId()) ;
         values.put(KEY_FICHE_DATE, uneFiche.getDate()) ;
+        values.put(KEY_FICHE_SUPPRIMER, uneFiche.isSupprimer()) ;
         values.put(KEY_CREATED_AT, getDateTime()) ;
 
         // insert row
@@ -407,18 +412,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         assert c != null;
         if(c.getCount() > 0) {
-            Chantier unChantier = new Chantier();
-            unChantier.setCode(c.getString(c.getColumnIndex(KEY_FICHE_CHANTIER)));
+            Chantier unChantier = getUnChantier(c.getString(c.getColumnIndex(KEY_FICHE_CHANTIER))) ;
+            Utilisateur unUtilisateur = getUnUtilisateur(c.getString(c.getColumnIndex(KEY_FICHE_UTI))) ;
 
-            Utilisateur unUtilisateur = new Utilisateur();
-            unUtilisateur.setId(c.getString(c.getColumnIndex(KEY_FICHE_UTI)));
+            ArrayList<FicheRisque> listeFicheRisque = getUneFicheRisqueByFiche(c.getString((c.getColumnIndex(KEY_FICHE_ID)))) ;
+            ArrayList<Risque> listeRisque = new ArrayList<>() ;
+            for(FicheRisque uneFicheRisque : listeFicheRisque) {
+                Risque unRisque = getUnRisque(uneFicheRisque.getUnRisque().getId()) ;
+                listeRisque.add(unRisque) ;
+            }
 
             uneFiche.setId(c.getString((c.getColumnIndex(KEY_FICHE_ID))));
             uneFiche.setUnChantier(unChantier);
-            uneFiche.setUnUtilisateur(unUtilisateur);
+            uneFiche.setUnUtilisateur(unUtilisateur) ;
+            uneFiche.setListeRisque(listeRisque) ;
             uneFiche.setDate(c.getString((c.getColumnIndex(KEY_FICHE_DATE))));
             boolean supprimer = c.getInt(c.getColumnIndex(KEY_FICHE_SUPPRIMER)) > 0;
-            uneFiche.setSupprimer(supprimer);
+            uneFiche.setSupprimer(supprimer) ;
             uneFiche.setCreatedAt(c.getString(c.getColumnIndex(KEY_CREATED_AT))) ;
         }
 
@@ -441,19 +451,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (c.moveToFirst()) {
             do {
 
-                Chantier unChantier = new Chantier() ;
-                unChantier.setCode(c.getString(c.getColumnIndex(KEY_FICHE_CHANTIER))) ;
+                Chantier unChantier = getUnChantier(c.getString(c.getColumnIndex(KEY_FICHE_CHANTIER))) ;
+                Utilisateur unUtilisateur = getUnUtilisateur(c.getString(c.getColumnIndex(KEY_FICHE_UTI))) ;
 
-                Utilisateur unUtilisateur = new Utilisateur() ;
-                unUtilisateur.setId(c.getString(c.getColumnIndex(KEY_FICHE_UTI))) ;
+                ArrayList<FicheRisque> listeFicheRisque = getUneFicheRisqueByFiche(c.getString((c.getColumnIndex(KEY_FICHE_ID)))) ;
+                ArrayList<Risque> listeRisque = new ArrayList<>() ;
+                for(FicheRisque uneFicheRisque : listeFicheRisque) {
+                    Risque unRisque = getUnRisque(uneFicheRisque.getUnRisque().getId()) ;
+                    listeRisque.add(unRisque) ;
+                }
 
                 Fiche uneFiche = new Fiche() ;
-                uneFiche.setId(c.getString((c.getColumnIndex(KEY_FICHE_ID)))) ;
-                uneFiche.setUnChantier(unChantier) ;
+                uneFiche.setId(c.getString((c.getColumnIndex(KEY_FICHE_ID))));
+                uneFiche.setUnChantier(unChantier);
                 uneFiche.setUnUtilisateur(unUtilisateur) ;
+                uneFiche.setListeRisque(listeRisque) ;
                 uneFiche.setDate(c.getString((c.getColumnIndex(KEY_FICHE_DATE))));
                 boolean supprimer = c.getInt(c.getColumnIndex(KEY_FICHE_SUPPRIMER)) > 0;
                 uneFiche.setSupprimer(supprimer) ;
+                uneFiche.setCreatedAt(c.getString(c.getColumnIndex(KEY_CREATED_AT))) ;
 
                 // Ajouter à la liste des risques
                 lesFiches.add(uneFiche);
@@ -487,34 +503,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Log.d(TAG, "Une fonction a été ajoutée !") ;
     }
 
-    public ArrayList<Fonction> getAllFonctions() {
-        ArrayList<Fonction> lesFonctions = new ArrayList<>() ;
-        String selectQuery = "SELECT * FROM " + TABLE_FONCTION + " ;" ;
-
-        Log.d(TAG, selectQuery);
-
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery(selectQuery, null);
-
-        // Ajout de chaque ligne à la liste
-        if (c.moveToFirst()) {
-            do {
-                Fonction uneFonction = new Fonction() ;
-                uneFonction.setId(c.getString((c.getColumnIndex(KEY_FONCTION_ID)))) ;
-                uneFonction.setLibelle((c.getString(c.getColumnIndex(KEY_FONCTION_LIBELLE)))) ;
-                boolean supprimer = c.getInt(c.getColumnIndex(KEY_FONCTION_SUPPRIMER)) > 0 ;
-                uneFonction.setSupprimer(supprimer) ;
-
-                // Ajouter à la liste des risques
-                lesFonctions.add(uneFonction);
-            } while (c.moveToNext());
-        }
-
-        db.close() ;
-
-        return lesFonctions ;
-    }
-
     public Fonction getUneFonction(String code) {
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -543,6 +531,35 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close() ;
 
         return uneFonction ;
+    }
+
+    public ArrayList<Fonction> getAllFonctions() {
+        ArrayList<Fonction> lesFonctions = new ArrayList<>() ;
+        String selectQuery = "SELECT * FROM " + TABLE_FONCTION + " ;" ;
+
+        Log.d(TAG, selectQuery);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        // Ajout de chaque ligne à la liste
+        if (c.moveToFirst()) {
+            do {
+                Fonction uneFonction = new Fonction() ;
+                uneFonction.setId(c.getString((c.getColumnIndex(KEY_FONCTION_ID)))) ;
+                uneFonction.setLibelle((c.getString(c.getColumnIndex(KEY_FONCTION_LIBELLE)))) ;
+                boolean supprimer = c.getInt(c.getColumnIndex(KEY_FONCTION_SUPPRIMER)) > 0 ;
+                uneFonction.setSupprimer(supprimer) ;
+                uneFonction.setCreatedAt(c.getString(c.getColumnIndex(KEY_CREATED_AT))) ;
+
+                // Ajouter à la liste des risques
+                lesFonctions.add(uneFonction);
+            } while (c.moveToNext());
+        }
+
+        db.close() ;
+
+        return lesFonctions ;
     }
 
     /*
@@ -617,13 +634,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // Ajout de chaque ligne à la liste
         if (c.moveToFirst()) {
             do {
+                Fonction uneFonction = getUneFonction(c.getString(c.getColumnIndex(KEY_UTI_FONCTION))) ;
+
                 Utilisateur unUtilisateur = new Utilisateur() ;
                 unUtilisateur.setId(c.getString((c.getColumnIndex(KEY_UTI_ID)))) ;
                 unUtilisateur.setNom((c.getString(c.getColumnIndex(KEY_UTI_NOM)))) ;
                 unUtilisateur.setPrenom((c.getString(c.getColumnIndex(KEY_UTI_PRENOM)))) ;
                 unUtilisateur.setMail((c.getString(c.getColumnIndex(KEY_UTI_EMAIL)))) ;
+                unUtilisateur.setUneFonction(uneFonction) ;
                 boolean supprimer = c.getInt(c.getColumnIndex(KEY_UTI_SUPPRIMER)) > 0 ;
                 unUtilisateur.setSupprimer(supprimer) ;
+                unUtilisateur.setCreatedAt(c.getString(c.getColumnIndex(KEY_CREATED_AT))) ;
 
                 // Ajouter à la liste des risques
                 lesUtilisateurs.add(unUtilisateur) ;
@@ -633,5 +654,131 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close() ;
 
         return lesUtilisateurs ;
+    }
+
+    /*
+        ------------------------------------------------------------------
+                                    FICHE RISQUE
+        ------------------------------------------------------------------
+    */
+
+    public void setUneFicheRisque(FicheRisque uneFicheRisque) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues() ;
+        values.put(KEY_FICHE_RISQUE_FICHE, uneFicheRisque.getUneFiche().getId()) ;
+        values.put(KEY_FICHE_RISQUE_RISQUE, uneFicheRisque.getUnRisque().getId()) ;
+        values.put(KEY_FICHE_RISQUE_SUPPRIMER, uneFicheRisque.isSupprimer()) ;
+        values.put(KEY_CREATED_AT, getDateTime()) ;
+
+        // insert row
+        db.insertWithOnConflict(TABLE_FICHE_RISQUE, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+        db.close() ;
+
+        Log.d(TAG, "Une fiche risque a été ajoutée !") ;
+    }
+
+    public ArrayList<FicheRisque> getUneFicheRisqueByFiche(String code) {
+        ArrayList<FicheRisque> lesFicheRisques = new ArrayList<>() ;
+
+        String selectQuery = "SELECT  * FROM " + TABLE_FICHE_RISQUE + " " +
+                             "WHERE " + KEY_FICHE_RISQUE_FICHE + " = " + code + " ;" ;
+
+        Log.d(TAG, selectQuery);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        // Ajout de chaque ligne à la liste
+        if (c.moveToFirst()) {
+            do {
+
+                Fiche uneFiche = getUneFiche(c.getString(c.getColumnIndex(KEY_FICHE_RISQUE_FICHE))) ;
+                Risque unRisque = getUnRisque(c.getString(c.getColumnIndex(KEY_FICHE_RISQUE_RISQUE))) ;
+
+                FicheRisque uneFicheRisque = new FicheRisque() ;
+                uneFicheRisque.setUneFiche(uneFiche) ;
+                uneFicheRisque.setUnRisque(unRisque) ;
+                boolean supprimer = c.getInt(c.getColumnIndex(KEY_FICHE_RISQUE_SUPPRIMER)) > 0 ;
+                uneFicheRisque.setSupprimer(supprimer);
+                uneFicheRisque.setCreatedAt(c.getString(c.getColumnIndex(KEY_CREATED_AT))) ;
+
+                // Ajouter à la liste des risques
+                lesFicheRisques.add(uneFicheRisque);
+            } while (c.moveToNext());
+        }
+
+        db.close() ;
+
+        return lesFicheRisques ;
+    }
+
+    public ArrayList<FicheRisque> getUneFicheRisqueByRisque(String code) {
+        ArrayList<FicheRisque> lesFicheRisques = new ArrayList<>() ;
+
+        String selectQuery = "SELECT  * FROM " + TABLE_FICHE_RISQUE + " " +
+                             "WHERE " + KEY_FICHE_RISQUE_RISQUE + " = " + code + " ;" ;
+
+        Log.d(TAG, selectQuery);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        // Ajout de chaque ligne à la liste
+        if (c.moveToFirst()) {
+            do {
+
+                Fiche uneFiche = getUneFiche(c.getString(c.getColumnIndex(KEY_FICHE_RISQUE_FICHE))) ;
+                Risque unRisque = getUnRisque(c.getString(c.getColumnIndex(KEY_FICHE_RISQUE_RISQUE))) ;
+
+                FicheRisque uneFicheRisque = new FicheRisque() ;
+                uneFicheRisque.setUneFiche(uneFiche) ;
+                uneFicheRisque.setUnRisque(unRisque) ;
+                boolean supprimer = c.getInt(c.getColumnIndex(KEY_FICHE_RISQUE_SUPPRIMER)) > 0 ;
+                uneFicheRisque.setSupprimer(supprimer);
+                uneFicheRisque.setCreatedAt(c.getString(c.getColumnIndex(KEY_CREATED_AT))) ;
+
+                // Ajouter à la liste des risques
+                lesFicheRisques.add(uneFicheRisque);
+            } while (c.moveToNext());
+        }
+
+        db.close() ;
+
+        return lesFicheRisques ;
+    }
+
+    public ArrayList<FicheRisque> getAllFicheRisques() {
+        ArrayList<FicheRisque> lesFicheRisques = new ArrayList<>() ;
+
+        String selectQuery = "SELECT * FROM " + TABLE_FICHE_RISQUE + " ;" ;
+
+        Log.d(TAG, selectQuery);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        // Ajout de chaque ligne à la liste
+        if (c.moveToFirst()) {
+            do {
+
+                Fiche uneFiche = getUneFiche(c.getString(c.getColumnIndex(KEY_FICHE_RISQUE_FICHE))) ;
+                Risque unRisque = getUnRisque(c.getString(c.getColumnIndex(KEY_FICHE_RISQUE_RISQUE))) ;
+
+                FicheRisque uneFicheRisque = new FicheRisque() ;
+                uneFicheRisque.setUneFiche(uneFiche) ;
+                uneFicheRisque.setUnRisque(unRisque) ;
+                boolean supprimer = c.getInt(c.getColumnIndex(KEY_FICHE_RISQUE_SUPPRIMER)) > 0 ;
+                uneFicheRisque.setSupprimer(supprimer);
+                uneFicheRisque.setCreatedAt(c.getString(c.getColumnIndex(KEY_CREATED_AT))) ;
+
+                // Ajouter à la liste des risques
+                lesFicheRisques.add(uneFicheRisque);
+            } while (c.moveToNext());
+        }
+
+        db.close() ;
+
+        return lesFicheRisques ;
     }
 }

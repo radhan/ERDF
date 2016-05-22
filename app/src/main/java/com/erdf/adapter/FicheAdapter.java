@@ -1,6 +1,7 @@
 package com.erdf.adapter;
 
 import android.app.Activity;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,16 +9,18 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.erdf.R;
-import com.erdf.ViewFiche;
+import com.erdf.classe.metier.Chantier;
+import com.erdf.classe.metier.Fiche;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Radhan on 15/03/2016.
  */
-public class FicheAdapter extends ArrayAdapter<ViewFiche> {
+public class FicheAdapter extends ArrayAdapter<Fiche> {
 
-    public FicheAdapter(Activity context, List<ViewFiche> fiches) {
+    public FicheAdapter(Activity context, ArrayList<Fiche> fiches) {
         super(context, 0, fiches) ;
     }
 
@@ -33,16 +36,18 @@ public class FicheAdapter extends ArrayAdapter<ViewFiche> {
             viewHolder = new FicheViewHolder();
             viewHolder.adresse = (TextView) convertView.findViewById(R.id.adresse);
             viewHolder.date = (TextView) convertView.findViewById(R.id.date);
-            convertView.setTag(viewHolder);
-            convertView.setTag(R.id.adresse, viewHolder.adresse);
-            convertView.setTag(R.id.date, viewHolder.date);
+            convertView.setTag(viewHolder) ;
         } else {
             viewHolder = (FicheViewHolder) convertView.getTag();
         }
 
+        //getItem(position) va récupérer l'item [position] de la List actus
+        Fiche uneFiche = getItem(position);
+        Chantier unChantier = uneFiche.getUnChantier() ;
+
         //remplir la vue
-        viewHolder.adresse.setText(getItem(position).getTitre());
-        viewHolder.date.setText(getItem(position).getSousTitre());
+        viewHolder.adresse.setText(unChantier.getNumRue() + " " + unChantier.getRue() + " " + unChantier.getCodePostal() + " " + unChantier.getVille());
+        viewHolder.date.setText(uneFiche.getDate()) ;
 
         return convertView;
     }

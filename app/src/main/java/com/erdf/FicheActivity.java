@@ -39,9 +39,7 @@ import butterknife.InjectView;
 
 public class FicheActivity extends BaseActivity implements AdapterView.OnItemSelectedListener {
 
-    List<ViewRisque> lesRisques = new ArrayList<>() ;
     ArrayList<Risque> listeRisques = new ArrayList<>() ;
-
     ArrayList<String> idChantiers = new ArrayList<>() ;
 
     @InjectView(R.id.sDate)             TextView dateText       ;
@@ -177,14 +175,9 @@ public class FicheActivity extends BaseActivity implements AdapterView.OnItemSel
 
         final ArrayList<Risque> listeRisque = RisqueDAO.getListeRisque(getApplicationContext()) ;
 
-        for (int i = 0; i < listeRisque.size() ; i++) {
-            ViewRisque vRisque = new ViewRisque(listeRisque.get(i).getTitre(), listeRisque.get(i).getResume());
-            lesRisques.add(vRisque);
-        }
-
-        if (!lesRisques.isEmpty()) {
+        if (!listeRisque.isEmpty()) {
             listviewRisque = (ListView) findViewById(R.id.listView);
-            RisqueAdapter adapter = new RisqueAdapter(FicheActivity.this, lesRisques);
+            RisqueAdapter adapter = new RisqueAdapter(FicheActivity.this, listeRisque);
             listviewRisque.setAdapter(adapter);
 
             listviewRisque.setOnItemClickListener(new AdapterView.OnItemClickListener() {

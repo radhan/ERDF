@@ -2,22 +2,18 @@ package com.erdf;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.erdf.adapter.FicheAdapter;
-import com.erdf.classe.DAO.ChantierDAO;
 import com.erdf.classe.DAO.FicheDAO;
-import com.erdf.classe.DAO.UtilisateurDAO;
 import com.erdf.classe.metier.Chantier;
 import com.erdf.classe.metier.Fiche;
 import com.erdf.classe.metier.Risque;
 import com.erdf.classe.metier.Utilisateur;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -25,7 +21,6 @@ import butterknife.InjectView;
 
 public class ListeFicheActivity extends BaseActivity implements AdapterView.OnItemClickListener {
 
-    List<ViewFiche> lesFiches = new ArrayList<>() ;
     @InjectView(R.id.listFiche) ListView listviewFiches ;
 
     @Override
@@ -47,16 +42,8 @@ public class ListeFicheActivity extends BaseActivity implements AdapterView.OnIt
         //On récupère la liste de fiche
         ArrayList<Fiche> listeFiche = FicheDAO.getListeFiche(getApplicationContext()) ;
 
-        for(Fiche uneFiche : listeFiche) {
-            //Pour chaque fiches on récupère le chantier
-            Chantier unChantier = ChantierDAO.getUnChantier(getApplicationContext(), uneFiche.getUnChantier().getCode()) ;
-
-            Log.i("ListeFicheAct", "Code : " + unChantier.getCode()) ;
-            ViewFiche vFiches = new ViewFiche(unChantier.getNumRue(), unChantier.getRue(), unChantier.getCodePostal(), unChantier.getVille(), uneFiche.getDate()) ;
-            lesFiches.add(vFiches);
-        }
-        if (!lesFiches.isEmpty()) {
-            FicheAdapter adapter = new FicheAdapter(ListeFicheActivity.this, lesFiches);
+        if (!listeFiche.isEmpty()) {
+            FicheAdapter adapter = new FicheAdapter(ListeFicheActivity.this, listeFiche);
             listviewFiches.setAdapter(adapter);
             listviewFiches.setOnItemClickListener(ListeFicheActivity.this);
         }
@@ -64,8 +51,8 @@ public class ListeFicheActivity extends BaseActivity implements AdapterView.OnIt
 
     public void onItemClick(AdapterView parentView, View childView, int position, long id) {
         ArrayList<Fiche> listeFiche = FicheDAO.getListeFiche(getApplicationContext()) ;
-        Chantier unChantier = ChantierDAO.getUnChantier(getApplicationContext(), listeFiche.get(position).getId()) ;
-        Utilisateur unUtilisateur = UtilisateurDAO.getUnUtilisateur(getApplicationContext(), listeFiche.get(position).getId()) ;
+        Chantier unChantier = listeFiche.get(position).getUnChantier() ;
+        Utilisateur unUtilisateur = listeFiche.get(position).getUnUtilisateur() ;
 
         //On créé un objet Bundle, c'est ce qui va nous permetre d'envoyer des données à l'autre Activity
         Bundle objetBdl = new Bundle();

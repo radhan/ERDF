@@ -12,6 +12,7 @@ import android.widget.EditText;
 import com.erdf.classe.DAO.ChantierDAO;
 import com.erdf.classe.DAO.CompteDAO;
 import com.erdf.classe.DAO.FicheDAO;
+import com.erdf.classe.DAO.FicheRisqueDAO;
 import com.erdf.classe.DAO.FonctionDAO;
 import com.erdf.classe.DAO.RisqueDAO;
 import com.erdf.classe.DAO.UtilisateurDAO;
@@ -51,6 +52,7 @@ public class LoginActivity extends Activity {
         ChantierDAO.syncGetListeChantier(getApplicationContext());
         UtilisateurDAO.syncGetListeUtilisateur(getApplicationContext());
         FonctionDAO.syncGetListeFonction(getApplicationContext());
+        FicheRisqueDAO.getListeFicheRisque(getApplicationContext()) ;
 
         loginButton.setOnClickListener(new View.OnClickListener() {
 
