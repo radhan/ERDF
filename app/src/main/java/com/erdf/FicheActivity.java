@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.erdf.classe.DAO.ChantierDAO;
 import com.erdf.classe.adapter.RisqueAdapter;
@@ -206,7 +207,13 @@ public class FicheActivity extends BaseActivity {
         ArrayList<Chantier> listeChantier = ChantierDAO.getListeChantier(getApplicationContext()) ;
 
         //On récupère l'adresse de la géolocalisation dans un tableau
-        String adresse[] = adresseText.toString().split(",") ;
+        String adresse[] = adresseText.getText().toString().split(",") ;
+
+        //Si l'adresse n'est pas correcte on affiche un message d'erreur, 3 pour numRue/Rue - Ville - CodePostal
+        if(adresse.length < 3) {
+            Toast.makeText(getApplicationContext(), "Le format de l'adresse est incorrect.\nVeuillez respecter le format suivant :\n(Numero Rue) Rue, Ville, CodePostal", Toast.LENGTH_SHORT).show();
+            return ;
+        }
 
         //On créer un objet Chantier
         Chantier leChantier = new Chantier() ;
@@ -224,8 +231,6 @@ public class FicheActivity extends BaseActivity {
             if(dernierId != null && !dernierId.isEmpty()) {
                 dernierId = String.valueOf(Integer.parseInt(dernierId) + 1);
             }
-
-            Log.i("FicheActivite", "Chantier new id : " + dernierId) ;
 
             //On divise le numéro de rue et la rue
             String rue[] = adresse[0].split(" ", 2) ;
