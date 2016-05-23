@@ -197,11 +197,12 @@ public class ConnexionBDD extends AsyncTask<Void, String, String>  {
         String URL = "" ;
         final String Domaine = "http://comment-telecharger.eu/ERDF/" ;
 
-        final String CONNEXION_URL      = Domaine + "connexion.php" ;
-        final String RISQUE_URL         = Domaine + "getAllRisques.php" ;
-        final String FICHE_URL          = Domaine + "getAllFiches.php" ;
-        final String CHANTIER_URL       = Domaine + "getAllChantiers.php" ;
-        final String SAISIR_FICHE_URL   = Domaine + "setUneFiche.php" ;
+        final String CONNEXION_URL           = Domaine + "connexion.php" ;
+        final String RISQUE_URL              = Domaine + "getAllRisques.php" ;
+        final String FICHE_URL               = Domaine + "getAllFiches.php" ;
+        final String CHANTIER_URL            = Domaine + "getAllChantiers.php" ;
+        final String SAISIR_FICHE_URL        = Domaine + "setUneFiche.php" ;
+        final String SAISIR_UTILISATEUR_URL  = Domaine + "setUnUtilisateur.php" ;
 
         switch(besoin)
         {
@@ -223,6 +224,10 @@ public class ConnexionBDD extends AsyncTask<Void, String, String>  {
 
             case "SaisirFiche" :
                 URL = SAISIR_FICHE_URL ;
+            break ;
+
+            case "SaisirUtilisateur" :
+                URL = SAISIR_UTILISATEUR_URL ;
             break ;
         }
 

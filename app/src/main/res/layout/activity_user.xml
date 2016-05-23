@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.erdf.UserActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ajout Utilisateur"
+        android:id="@+id/tTitre"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="70dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nom :"
+        android:id="@+id/tNom"
+        android:layout_below="@+id/tTitre"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="20dp"/>
+
+    <EditText
+        android:layout_width="172dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/iNom"
+        android:layout_alignTop="@+id/tNom"
+        android:layout_toRightOf="@+id/tNom"
+        android:layout_alignLeft ="@+id/iMdp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Prenom :"
+        android:id="@+id/tPrenom"
+        android:layout_below="@+id/iNom"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="15dp"/>
+
+    <EditText
+        android:layout_width="172dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/iPrenom"
+        android:layout_alignTop="@+id/tPrenom"
+        android:layout_toRightOf="@+id/tPrenom"
+        android:layout_marginTop="-15dp"
+        android:layout_alignLeft ="@+id/iMdp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="E-mail :"
+        android:id="@+id/tEmail"
+        android:layout_below="@+id/iPrenom"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="15dp"/>
+
+    <EditText
+        android:layout_width="172dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/iEmail"
+        android:layout_alignTop="@+id/tEmail"
+        android:layout_toRightOf="@+id/tEmail"
+        android:layout_marginTop="-15dp"
+        android:layout_alignLeft ="@+id/iMdp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Mot de passe :"
+        android:id="@+id/tMdp"
+        android:layout_below="@+id/iEmail"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="15dp"/>
+
+    <EditText
+        android:layout_width="172dp"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:id="@+id/iMdp"
+        android:layout_alignTop="@+id/tMdp"
+        android:layout_toRightOf="@+id/tMdp"
+        android:layout_marginTop="-15dp"
+        android:layout_marginLeft="20dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Administrateur :"
+        android:id="@+id/tAdm"
+        android:layout_below="@+id/iMdp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="15dp"/>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:id="@+id/chxAdm"
+        android:layout_alignTop="@+id/tAdm"
+        android:layout_toRightOf="@+id/tAdm"
+        android:layout_marginTop="-7dp"
+        android:layout_marginLeft="20dp"/>
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Envoyer"
+        android:id="@+id/button"
+        android:layout_marginTop="30dp"
+        android:layout_below="@id/tAdm"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

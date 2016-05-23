@@ -10,6 +10,7 @@ public class Utilisateur {
     private String mail ;
     private Fonction uneFonction ;
     private boolean supprimer ;
+    private Compte unCompte ;
 
     public Utilisateur() {
     }
@@ -53,6 +54,14 @@ public class Utilisateur {
 
     public void setMail(String mail) {
         this.mail = mail;
+    }
+
+    public Compte getUnCompte() {
+        return unCompte ;
+    }
+
+    public void setUnCompte(Compte compte) {
+        this.unCompte = compte;
     }
 
     public Fonction getUneFonction() {

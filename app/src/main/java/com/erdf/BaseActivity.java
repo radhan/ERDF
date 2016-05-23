@@ -92,7 +92,7 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
             finish();
 
         } else if (id == R.id.nav_ajouter_utilisateur) {
-            //startActivity(new Intent(BaseActivity.this, AddUserActivity.class));
+            startActivity(new Intent(BaseActivity.this, UserActivity.class));
             finish();
 
         } else if (id == R.id.nav_liste_utilisateurs) {
