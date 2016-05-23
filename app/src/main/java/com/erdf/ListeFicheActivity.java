@@ -2,6 +2,7 @@ package com.erdf;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -64,10 +65,12 @@ public class ListeFicheActivity extends BaseActivity implements AdapterView.OnIt
         ArrayList<String> titre = new ArrayList<>() ;
         ArrayList<String> soustitre =  new ArrayList<>();
 
-        for (Risque unRisque : listeRisque) {
+        for(Risque unRisque : listeRisque) {
             titre.add(unRisque.getTitre());
             soustitre.add(unRisque.getResume());
         }
+
+        Log.i("ListeFiche", "Taille : " + listeRisque.size()) ;
 
         //Cela fonctionne plus ou moins comme une HashMap, on entre une clef et sa valeur en face
         objetBdl.putString("dateFiche", listeFiche.get(position).getDate());

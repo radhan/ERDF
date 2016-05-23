@@ -438,8 +438,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Fiche getUneFiche(String code) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String selectQuery = "SELECT  * FROM " + TABLE_FICHE
-                       + " WHERE " + KEY_FICHE_ID + " = " + code + " ;" ;
+        String selectQuery = "SELECT  * FROM " + TABLE_FICHE + " " +
+                             "WHERE " + KEY_FICHE_ID + " = " + code + " ;" ;
 
         Log.d(TAG, selectQuery);
 
