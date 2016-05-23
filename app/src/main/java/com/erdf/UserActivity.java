@@ -83,7 +83,7 @@ public class UserActivity extends BaseActivity {
         user.setUnCompte(compte);
 
         UtilisateurDAO unUserDAO =  new UtilisateurDAO() ;
-        unUserDAO.setUtilisateur(this, user);
+        unUserDAO.setUnUserTest(this, user);
 
     }
 
