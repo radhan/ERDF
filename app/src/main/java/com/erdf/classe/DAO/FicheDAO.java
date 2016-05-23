@@ -51,65 +51,69 @@ public class FicheDAO {
         return db.getUneFiche(code) ;
     }
 
-    public static void setUneFiche(final Context pContext, final Fiche uneFiche) {
+    public static void setUneFiche(final Context pContext, final Fiche uneFiche, boolean online) {
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, urlSetFiche, new Response.Listener<String>() {
+        if(online) {
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, urlSetFiche, new Response.Listener<String>() {
 
-            @Override
-            public void onResponse(String response) {
+                @Override
+                public void onResponse(String response) {
 
-                Log.d(TAG, response) ;
-                try {
+                    Log.d(TAG, response);
+                    try {
 
-                    JSONObject oJson = new JSONObject(response) ;
-                    if(oJson.getString("RESULTAT").equals("OK")) {
-                        Toast.makeText(pContext, "Ajout d'une fiche réussi", Toast.LENGTH_SHORT).show() ;
-                        syncGetListeFiche(pContext) ;
+                        JSONObject oJson = new JSONObject(response);
+                        if (oJson.getString("RESULTAT").equals("OK")) {
+                            Toast.makeText(pContext, "Ajout d'une fiche réussi", Toast.LENGTH_SHORT).show();
+                            syncGetListeFiche(pContext);
+                        } else {
+                            Toast.makeText(pContext, "Erreur lors de l'ajout", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                    else {
-                        Toast.makeText(pContext, "Erreur lors de l'ajout", Toast.LENGTH_SHORT).show() ;
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace() ;
                 }
-            }
-        }, new Response.ErrorListener() {
+            }, new Response.ErrorListener() {
 
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(pContext, error.toString(), Toast.LENGTH_SHORT).show() ;
-            }
-        })
-        {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-
-                //On crééer une chaine de caractère avec les risques
-                String risques = "" ;
-                for(int i = 0; i < uneFiche.getListeRisque().size() ; i++) {
-                    if(!risques.isEmpty()) {
-                        risques = risques + "|" ;
-                    }
-                    risques = risques + uneFiche.getListeRisque().get(i).getId() ;
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(pContext, error.toString(), Toast.LENGTH_SHORT).show();
                 }
+            }) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
 
-                Map<String,String> params = new HashMap<>() ;
-                params.put("chantier", uneFiche.getUnChantier().getCode()) ;
-                params.put("utilisateur", uneFiche.getUnUtilisateur().getId()) ;
-                params.put("date", uneFiche.getDate()) ;
-                params.put("risque", risques) ;
+                    //On crééer une chaine de caractère avec les risques
+                    String risques = "";
+                    for (int i = 0; i < uneFiche.getListeRisque().size(); i++) {
+                        if (!risques.isEmpty()) {
+                            risques = risques + "|";
+                        }
+                        risques = risques + uneFiche.getListeRisque().get(i).getId();
+                    }
 
-                return params;
-            }
-        };
+                    Map<String, String> params = new HashMap<>();
+                    params.put("chantier", uneFiche.getUnChantier().getCode());
+                    params.put("utilisateur", uneFiche.getUnUtilisateur().getId());
+                    params.put("date", uneFiche.getDate());
+                    params.put("risque", risques);
 
-        // On ajoute la requête à la file d'attente
-        ConnexionControleur.getInstance().addToRequestQueue(stringRequest);
+                    return params;
+                }
+            };
+
+            // On ajoute la requête à la file d'attente
+            ConnexionControleur.getInstance().addToRequestQueue(stringRequest);
+        }
+        else {
+            // SQLite database handler
+            db = new DatabaseHelper(pContext) ;
+
+            db.setUneFiche(uneFiche) ;
+        }
     }
 
-    public static void syncGetListeFiche(Context pContext) {
-        // SQLite database handler
-        db = new DatabaseHelper(pContext) ;
+    public static void syncGetListeFiche(final Context pContext) {
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, urlAllFiches, null, new Response.Listener<JSONObject>() {
 
@@ -154,7 +158,7 @@ public class FicheDAO {
                         Fiche uneFiche = new Fiche(oFiche.getString("fic_id"), unChantier, unUtilisateur, oFiche.getString("fic_date"), supprimerFiche) ;
                         uneFiche.setListeRisque(listeRisque);
 
-                        db.setUneFiche(uneFiche) ;
+                        setUneFiche(pContext, uneFiche, false) ;
                     }
 
                 } catch (JSONException e) {

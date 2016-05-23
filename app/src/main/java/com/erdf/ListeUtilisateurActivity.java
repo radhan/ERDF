@@ -5,7 +5,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.erdf.adapter.UtilisateurAdapter;
+import com.erdf.classe.adapter.UtilisateurAdapter;
 import com.erdf.classe.DAO.UtilisateurDAO;
 import com.erdf.classe.metier.Utilisateur;
 

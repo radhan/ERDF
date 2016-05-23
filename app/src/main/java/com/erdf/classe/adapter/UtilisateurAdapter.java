@@ -1,4 +1,4 @@
-package com.erdf.adapter;
+package com.erdf.classe.adapter;
 
 import android.app.Activity;
 import android.support.v4.content.ContextCompat;
@@ -41,7 +41,7 @@ public class UtilisateurAdapter extends ArrayAdapter<Utilisateur> {
         }
 
         //getItem(position) va récupérer l'item [position] de la List actus
-        final Utilisateur unUtilisateur = getItem(position);
+        Utilisateur unUtilisateur = getItem(position);
 
         //remplir la vue
         viewHolder.avatar.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.personne));

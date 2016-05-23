@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.erdf.adapter.FicheAdapter;
+import com.erdf.classe.adapter.FicheAdapter;
 import com.erdf.classe.DAO.FicheDAO;
 import com.erdf.classe.metier.Chantier;
 import com.erdf.classe.metier.Fiche;

@@ -1,14 +1,11 @@
 package com.erdf;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.TextView;
 
 import com.erdf.classe.DAO.UtilisateurDAO;
 import com.erdf.classe.metier.Utilisateur;
 import com.erdf.classe.technique.SessionManager;
-
-import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;

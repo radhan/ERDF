@@ -1,22 +1,22 @@
 package com.erdf;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.erdf.adapter.RisqueAdapter;
+import com.erdf.classe.DAO.ChantierDAO;
+import com.erdf.classe.adapter.RisqueAdapter;
 import com.erdf.classe.DAO.FicheDAO;
 import com.erdf.classe.DAO.RisqueDAO;
 import com.erdf.classe.metier.Chantier;
@@ -24,6 +24,7 @@ import com.erdf.classe.metier.Fiche;
 import com.erdf.classe.metier.Risque;
 import com.erdf.classe.metier.Utilisateur;
 import com.erdf.classe.technique.InternetDetection;
+import com.erdf.classe.technique.SessionManager;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -37,14 +38,11 @@ import java.util.Locale;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-public class FicheActivity extends BaseActivity implements AdapterView.OnItemSelectedListener {
+public class FicheActivity extends BaseActivity {
 
-    ArrayList<Risque> listeRisques = new ArrayList<>() ;
-    ArrayList<String> idChantiers = new ArrayList<>() ;
+    ArrayList<Risque> listeRisques  = new ArrayList<>() ;
 
     @InjectView(R.id.sDate)             TextView dateText       ;
-    @InjectView(R.id.sChantier)         TextView chantierText   ;
-    @InjectView(R.id.spinnerChantier)   Spinner spinnerChantier ;
     @InjectView(R.id.sAdresse)          TextView adresseText    ;
     @InjectView(R.id.bAdresse)          Button btnAdresse       ;
     @InjectView(R.id.button)            Button btnEnvoyer       ;
@@ -63,9 +61,6 @@ public class FicheActivity extends BaseActivity implements AdapterView.OnItemSel
 
         //On déclare l'objet fiche
         uneFiche = new Fiche() ;
-
-        //On définie le selected listener
-        spinnerChantier.setOnItemSelectedListener(this) ;
 
         //Configuration button d'edition
         btnAdresse.setOnClickListener(new View.OnClickListener() {
@@ -109,15 +104,6 @@ public class FicheActivity extends BaseActivity implements AdapterView.OnItemSel
             adresseText.setEnabled(true);
         }
 
-    }
-
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        chantierText.setText(idChantiers.get(position));
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-        chantierText.setText(0);
     }
 
     //Méthode qui récupère la date
@@ -201,8 +187,8 @@ public class FicheActivity extends BaseActivity implements AdapterView.OnItemSel
 
     public void setFiche() {
 
-        SharedPreferences connexionPref = getSharedPreferences("connexion", 0);
-        int idUtilisateur = connexionPref.getInt("idUtilisateur", 1) ;
+        SessionManager session = new SessionManager(getApplicationContext()) ;
+        String idUtilisateur = session.getIdUtilisateur() ;
 
         SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         Date inputDate = null;
@@ -216,18 +202,54 @@ public class FicheActivity extends BaseActivity implements AdapterView.OnItemSel
         fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String dateString = fmt.format(inputDate);
 
-        Chantier unChantier = new Chantier() ;
-        unChantier.setCode(chantierText.getText().toString()) ;
+        //On récupère la liste des chantiers
+        ArrayList<Chantier> listeChantier = ChantierDAO.getListeChantier(getApplicationContext()) ;
+
+        //On récupère l'adresse de la géolocalisation dans un tableau
+        String adresse[] = adresseText.toString().split(",") ;
+
+        //On créer un objet Chantier
+        Chantier leChantier = new Chantier() ;
+
+        for(Chantier unChantier : listeChantier) {
+            if((unChantier.getNumRue() + " " + unChantier.getRue()).equals(adresse[0]) && unChantier.getVille().equals(adresse[1]) && unChantier.getCodePostal().equals(adresse[2])) {
+                leChantier = unChantier ;
+                break ;
+            }
+        }
+
+        if(leChantier.getCode() == null) {
+            //Récupérer le dernier id
+            String dernierId = ChantierDAO.getDernierIdChantier(getApplicationContext()) ;
+            if(dernierId != null && !dernierId.isEmpty()) {
+                dernierId = String.valueOf(Integer.parseInt(dernierId) + 1);
+            }
+
+            Log.i("FicheActivite", "Chantier new id : " + dernierId) ;
+
+            //On divise le numéro de rue et la rue
+            String rue[] = adresse[0].split(" ", 2) ;
+
+            leChantier.setCode(dernierId) ;
+            leChantier.setNumRue(rue[0]) ;
+            leChantier.setRue(rue[1]) ;
+            leChantier.setLibelle("Bla bla") ;
+            leChantier.setVille(adresse[1]) ;
+            leChantier.setCodePostal(adresse[2]) ;
+            leChantier.setSupprimer(false) ;
+
+            ChantierDAO.setUnChantier(getApplicationContext(), leChantier, true) ;
+        }
 
         Utilisateur unUtilisateur = new Utilisateur() ;
-        unUtilisateur.setId(Integer.toString(idUtilisateur)) ;
+        unUtilisateur.setId(idUtilisateur) ;
 
-        uneFiche.setUnChantier(unChantier) ;
+        uneFiche.setUnChantier(leChantier) ;
         uneFiche.setUnUtilisateur(unUtilisateur) ;
         uneFiche.setDate(dateString) ;
         uneFiche.setListeRisque(listeRisques);
 
-        FicheDAO.setUneFiche(getApplicationContext(), uneFiche);
+        FicheDAO.setUneFiche(getApplicationContext(), uneFiche, true);
     }
 
 }

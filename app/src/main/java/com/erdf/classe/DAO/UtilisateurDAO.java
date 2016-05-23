@@ -31,7 +31,7 @@ public class UtilisateurDAO {
     static String urlAllUtilisateurs = "http://comment-telecharger.eu/ERDF/getAllUtilisateurs.php" ;
     static String urlSetUtilisateur =  "http://comment-telecharger.eu/ERDF/setUnUtilisateur.php" ;
 
-    public UtilisateurDAO() {
+    private UtilisateurDAO() {
 
     }
 
@@ -49,11 +49,60 @@ public class UtilisateurDAO {
         return db.getUnUtilisateur(code) ;
     }
 
-    public static void setUnUtilisateur(Context unContext, Utilisateur unUtilisateur) {
-        // SQLite database handler
-        db = new DatabaseHelper(unContext) ;
+    public static void setUnUtilisateur(final Context pContext, final Utilisateur unUtilisateur, boolean online) {
 
-        db.setUnUtilisateur(unUtilisateur) ;
+        if(online) {
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, urlSetUtilisateur, new Response.Listener<String>() {
+
+                @Override
+                public void onResponse(String response) {
+
+                    Log.d(TAG, response) ;
+                    try {
+
+                        JSONObject oJson = new JSONObject(response) ;
+                        if(oJson.getString("RESULTAT").equals("OK")) {
+                            Toast.makeText(pContext, "Ajout d'un Utilisateur réussi", Toast.LENGTH_SHORT).show() ;
+                            syncGetListeUtilisateur(pContext) ;
+                        }
+                        else {
+                            Toast.makeText(pContext, "Erreur lors de l'ajout", Toast.LENGTH_SHORT).show() ;
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace() ;
+                    }
+                }
+            }, new Response.ErrorListener() {
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(pContext, error.toString(), Toast.LENGTH_SHORT).show() ;
+                }
+            })
+            {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+
+                    Map<String,String> params = new HashMap<>() ;
+                    params.put("nom", unUtilisateur.getNom()) ;
+                    params.put("prenom", unUtilisateur.getPrenom());
+                    params.put("password", unUtilisateur.getUnCompte().getPassword());
+                    params.put("fonction", unUtilisateur.getUneFonction().getId()) ;
+                    params.put("mail", unUtilisateur.getMail()) ;
+
+                    return params;
+                }
+            };
+
+            // On ajoute la requête à la file d'attente
+            ConnexionControleur.getInstance().addToRequestQueue(stringRequest);
+        }
+        else {
+            // SQLite database handler
+            db = new DatabaseHelper(pContext);
+
+            db.setUnUtilisateur(unUtilisateur);
+        }
     }
 
     public static void syncGetListeUtilisateur(final Context unContext) {
@@ -74,10 +123,9 @@ public class UtilisateurDAO {
                         boolean supprimerFonction = oUtilisateur.getInt("fon_supprimer") > 0 ;
                         Fonction uneFonction = new Fonction(oUtilisateur.getString("fon_id"), oUtilisateur.getString("fon_libelle"), supprimerFonction);
 
-
                         boolean supprimerUti = oUtilisateur.getInt("use_supprimer") > 0 ;
                         Utilisateur unUtilisateur = new Utilisateur(oUtilisateur.getString("use_id"), oUtilisateur.getString("use_nom"), oUtilisateur.getString("use_prenom"), oUtilisateur.getString("use_mail"), uneFonction, supprimerUti) ;
-                        setUnUtilisateur(unContext, unUtilisateur) ;
+                        setUnUtilisateur(unContext, unUtilisateur, false) ;
                     }
 
                 } catch (JSONException e) {
@@ -96,51 +144,4 @@ public class UtilisateurDAO {
         ConnexionControleur.getInstance().addToRequestQueue(jsonObjReq);
     }
 
-    public static void setUnUserTest(final Context pContext, final Utilisateur unUser) {
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, urlSetUtilisateur, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-
-                Log.d(TAG, response) ;
-                try {
-
-                    JSONObject oJson = new JSONObject(response) ;
-                    if(oJson.getString("RESULTAT").equals("OK")) {
-                        Toast.makeText(pContext, "Ajout d'un Utilisateur réussi", Toast.LENGTH_SHORT).show() ;
-                        syncGetListeUtilisateur(pContext) ;
-                    }
-                    else {
-                        Toast.makeText(pContext, "Erreur lors de l'ajout", Toast.LENGTH_SHORT).show() ;
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace() ;
-                }
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(pContext, error.toString(), Toast.LENGTH_SHORT).show() ;
-            }
-        })
-        {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-
-                Map<String,String> params = new HashMap<>() ;
-                params.put("nom", unUser.getNom()) ;
-                params.put("prenom", unUser.getPrenom());
-                params.put("password", unUser.getUnCompte().getPassword());
-                params.put("fonction", unUser.getUneFonction().getId()) ;
-                params.put("mail", unUser.getMail()) ;
-
-                return params;
-            }
-        };
-
-        // On ajoute la requête à la file d'attente
-        ConnexionControleur.getInstance().addToRequestQueue(stringRequest);
-    }
 }

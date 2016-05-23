@@ -1,4 +1,4 @@
-package com.erdf.adapter;
+package com.erdf.classe.adapter;
 
 import android.app.Activity;
 import android.view.LayoutInflater;

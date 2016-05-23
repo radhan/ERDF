@@ -37,7 +37,7 @@
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/listRisque"
+        android:id="@+id/listeRisque"
         android:layout_below="@+id/tTechnicien"
         android:layout_alignParentLeft="true"
         android:layout_marginTop="35dp" />

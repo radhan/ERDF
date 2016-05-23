@@ -219,6 +219,65 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Log.d(TAG, "Un chantier a été ajouté !") ;
     }
 
+    public Chantier getUnChantier(String code) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String selectQuery = "SELECT * FROM " + TABLE_CHANTIER + " " +
+                "WHERE " + KEY_CHANTIER_CODE + " = " + code + " ;" ;
+
+        Log.d(TAG, selectQuery);
+
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if (c != null) {
+            c.moveToFirst();
+        }
+
+        Chantier unChantier = new Chantier();
+        assert c != null;
+
+        if(c.getCount() > 0) {
+            unChantier.setCode(c.getString(c.getColumnIndex(KEY_CHANTIER_CODE)));
+            unChantier.setLibelle((c.getString(c.getColumnIndex(KEY_CHANTIER_LIBELLE))));
+            unChantier.setNumRue((c.getString(c.getColumnIndex(KEY_CHANTIER_NUMRUE))));
+            unChantier.setRue((c.getString(c.getColumnIndex(KEY_CHANTIER_RUE))));
+            unChantier.setVille((c.getString(c.getColumnIndex(KEY_CHANTIER_VILLE))));
+            unChantier.setCodePostal((c.getString(c.getColumnIndex(KEY_CHANTIER_CODEPOSTAL))));
+            boolean supprimer = c.getInt(c.getColumnIndex(KEY_CHANTIER_SUPPRIMER)) > 0;
+            unChantier.setSupprimer(supprimer);
+            unChantier.setCreatedAt(c.getString(c.getColumnIndex(KEY_CREATED_AT)));
+        }
+
+        db.close() ;
+
+        return unChantier ;
+    }
+
+    public String getDernierIdChantier() {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String selectQuery = "SELECT MAX(" + KEY_CHANTIER_CODE + ") AS dernierId FROM " + TABLE_CHANTIER + " ;" ;
+
+        Log.d(TAG, selectQuery);
+
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if (c != null) {
+            c.moveToFirst();
+        }
+
+        String dernierId = "" ;
+        assert c != null;
+
+        if(c.getCount() > 0) {
+            dernierId = c.getString(c.getColumnIndex("dernierId")) ;
+        }
+
+        db.close() ;
+
+        return dernierId ;
+    }
+
     public ArrayList<Chantier> getAllChantiers() {
         ArrayList<Chantier> lesChantiers = new ArrayList<>() ;
         String selectQuery = "SELECT * FROM " + TABLE_CHANTIER + " ;" ;
@@ -252,40 +311,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return lesChantiers ;
     }
 
-    public Chantier getUnChantier(String code) {
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        String selectQuery = "SELECT * FROM " + TABLE_CHANTIER + " " +
-                             "WHERE " + KEY_CHANTIER_CODE + " = " + code + " ;" ;
-
-        Log.d(TAG, selectQuery);
-
-        Cursor c = db.rawQuery(selectQuery, null);
-
-        if (c != null) {
-            c.moveToFirst();
-        }
-
-        Chantier unChantier = new Chantier();
-        assert c != null;
-
-        if(c.getCount() > 0) {
-            unChantier.setCode(c.getString(c.getColumnIndex(KEY_CHANTIER_CODE)));
-            unChantier.setLibelle((c.getString(c.getColumnIndex(KEY_CHANTIER_LIBELLE))));
-            unChantier.setNumRue((c.getString(c.getColumnIndex(KEY_CHANTIER_NUMRUE))));
-            unChantier.setRue((c.getString(c.getColumnIndex(KEY_CHANTIER_RUE))));
-            unChantier.setVille((c.getString(c.getColumnIndex(KEY_CHANTIER_VILLE))));
-            unChantier.setCodePostal((c.getString(c.getColumnIndex(KEY_CHANTIER_CODEPOSTAL))));
-            boolean supprimer = c.getInt(c.getColumnIndex(KEY_CHANTIER_SUPPRIMER)) > 0;
-            unChantier.setSupprimer(supprimer);
-            unChantier.setCreatedAt(c.getString(c.getColumnIndex(KEY_CREATED_AT)));
-        }
-
-        db.close() ;
-
-        return unChantier ;
-    }
-
     /*
         ------------------------------------------------------------------
                                     RISQUE
@@ -309,41 +334,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Log.d(TAG, "Un risque a été ajouté !") ;
     }
 
-    public ArrayList<Risque> getAllRisques() {
-        ArrayList<Risque> lesRisques = new ArrayList<>() ;
-        String selectQuery = "SELECT * FROM " + TABLE_RISQUE + " ;" ;
-
-        Log.d(TAG, selectQuery);
-
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery(selectQuery, null);
-
-        // Ajout de chaque ligne à la liste
-        if (c.moveToFirst()) {
-            do {
-                Risque unRisque = new Risque();
-                unRisque.setId(c.getString((c.getColumnIndex(KEY_RISQUE_ID)))) ;
-                unRisque.setTitre((c.getString(c.getColumnIndex(KEY_RISQUE_TITRE)))) ;
-                unRisque.setResume((c.getString(c.getColumnIndex(KEY_RISQUE_RESUME)))) ;
-                boolean supprimer = c.getInt(c.getColumnIndex(KEY_RISQUE_SUPPRIMER)) > 0 ;
-                unRisque.setSupprimer(supprimer) ;
-                unRisque.setCreatedAt(c.getString(c.getColumnIndex(KEY_CREATED_AT))) ;
-
-                // Ajouter à la liste des risques
-                lesRisques.add(unRisque);
-            } while (c.moveToNext());
-        }
-
-        db.close() ;
-
-        return lesRisques ;
-    }
-
     public Risque getUnRisque(String code) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         String selectQuery = "SELECT  * FROM " + TABLE_RISQUE + " " +
-                             "WHERE " + KEY_RISQUE_ID + " = " + code + " ;" ;
+                "WHERE " + KEY_RISQUE_ID + " = " + code + " ;" ;
 
         Log.d(TAG, selectQuery);
 
@@ -357,9 +352,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         assert c != null;
         if(c.getCount() > 0) {
+            ArrayList<FicheRisque> listeFicheRisque = getUneFicheRisqueByRisque(c.getString((c.getColumnIndex(KEY_FICHE_ID)))) ;
+            ArrayList<Fiche> listeFiche = new ArrayList<>() ;
+            for(FicheRisque uneFicheRisque : listeFicheRisque) {
+                Fiche uneFiche = getUneFiche(uneFicheRisque.getUneFiche().getId()) ;
+                listeFiche.add(uneFiche) ;
+            }
+
             unRisque.setId(c.getString((c.getColumnIndex(KEY_RISQUE_ID))));
             unRisque.setTitre((c.getString(c.getColumnIndex(KEY_RISQUE_TITRE))));
             unRisque.setResume((c.getString(c.getColumnIndex(KEY_RISQUE_RESUME))));
+            unRisque.setListeFiche(listeFiche) ;
             boolean supprimer = c.getInt(c.getColumnIndex(KEY_RISQUE_SUPPRIMER)) > 0;
             unRisque.setSupprimer(supprimer);
             unRisque.setCreatedAt(c.getString(c.getColumnIndex(KEY_CREATED_AT)));
@@ -368,6 +371,44 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close() ;
 
         return unRisque;
+    }
+
+    public ArrayList<Risque> getAllRisques() {
+        ArrayList<Risque> lesRisques = new ArrayList<>() ;
+        String selectQuery = "SELECT * FROM " + TABLE_RISQUE + " ;" ;
+
+        Log.d(TAG, selectQuery);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        // Ajout de chaque ligne à la liste
+        if (c.moveToFirst()) {
+            do {
+                ArrayList<FicheRisque> listeFicheRisque = getUneFicheRisqueByRisque(c.getString((c.getColumnIndex(KEY_RISQUE_ID)))) ;
+                ArrayList<Fiche> listeFiche = new ArrayList<>() ;
+                for(FicheRisque uneFicheRisque : listeFicheRisque) {
+                    Fiche uneFiche = getUneFiche(uneFicheRisque.getUneFiche().getId()) ;
+                    listeFiche.add(uneFiche) ;
+                }
+
+                Risque unRisque = new Risque();
+                unRisque.setId(c.getString((c.getColumnIndex(KEY_RISQUE_ID)))) ;
+                unRisque.setTitre((c.getString(c.getColumnIndex(KEY_RISQUE_TITRE)))) ;
+                unRisque.setResume((c.getString(c.getColumnIndex(KEY_RISQUE_RESUME)))) ;
+                unRisque.setListeFiche(listeFiche) ;
+                boolean supprimer = c.getInt(c.getColumnIndex(KEY_RISQUE_SUPPRIMER)) > 0 ;
+                unRisque.setSupprimer(supprimer) ;
+                unRisque.setCreatedAt(c.getString(c.getColumnIndex(KEY_CREATED_AT))) ;
+
+                // Ajouter à la liste des risques
+                lesRisques.add(unRisque);
+            } while (c.moveToNext());
+        }
+
+        db.close() ;
+
+        return lesRisques ;
     }
 
     /*

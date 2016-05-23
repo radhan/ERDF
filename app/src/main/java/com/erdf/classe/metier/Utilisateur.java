@@ -9,8 +9,8 @@ public class Utilisateur {
     private String prenom ;
     private String mail ;
     private Fonction uneFonction ;
-    private boolean supprimer ;
     private Compte unCompte ;
+    private boolean supprimer ;
     private String createdAt ;
 
     public Utilisateur() {

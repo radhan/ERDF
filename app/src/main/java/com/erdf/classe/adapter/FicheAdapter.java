@@ -1,7 +1,6 @@
-package com.erdf.adapter;
+package com.erdf.classe.adapter;
 
 import android.app.Activity;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,6 @@ import com.erdf.classe.metier.Chantier;
 import com.erdf.classe.metier.Fiche;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Radhan on 15/03/2016.

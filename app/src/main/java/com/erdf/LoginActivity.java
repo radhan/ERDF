@@ -35,7 +35,7 @@ public class LoginActivity extends Activity {
 
         //Préférences de l'application - Utilisateur déjà connecté ou non
         SessionManager session = new SessionManager(getApplicationContext());
-        if (session.isConnecte()) {
+        if(session.isConnecte()) {
             Intent intent = new Intent(this, AccueilActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_CLEAR_TOP);
             Log.i("LoginActivity", "Connexion - OK");

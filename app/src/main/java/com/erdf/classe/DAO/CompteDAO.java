@@ -86,7 +86,7 @@ public class CompteDAO {
         Intent intent = new Intent(pContext, FicheActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         pContext.startActivity(intent);
-        ((Activity)pContext).finish();
+        //((Activity)pContext).finish();
 
         Toast.makeText(pContext, "Vous êtes connecté !", Toast.LENGTH_LONG).show();
     }

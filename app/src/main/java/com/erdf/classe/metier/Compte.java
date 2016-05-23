@@ -7,6 +7,7 @@ public class Compte {
     private String id ;
     private String login ;
     private String password ;
+    private boolean supprimer ;
 
     public Compte() {
     }
@@ -39,5 +40,13 @@ public class Compte {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public boolean isSupprimer() {
+        return supprimer;
+    }
+
+    public void setSupprimer(boolean supprimer) {
+        this.supprimer = supprimer;
     }
 }
