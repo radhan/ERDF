@@ -15,10 +15,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
+import com.erdf.classe.DAO.FonctionDAO;
+import com.erdf.classe.DAO.UtilisateurDAO;
+import com.erdf.classe.metier.Fonction;
+import com.erdf.classe.metier.Utilisateur;
+import com.erdf.classe.technique.SessionManager;
+
 public class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     protected DrawerLayout drawer;
     public static Menu _menu ;
+    SessionManager session ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,9 +51,11 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
         //Récupération du type d'utilisateur
-        SharedPreferences connexionPref = getSharedPreferences("connexion", 0) ;
+        session = new SessionManager(getApplicationContext()) ;
+        Utilisateur unUtilisateur = UtilisateurDAO.getUnUtilisateur(getApplicationContext(), session.getIdUtilisateur()) ;
+        Fonction uneFonction = FonctionDAO.getUneFonction(getApplicationContext(), unUtilisateur.getUneFonction().getId()) ;
 
-        if (connexionPref.getString("fonctionUtilisateur", "Inconnu").equals("Administrateur")) {
+        if(uneFonction.getLibelle().equals("Administrateur")) {
             navigationView.getMenu().findItem(R.id.nav_gestion_utilisateur).setVisible(true) ;
             navigationView.getMenu().findItem(R.id.nav_liste_fiches).setVisible(true) ;
         }
@@ -96,8 +105,9 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
             finish();
 
         } else if (id == R.id.nav_liste_utilisateurs) {
-            //startActivity(new Intent(BaseActivity.this, AddUserActivity.class));
+            startActivity(new Intent(BaseActivity.this, ListeUtilisateurActivity.class));
             finish();
+
         }else if (id == R.id.nav_liste_fiches) {
             startActivity(new Intent(BaseActivity.this, ListeFicheActivity.class));
             finish();
@@ -120,8 +130,7 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
     //Deconnexion de l'utilisateur
     DialogInterface.OnClickListener deconnexionAccept = new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface dialog, int which) {
-            SharedPreferences connexionPref = getSharedPreferences("connexion", 0);
-            connexionPref.edit().clear().apply();
+            session.deconnexion() ;
             startActivity(new Intent(BaseActivity.this, LoginActivity.class));
             finish();
         }

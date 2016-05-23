@@ -13,6 +13,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.erdf.classe.SQLite.DatabaseHelper;
 import com.erdf.classe.metier.Chantier;
 import com.erdf.classe.metier.Fiche;
+import com.erdf.classe.metier.FicheRisque;
 import com.erdf.classe.metier.Fonction;
 import com.erdf.classe.metier.Risque;
 import com.erdf.classe.metier.Utilisateur;
@@ -28,30 +29,37 @@ import java.util.Map;
 /**
  * Created by Radhan on 24/04/2016.
  */
-public class FicheDAO {
-    private static String TAG = FicheDAO.class.getSimpleName() ;
+public class FicheRisqueDAO {
+    private static String TAG = FicheRisqueDAO.class.getSimpleName() ;
     private static DatabaseHelper db ;
-    static String urlAllFiches = "http://comment-telecharger.eu/ERDF/getAllFiches.php" ;
-    static String urlSetFiche =  "http://comment-telecharger.eu/ERDF/setUneFiche.php" ;
+    static String urlAllFicheRisques = "http://comment-telecharger.eu/ERDF/getAllFicheRisques.php" ;
+    static String urlSetFicheRisque =  "http://comment-telecharger.eu/ERDF/setUneFiche.php" ;
 
-    private FicheDAO() {
+    private FicheRisqueDAO() {
     }
 
-    public static ArrayList<Fiche> getListeFiche(Context unContext) {
+    public static ArrayList<FicheRisque> getListeFicheRisque(Context unContext) {
         // SQLite database handler
         db = new DatabaseHelper(unContext) ;
 
-        return db.getAllFiches() ;
+        return db.getAllFicheRisques() ;
     }
 
-    public static Fiche getUneFiche(Context unContext, String code) {
+    public static ArrayList<FicheRisque> getUneFicheRisqueByFiche(Context unContext, String code) {
         // SQLite database handler
         db = new DatabaseHelper(unContext) ;
 
-        return db.getUneFiche(code) ;
+        return db.getUneFicheRisqueByFiche(code) ;
     }
 
-    public static void setUneFiche(final Context pContext, final Fiche uneFiche) {
+    public static ArrayList<FicheRisque> getUneFicheRisqueByRisque(Context unContext, String code) {
+        // SQLite database handler
+        db = new DatabaseHelper(unContext) ;
+
+        return db.getUneFicheRisqueByRisque(code) ;
+    }
+
+    /*public static void setUneFiche(final Context pContext, final Fiche uneFiche) {
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, urlSetFiche, new Response.Listener<String>() {
 
@@ -105,13 +113,13 @@ public class FicheDAO {
 
         // On ajoute la requête à la file d'attente
         ConnexionControleur.getInstance().addToRequestQueue(stringRequest);
-    }
+    }*/
 
-    public static void syncGetListeFiche(Context pContext) {
+    public static void syncGetListeFicheRisque(final Context pContext) {
         // SQLite database handler
         db = new DatabaseHelper(pContext) ;
 
-        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, urlAllFiches, null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, urlAllFicheRisques, null, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
@@ -119,42 +127,18 @@ public class FicheDAO {
 
                 try {
 
-                    ArrayList<Risque> listeRisque = new ArrayList<>() ;
-
                     // On parcours les données reçues
                     for (int i = 1; i < response.length() + 1; i++) {
-                        JSONObject oFiche = response.getJSONObject(Integer.toString(i)) ;
-                        listeRisque.clear() ;
+                        JSONObject oFicheRisque = response.getJSONObject(Integer.toString(i)) ;
 
-                        //On déclare l'objet chantier
-                        boolean supprimerChantier = oFiche.getInt("cha_supprimer") > 0 ;
-                        Chantier unChantier = new Chantier(oFiche.getString("cha_code"), oFiche.getString("cha_libelle"), oFiche.getString("cha_nrue"), oFiche.getString("cha_rue"), oFiche.getString("cha_ville"), oFiche.getString("cha_codepo"), supprimerChantier);
+                        Fiche uneFiche = FicheDAO.getUneFiche(pContext, oFicheRisque.getString("fri_fiche")) ;
+                        Risque unRisque = RisqueDAO.getUnRisque(pContext, oFicheRisque.getString("fri_risque")) ;
 
-                        //On déclare l'objet fonction
-                        boolean supprimerFonction = oFiche.getInt("fon_supprimer") > 0 ;
-                        Fonction uneFonction = new Fonction(oFiche.getString("fon_id"), oFiche.getString("fon_libelle"), supprimerFonction);
+                        //On déclare l'objet FicheRisque
+                        boolean supprimerFicheRisque = oFicheRisque.getInt("fri_supprimer") > 0 ;
+                        FicheRisque uneFicheRisque = new FicheRisque(uneFiche, unRisque, supprimerFicheRisque) ;
 
-                        //On déclare l'objet utilisateur
-                        boolean supprimerUtilisateur = oFiche.getInt("use_supprimer") > 0 ;
-                        Utilisateur unUtilisateur = new Utilisateur(oFiche.getString("use_id"), oFiche.getString("use_nom"), oFiche.getString("use_prenom"), oFiche.getString("use_mail"), uneFonction, supprimerUtilisateur);
-
-                        //Si le nombre de risques dans le fiche est supérieur à 0
-                        if(oFiche.getInt("nbRisque") > 0) {
-                            for (int j = 0; j < oFiche.getInt("nbRisque"); j++) {
-                                JSONObject oRisque = oFiche.getJSONObject(Integer.toString(j)) ;
-                                //On déclare l'objet risque
-                                boolean supprimerRisque = oRisque.getInt("ris_supprimer") > 0 ;
-                                Risque unRisque = new Risque(oRisque.getString("ris_id"), oRisque.getString("ris_titre"), oRisque.getString("ris_resume"), supprimerRisque);
-                                listeRisque.add(unRisque) ;
-                            }
-                        }
-
-                        //On déclare l'objet Fiche
-                        boolean supprimerFiche = oFiche.getInt("fic_supprimer") > 0 ;
-                        Fiche uneFiche = new Fiche(oFiche.getString("fic_id"), unChantier, unUtilisateur, oFiche.getString("fic_date"), supprimerFiche) ;
-                        uneFiche.setListeRisque(listeRisque);
-
-                        db.setUneFiche(uneFiche) ;
+                        db.setUneFicheRisque(uneFicheRisque) ;
                     }
 
                 } catch (JSONException e) {

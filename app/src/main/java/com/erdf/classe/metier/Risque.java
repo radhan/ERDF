@@ -10,7 +10,9 @@ public class Risque {
     private String titre ;
     private String resume ;
     private boolean supprimer ;
+    private String createdAt ;
     private ArrayList<Fiche> listeFiche = new ArrayList<>() ;
+    public boolean selected ;
 
     public Risque() {
     }
@@ -60,5 +62,21 @@ public class Risque {
 
     public void setListeFiche(ArrayList<Fiche> listeFiche) {
         this.listeFiche = listeFiche;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 }

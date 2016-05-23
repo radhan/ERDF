@@ -11,6 +11,7 @@ public class Fiche {
     private Utilisateur unUtilisateur ;
     private String date ;
     private boolean supprimer ;
+    private String createdAt ;
     private ArrayList<Risque> listeRisque = new ArrayList<>() ;
 
     public Fiche() {
@@ -70,5 +71,13 @@ public class Fiche {
 
     public void setListeRisque(ArrayList<Risque> listeRisque) {
         this.listeRisque = listeRisque;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
     }
 }

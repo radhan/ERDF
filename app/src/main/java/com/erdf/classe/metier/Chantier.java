@@ -11,6 +11,7 @@ public class Chantier {
     private String ville ;
     private String codePostal ;
     private boolean supprimer ;
+    private String createdAt ;
 
     public Chantier() {
     }
@@ -79,5 +80,13 @@ public class Chantier {
 
     public void setSupprimer(boolean supprimer) {
         this.supprimer = supprimer;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
     }
 }

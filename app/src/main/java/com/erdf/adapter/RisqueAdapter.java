@@ -10,18 +10,18 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.erdf.R;
-import com.erdf.ViewRisque;
+import com.erdf.classe.metier.Risque;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by Radhan on 15/03/2016.
  */
-public class RisqueAdapter extends ArrayAdapter<ViewRisque> {
+public class RisqueAdapter extends ArrayAdapter<Risque> {
 
-    private final List<ViewRisque> risques ;
+    private final ArrayList<Risque> risques ;
 
-    public RisqueAdapter(Activity context, List<ViewRisque> risques) {
+    public RisqueAdapter(Activity context, ArrayList<Risque> risques) {
         super(context, 0, risques) ;
         this.risques = risques ;
     }
@@ -67,7 +67,7 @@ public class RisqueAdapter extends ArrayAdapter<ViewRisque> {
 
         //remplir la vue
         viewHolder.titre.setText(getItem(position).getTitre());
-        viewHolder.soustitre.setText(getItem(position).getSousTitre());
+        viewHolder.soustitre.setText(getItem(position).getResume());
         viewHolder.checkbox.setChecked(getItem(position).isSelected());
 
         return convertView;

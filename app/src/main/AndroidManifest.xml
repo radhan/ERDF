@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
+        android:name=".classe.technique.ConnexionControleur"
         android:allowBackup="false"
         android:icon="@drawable/logo_erdf"
         android:label="@string/app_name"
@@ -34,7 +35,16 @@
         <activity android:name=".BaseActivity" />
         <activity android:name=".AccueilActivity" />
         <activity android:name=".ListeFicheActivity" />
-        <activity android:name=".FicheDetailActivity"></activity>
+        <activity android:name=".FicheDetailActivity" />
+        <!--
+             ATTENTION: This was auto-generated to add Google Play services to your project for
+             App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
+        -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <activity android:name=".ListeUtilisateurActivity"></activity>
     </application>
 
 </manifest>
