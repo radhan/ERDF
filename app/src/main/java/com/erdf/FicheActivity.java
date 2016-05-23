@@ -7,7 +7,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -219,12 +218,14 @@ public class FicheActivity extends BaseActivity {
         Chantier leChantier = new Chantier() ;
 
         for(Chantier unChantier : listeChantier) {
+            //Si le chantier existe déjà
             if((unChantier.getNumRue() + " " + unChantier.getRue()).equals(adresse[0]) && unChantier.getVille().equals(adresse[1]) && unChantier.getCodePostal().equals(adresse[2])) {
                 leChantier = unChantier ;
                 break ;
             }
         }
 
+        //Si le chantier n'existe pas
         if(leChantier.getCode() == null) {
             //Récupérer le dernier id
             String dernierId = ChantierDAO.getDernierIdChantier(getApplicationContext()) ;
@@ -236,8 +237,17 @@ public class FicheActivity extends BaseActivity {
             String rue[] = adresse[0].split(" ", 2) ;
 
             leChantier.setCode(dernierId) ;
-            leChantier.setNumRue(rue[0]) ;
-            leChantier.setRue(rue[1]) ;
+
+            //Si le numéro de rue est renseigné
+            if(rue[0].matches(".*\\d.*")){
+                leChantier.setNumRue(rue[0]) ;
+                leChantier.setRue(rue[1]) ;
+            }
+            else {
+                leChantier.setNumRue("0") ;
+                leChantier.setRue(adresse[0]) ;
+            }
+
             leChantier.setLibelle("Bla bla") ;
             leChantier.setVille(adresse[1]) ;
             leChantier.setCodePostal(adresse[2]) ;
