@@ -33,7 +33,7 @@ public class ListeFicheActivity extends BaseActivity implements AdapterView.OnIt
         ButterKnife.inject(this) ;
 
         //On synchronise la bdd interne avec la bdd en ligne
-        FicheDAO.syncGetListeFiche(getApplicationContext()) ;
+        FicheDAO.syncGetListeFiche(this) ;
 
         //On récupère la liste des risques
         getListeFiches() ;
@@ -41,7 +41,7 @@ public class ListeFicheActivity extends BaseActivity implements AdapterView.OnIt
 
     private void getListeFiches() {
         //On récupère la liste de fiche
-        ArrayList<Fiche> listeFiche = FicheDAO.getListeFiche(getApplicationContext()) ;
+        ArrayList<Fiche> listeFiche = FicheDAO.getListeFiche(this, true) ;
 
         if (!listeFiche.isEmpty()) {
             FicheAdapter adapter = new FicheAdapter(ListeFicheActivity.this, listeFiche);
@@ -51,7 +51,7 @@ public class ListeFicheActivity extends BaseActivity implements AdapterView.OnIt
     }
 
     public void onItemClick(AdapterView parentView, View childView, int position, long id) {
-        ArrayList<Fiche> listeFiche = FicheDAO.getListeFiche(getApplicationContext()) ;
+        ArrayList<Fiche> listeFiche = FicheDAO.getListeFiche(this, true) ;
         Chantier unChantier = listeFiche.get(position).getUnChantier() ;
         Utilisateur unUtilisateur = listeFiche.get(position).getUnUtilisateur() ;
 

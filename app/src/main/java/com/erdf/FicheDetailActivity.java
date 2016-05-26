@@ -51,7 +51,7 @@ public class FicheDetailActivity extends BaseActivity {
             lesRisques.add(unRisque);
         }
 
-        if(lesRisques != null && !lesRisques.isEmpty()) {
+        if(!lesRisques.isEmpty()) {
             for (Risque unRisque : lesRisques) {
                 Log.i("FicheDetail", unRisque.getTitre());
             }
@@ -65,12 +65,5 @@ public class FicheDetailActivity extends BaseActivity {
             listviewRisque.setAdapter(adapter);
         }
     }
-
-
-
-
-
-
-
 
 }

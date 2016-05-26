@@ -37,18 +37,18 @@ public class FicheDAO {
     private FicheDAO() {
     }
 
-    public static ArrayList<Fiche> getListeFiche(Context unContext) {
+    public static ArrayList<Fiche> getListeFiche(Context unContext, boolean risques) {
         // SQLite database handler
         db = new DatabaseHelper(unContext) ;
 
-        return db.getAllFiches() ;
+        return db.getAllFiches(risques) ;
     }
 
-    public static Fiche getUneFiche(Context unContext, String code) {
+    public static Fiche getUneFiche(Context unContext, String code, boolean risques) {
         // SQLite database handler
         db = new DatabaseHelper(unContext) ;
 
-        return db.getUneFiche(code) ;
+        return db.getUneFiche(code, risques) ;
     }
 
     public static void setUneFiche(final Context pContext, final Fiche uneFiche, boolean online) {

@@ -47,12 +47,12 @@ public class LoginActivity extends Activity {
         ButterKnife.inject(this);
 
         //On synchronise la bdd interne avec la bdd en ligne
-        FicheDAO.syncGetListeFiche(getApplicationContext());
-        RisqueDAO.syncGetListeRisque(getApplicationContext());
-        ChantierDAO.syncGetListeChantier(getApplicationContext());
-        UtilisateurDAO.syncGetListeUtilisateur(getApplicationContext());
-        FonctionDAO.syncGetListeFonction(getApplicationContext());
-        FicheRisqueDAO.getListeFicheRisque(getApplicationContext()) ;
+        FonctionDAO.syncGetListeFonction(this);
+        UtilisateurDAO.syncGetListeUtilisateur(this);
+        ChantierDAO.syncGetListeChantier(this);
+        RisqueDAO.syncGetListeRisque(this);
+        FicheDAO.syncGetListeFiche(this);
+        FicheRisqueDAO.syncGetListeFicheRisque(this) ;
 
         loginButton.setOnClickListener(new View.OnClickListener() {
 
@@ -91,14 +91,16 @@ public class LoginActivity extends Activity {
         if (user.isEmpty()) {
             userText.setError("Entrer un nom d'utilisateur valide");
             valid = false;
-        } else {
+        }
+        else {
             userText.setError(null);
         }
 
         if (password.isEmpty() || password.length() < 4) {
             passwordText.setError("Entrer un mot de passe ayant au moins 4 caractères alphanumériques");
             valid = false;
-        } else {
+        }
+        else {
             passwordText.setError(null);
         }
 

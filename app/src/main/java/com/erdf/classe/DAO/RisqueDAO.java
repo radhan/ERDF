@@ -28,18 +28,18 @@ public class RisqueDAO {
 
     }
 
-    public static ArrayList<Risque> getListeRisque(Context unContext) {
+    public static ArrayList<Risque> getListeRisque(Context unContext, boolean fiches) {
         // SQLite database handler
         db = new DatabaseHelper(unContext) ;
 
-        return db.getAllRisques() ;
+        return db.getAllRisques(fiches) ;
     }
 
-    public static Risque getUnRisque(Context unContext, String code) {
+    public static Risque getUnRisque(Context unContext, String code, boolean fiches) {
         // SQLite database handler
         db = new DatabaseHelper(unContext) ;
 
-        return db.getUnRisque(code) ;
+        return db.getUnRisque(code, fiches) ;
     }
 
     public static void setUnRisque(Context unContext, Risque unRisque) {
