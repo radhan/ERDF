@@ -22,12 +22,12 @@ import butterknife.InjectView;
 
 public class ListeFicheActivity extends BaseActivity implements AdapterView.OnItemClickListener {
 
-    @InjectView(R.id.listFiche) ListView listviewFiches ;
+    @InjectView(R.id.listFiche)     ListView listviewFiches ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_liste_fiche);
+        super.onCreate(savedInstanceState) ;
+        setContentView(R.layout.activity_liste_fiche) ;
 
         //NE PAS OUBLIER SI ON UTILISE ButterKnife
         ButterKnife.inject(this) ;
@@ -44,48 +44,48 @@ public class ListeFicheActivity extends BaseActivity implements AdapterView.OnIt
         ArrayList<Fiche> listeFiche = FicheDAO.getListeFiche(this, true) ;
 
         if (!listeFiche.isEmpty()) {
-            FicheAdapter adapter = new FicheAdapter(ListeFicheActivity.this, listeFiche);
-            listviewFiches.setAdapter(adapter);
-            listviewFiches.setOnItemClickListener(ListeFicheActivity.this);
+            FicheAdapter adapter = new FicheAdapter(ListeFicheActivity.this, listeFiche) ;
+            listviewFiches.setAdapter(adapter) ;
+            listviewFiches.setOnItemClickListener(ListeFicheActivity.this) ;
         }
     }
 
     public void onItemClick(AdapterView parentView, View childView, int position, long id) {
-        ArrayList<Fiche> listeFiche = FicheDAO.getListeFiche(this, true) ;
-        Chantier unChantier = listeFiche.get(position).getUnChantier() ;
+        ArrayList<Fiche> listeFiche = FicheDAO.getListeFiche(this, true)        ;
+        Chantier unChantier = listeFiche.get(position).getUnChantier()          ;
         Utilisateur unUtilisateur = listeFiche.get(position).getUnUtilisateur() ;
 
         //On créé un objet Bundle, c'est ce qui va nous permetre d'envoyer des données à l'autre Activity
-        Bundle objetBdl = new Bundle();
+        Bundle objetBdl = new Bundle() ;
 
         String adresse = unChantier.getNumRue() + " " + unChantier.getRue() + ", " + unChantier.getVille() + ", " + unChantier.getCodePostal() ;
         String technicien = unUtilisateur.getNom() + " " + unUtilisateur.getPrenom() ;
 
-        ArrayList<Risque> listeRisque = listeFiche.get(position).getListeRisque();
-        ArrayList<String> titre = new ArrayList<>() ;
-        ArrayList<String> soustitre =  new ArrayList<>();
+        ArrayList<Risque> listeRisque = listeFiche.get(position).getListeRisque()   ;
+        ArrayList<String> titre = new ArrayList<>()                                 ;
+        ArrayList<String> soustitre =  new ArrayList<>()                            ;
 
         for(Risque unRisque : listeRisque) {
-            titre.add(unRisque.getTitre());
-            soustitre.add(unRisque.getResume());
+            titre.add(unRisque.getTitre())      ;
+            soustitre.add(unRisque.getResume()) ;
         }
 
         Log.i("ListeFiche", "Taille : " + listeRisque.size()) ;
 
         //Cela fonctionne plus ou moins comme une HashMap, on entre une clef et sa valeur en face
-        objetBdl.putString("dateFiche", listeFiche.get(position).getDate());
-        objetBdl.putString("adresseFiche", adresse);
-        objetBdl.putString("technicienFiche", technicien);
-        objetBdl.putStringArrayList("titre", titre);
-        objetBdl.putStringArrayList("soustitre", soustitre);
+        objetBdl.putString("dateFiche", listeFiche.get(position).getDate()) ;
+        objetBdl.putString("adresseFiche", adresse)                         ;
+        objetBdl.putString("technicienFiche", technicien)                   ;
+        objetBdl.putStringArrayList("titre", titre)                         ;
+        objetBdl.putStringArrayList("soustitre", soustitre)                 ;
 
         //On créé l'Intent qui va nous permettre d'afficher l'autre Activity
-        Intent intent = new Intent(ListeFicheActivity.this, FicheDetailActivity.class);
+        Intent intent = new Intent(ListeFicheActivity.this, FicheDetailActivity.class) ;
 
         //On affecte à l'Intent le Bundle que l'on a créé
-        intent.putExtras(objetBdl);
+        intent.putExtras(objetBdl) ;
 
         //On démarre l'autre Activity
-        startActivity(intent);
+        startActivity(intent) ;
     }
 }

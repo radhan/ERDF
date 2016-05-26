@@ -29,87 +29,85 @@ import java.util.Map;
  * Created by Radhan on 24/04/2016.
  */
 public class FicheDAO {
-    private static String TAG = FicheDAO.class.getSimpleName() ;
-    private static DatabaseHelper db ;
-    static String urlAllFiches = "http://comment-telecharger.eu/ERDF/getAllFiches.php" ;
-    static String urlSetFiche =  "http://comment-telecharger.eu/ERDF/setUneFiche.php" ;
+    private static String TAG = FicheDAO.class.getSimpleName()                          ;
+    private static DatabaseHelper db                                                    ;
+    static String urlAllFiches = "http://comment-telecharger.eu/ERDF/getAllFiches.php"  ;
+    static String urlSetFiche =  "http://comment-telecharger.eu/ERDF/setUneFiche.php"   ;
 
     private FicheDAO() {
     }
 
-    public static ArrayList<Fiche> getListeFiche(Context unContext, boolean risques) {
-        // SQLite database handler
-        db = new DatabaseHelper(unContext) ;
-
-        return db.getAllFiches(risques) ;
+    public static ArrayList<Fiche> getListeFiche(Context pContext, boolean pRisques) {
+        db = new DatabaseHelper(pContext)   ;
+        return db.getAllFiches(pRisques)    ;
     }
 
-    public static Fiche getUneFiche(Context unContext, String code, boolean risques) {
-        // SQLite database handler
-        db = new DatabaseHelper(unContext) ;
-
-        return db.getUneFiche(code, risques) ;
+    public static Fiche getFiche(Context pContext, String pCode, boolean pRisques) {
+        db = new DatabaseHelper(pContext)   ;
+        return db.getFiche(pCode, pRisques) ;
     }
 
-    public static void setUneFiche(final Context pContext, final Fiche uneFiche, boolean online) {
+    public static void addFiche(final Context pContext, final Fiche pFiche, boolean pOnline) {
 
-        if(online) {
+        if(pOnline) {
             StringRequest stringRequest = new StringRequest(Request.Method.POST, urlSetFiche, new Response.Listener<String>() {
 
                 @Override
                 public void onResponse(String response) {
 
-                    Log.d(TAG, response);
+                    Log.d(TAG, response) ;
+
                     try {
 
-                        JSONObject oJson = new JSONObject(response);
+                        JSONObject oJson = new JSONObject(response) ;
+
                         if (oJson.getString("RESULTAT").equals("OK")) {
-                            Toast.makeText(pContext, "Ajout d'une fiche réussi", Toast.LENGTH_SHORT).show();
-                            syncGetListeFiche(pContext);
-                        } else {
-                            Toast.makeText(pContext, "Erreur lors de l'ajout", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(pContext, "Ajout d'une fiche réussi", Toast.LENGTH_SHORT).show() ;
+                            syncGetListeFiche(pContext) ;
                         }
+                        else {
+                            Toast.makeText(pContext, "Erreur lors de l'ajout", Toast.LENGTH_SHORT).show() ;
+                        }
+
                     } catch (JSONException e) {
-                        e.printStackTrace();
+                        e.printStackTrace() ;
                     }
                 }
             }, new Response.ErrorListener() {
 
                 @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(pContext, error.toString(), Toast.LENGTH_SHORT).show();
+                public void onErrorResponse(VolleyError pError) {
+                    Toast.makeText(pContext, "Erreur lors de l'ajout d'une fiche.\n" + pError.toString(), Toast.LENGTH_SHORT).show() ;
                 }
             }) {
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
 
                     //On crééer une chaine de caractère avec les risques
-                    String risques = "";
-                    for (int i = 0; i < uneFiche.getListeRisque().size(); i++) {
+                    String risques = "" ;
+                    for (int i = 0; i < pFiche.getListeRisque().size(); i++) {
                         if (!risques.isEmpty()) {
-                            risques = risques + "|";
+                            risques = risques + "|" ;
                         }
-                        risques = risques + uneFiche.getListeRisque().get(i).getId();
+                        risques = risques + pFiche.getListeRisque().get(i).getId() ;
                     }
 
-                    Map<String, String> params = new HashMap<>();
-                    params.put("chantier", uneFiche.getUnChantier().getCode());
-                    params.put("utilisateur", uneFiche.getUnUtilisateur().getId());
-                    params.put("date", uneFiche.getDate());
-                    params.put("risque", risques);
+                    Map<String, String> params = new HashMap<>()                ;
+                    params.put("chantier", pFiche.getUnChantier().getCode())    ;
+                    params.put("utilisateur", pFiche.getUnUtilisateur().getId());
+                    params.put("date", pFiche.getDate())                        ;
+                    params.put("risque", risques)                               ;
 
-                    return params;
+                    return params ;
                 }
             };
 
             // On ajoute la requête à la file d'attente
-            ConnexionControleur.getInstance().addToRequestQueue(stringRequest);
+            ConnexionControleur.getInstance().addToRequestQueue(stringRequest) ;
         }
         else {
-            // SQLite database handler
-            db = new DatabaseHelper(pContext) ;
-
-            db.setUneFiche(uneFiche) ;
+            db = new DatabaseHelper(pContext)   ;
+            db.addFiche(pFiche)                 ;
         }
     }
 
@@ -119,7 +117,7 @@ public class FicheDAO {
 
             @Override
             public void onResponse(JSONObject response) {
-                Log.d(TAG, response.toString());
+                Log.d(TAG, response.toString()) ;
 
                 try {
 
@@ -156,24 +154,24 @@ public class FicheDAO {
                         //On déclare l'objet Fiche
                         boolean supprimerFiche = oFiche.getInt("fic_supprimer") > 0 ;
                         Fiche uneFiche = new Fiche(oFiche.getString("fic_id"), unChantier, unUtilisateur, oFiche.getString("fic_date"), supprimerFiche) ;
-                        uneFiche.setListeRisque(listeRisque);
+                        uneFiche.setListeRisque(listeRisque) ;
 
-                        setUneFiche(pContext, uneFiche, false) ;
+                        addFiche(pContext, uneFiche, false) ;
                     }
 
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    e.printStackTrace() ;
                 }
             }
         }, new Response.ErrorListener() {
 
             @Override
-            public void onErrorResponse(VolleyError error) {
-
+            public void onErrorResponse(VolleyError pError) {
+                Toast.makeText(pContext, "Erreur de Synchronisation des fiche.\n" + pError.toString(), Toast.LENGTH_SHORT).show() ;
             }
         });
 
         // On ajoute la requête à la file d'attente
-        ConnexionControleur.getInstance().addToRequestQueue(jsonObjReq);
+        ConnexionControleur.getInstance().addToRequestQueue(jsonObjReq) ;
     }
 }

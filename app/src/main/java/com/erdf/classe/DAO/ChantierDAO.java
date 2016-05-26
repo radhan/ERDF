@@ -25,99 +25,95 @@ import java.util.Map;
  * Created by Radhan on 19/04/2016.
  */
 public class ChantierDAO {
-    private static String TAG = ChantierDAO.class.getSimpleName() ;
-    private static DatabaseHelper db ;
-    static String urlAllChantiers = "http://comment-telecharger.eu/ERDF/getAllChantiers.php" ;
-    static String urlSetChantier = "http://comment-telecharger.eu/ERDF/setUnChantier.php" ;
+    private static String TAG = ChantierDAO.class.getSimpleName()                               ;
+    private static DatabaseHelper db                                                            ;
+    static String urlAllChantiers = "http://comment-telecharger.eu/ERDF/getAllChantiers.php"    ;
+    static String urlSetChantier = "http://comment-telecharger.eu/ERDF/setUnChantier.php"       ;
 
     private ChantierDAO() {
 
     }
 
-   public static ArrayList<Chantier> getListeChantier(Context unContext) {
-        // SQLite database handler
-        db = new DatabaseHelper(unContext) ;
-
-        return db.getAllChantiers() ;
+   public static ArrayList<Chantier> getListeChantier(Context pContext) {
+        db = new DatabaseHelper(pContext)   ;
+        return db.getAllChantiers()         ;
     }
 
-    public static Chantier getUnChantier(Context unContext, String code) {
-        // SQLite database handler
-        db = new DatabaseHelper(unContext) ;
-
-        return db.getUnChantier(code) ;
+    public static Chantier getChantier(Context pContext, String pCode) {
+        db = new DatabaseHelper(pContext)   ;
+        return db.getChantier(pCode)        ;
     }
 
-    public static String getDernierIdChantier(Context unContext) {
-        // SQLite database handler
-        db = new DatabaseHelper(unContext) ;
-
-        return db.getDernierIdChantier() ;
+    public static String getDernierIdChantier(Context pContext) {
+        db = new DatabaseHelper(pContext)   ;
+        return db.getDernierIdChantier()    ;
     }
 
-    public static void setUnChantier(final Context pContext, final Chantier unChantier, boolean online) {
+    public static void addChantier(final Context pContext, final Chantier pChantier, boolean pOnline) {
 
         //Si c'est en ligne alors on ajoute à MySql
-        if(online) {
+        if(pOnline) {
             StringRequest stringRequest = new StringRequest(Request.Method.POST, urlSetChantier, new Response.Listener<String>() {
 
                 @Override
                 public void onResponse(String response) {
 
-                    Log.d(TAG, response);
+                    Log.d(TAG, response) ;
+
                     try {
 
-                        JSONObject oJson = new JSONObject(response);
+                        JSONObject oJson = new JSONObject(response) ;
+
                         if (oJson.getString("RESULTAT").equals("OK")) {
-                            Toast.makeText(pContext, "Ajout d'un chantier réussi", Toast.LENGTH_SHORT).show();
-                            syncGetListeChantier(pContext);
-                        } else {
-                            Toast.makeText(pContext, "Erreur lors de l'ajout", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(pContext, "Ajout d'un chantier réussi", Toast.LENGTH_SHORT).show()   ;
+                            syncGetListeChantier(pContext)                                                      ;
                         }
+                        else {
+                            Toast.makeText(pContext, "Erreur lors de l'ajout", Toast.LENGTH_SHORT).show()       ;
+                        }
+
                     } catch (JSONException e) {
-                        e.printStackTrace();
+                        e.printStackTrace() ;
                     }
                 }
             }, new Response.ErrorListener() {
 
                 @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(pContext, error.toString(), Toast.LENGTH_SHORT).show();
+                public void onErrorResponse(VolleyError pError) {
+                    Toast.makeText(pContext, "Erreur lors de l'ajout d'un chantier.\n" + pError.toString(), Toast.LENGTH_SHORT).show() ;
                 }
             }) {
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
 
-                    Map<String, String> params = new HashMap<>();
-                    params.put("code", unChantier.getCode());
-                    params.put("libelle", unChantier.getLibelle());
-                    params.put("numRue", unChantier.getNumRue());
-                    params.put("rue", unChantier.getRue());
-                    params.put("ville", unChantier.getVille());
-                    params.put("codePostal", unChantier.getCodePostal());
+                    Map<String, String> params = new HashMap<>()        ;
+                    params.put("code", pChantier.getCode())             ;
+                    params.put("libelle", pChantier.getLibelle())       ;
+                    params.put("numRue", pChantier.getNumRue())         ;
+                    params.put("rue", pChantier.getRue())               ;
+                    params.put("ville", pChantier.getVille())           ;
+                    params.put("codePostal", pChantier.getCodePostal()) ;
 
-                    return params;
+                    return params ;
                 }
             };
 
             // On ajoute la requête à la file d'attente
-            ConnexionControleur.getInstance().addToRequestQueue(stringRequest);
+            ConnexionControleur.getInstance().addToRequestQueue(stringRequest) ;
         }
         else {
-            // SQLite database handler
-            db = new DatabaseHelper(pContext) ;
-
-            db.setUnChantier(unChantier) ;
+            db = new DatabaseHelper(pContext)   ;
+            db.addChantier(pChantier)           ;
         }
     }
 
-    public static void syncGetListeChantier(final Context unContext) {
+    public static void syncGetListeChantier(final Context pContext) {
 
         final JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, urlAllChantiers, null, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
-                Log.d(TAG, response.toString());
+                Log.d(TAG, response.toString()) ;
 
                 try {
 
@@ -126,22 +122,22 @@ public class ChantierDAO {
                         JSONObject oChantier = response.getJSONObject(Integer.toString(i)) ;
                         boolean supprimer = oChantier.getInt("cha_supprimer") > 0 ;
                         Chantier unChantier = new Chantier(oChantier.getString("cha_code"), oChantier.getString("cha_libelle"), oChantier.getString("cha_nrue"), oChantier.getString("cha_rue"), oChantier.getString("cha_ville"), oChantier.getString("cha_codepo"), supprimer) ;
-                        setUnChantier(unContext, unChantier, false) ;
+                        addChantier(pContext, unChantier, false) ;
                     }
 
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    e.printStackTrace() ;
                 }
             }
         }, new Response.ErrorListener() {
 
             @Override
-            public void onErrorResponse(VolleyError error) {
-
+            public void onErrorResponse(VolleyError pError) {
+                Toast.makeText(pContext, "Erreur de Synchronisation des chantiers.\n" + pError.toString(), Toast.LENGTH_SHORT).show() ;
             }
         });
 
         // On ajoute la requête à la file d'attente
-        ConnexionControleur.getInstance().addToRequestQueue(jsonObjReq);
+        ConnexionControleur.getInstance().addToRequestQueue(jsonObjReq) ;
     }
 }

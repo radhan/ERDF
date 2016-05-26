@@ -16,12 +16,12 @@ import butterknife.InjectView;
 
 public class ListeUtilisateurActivity extends BaseActivity implements AdapterView.OnItemClickListener  {
 
-    @InjectView(R.id.listeUti) ListView listviewUtilisateurs ;
+    @InjectView(R.id.listeUti)      ListView listviewUtilisateurs ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_liste_utilisateur);
+        super.onCreate(savedInstanceState) ;
+        setContentView(R.layout.activity_liste_utilisateur) ;
 
         //NE PAS OUBLIER SI ON UTILISE ButterKnife
         ButterKnife.inject(this) ;
@@ -36,12 +36,12 @@ public class ListeUtilisateurActivity extends BaseActivity implements AdapterVie
 
     private void getListeUtilisateurs() {
         //On récupère la liste des utilisateurs
-        ArrayList<Utilisateur> listeUtilisateur = UtilisateurDAO.getListeUtilisateur(getApplicationContext()) ;
+        ArrayList<Utilisateur> listeUtilisateur = UtilisateurDAO.getListeUtilisateur(this) ;
 
         if (!listeUtilisateur.isEmpty()) {
-            UtilisateurAdapter adapter = new UtilisateurAdapter(ListeUtilisateurActivity.this, listeUtilisateur);
-            listviewUtilisateurs.setAdapter(adapter);
-            listviewUtilisateurs.setOnItemClickListener(ListeUtilisateurActivity.this);
+            UtilisateurAdapter adapter = new UtilisateurAdapter(ListeUtilisateurActivity.this, listeUtilisateur) ;
+            listviewUtilisateurs.setAdapter(adapter) ;
+            listviewUtilisateurs.setOnItemClickListener(ListeUtilisateurActivity.this) ;
         }
     }
 }

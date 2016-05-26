@@ -53,8 +53,8 @@ public class FicheActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fiche);
+        super.onCreate(savedInstanceState)      ;
+        setContentView(R.layout.activity_fiche) ;
 
         //NE PAS OUBLIER SI ON UTILISE ButterKnife
         ButterKnife.inject(this) ;
@@ -66,7 +66,7 @@ public class FicheActivity extends BaseActivity {
         btnAdresse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                adresseText.setEnabled(!adresseText.isEnabled());
+                adresseText.setEnabled(!adresseText.isEnabled()) ;
             }
         });
 
@@ -76,7 +76,7 @@ public class FicheActivity extends BaseActivity {
             public void onClick(View v) {
                 setFiche();
             }
-        });
+        }) ;
 
         //On récupère la liste des risques et des chantiers
         getRisques() ;
@@ -85,41 +85,42 @@ public class FicheActivity extends BaseActivity {
         getDate() ;
 
         //On regarde si on dispose d'une connexion internet
-        InternetDetection inter = new InternetDetection(getApplicationContext());
-        Boolean isInternetPresent = inter.isConnectingToInternet(); // true or false
+        InternetDetection inter = new InternetDetection(this)       ;
+        Boolean isInternetPresent = inter.isConnectingToInternet()  ; // true or false
 
         //S'il dispose d'une connexion internet
         if(isInternetPresent) {
             //Si le GPS est activé, alors on va chercher la localisation
-            final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE) ;
+
             if(manager.isProviderEnabled( LocationManager.GPS_PROVIDER)) {
                 getLocalisation() ;
-                adresseText.setEnabled(false);
+                adresseText.setEnabled(false) ;
             }
             else {
-                adresseText.setEnabled(true);
+                adresseText.setEnabled(true) ;
             }
         }
         else {
-            adresseText.setEnabled(true);
+            adresseText.setEnabled(true) ;
         }
 
     }
 
     //Méthode qui récupère la date
     private void getDate() {
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        Date date = new Date();
-        dateText.setText(dateFormat.format(date));
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss") ;
+        Date date = new Date() ;
+        dateText.setText(dateFormat.format(date)) ;
     }
 
     //Méthode qui récupère la localisation
     private void getLocalisation() {
-        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE) ;
+        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER) ;
 
         if(location != null) {
-            getAdresse(location);
+            getAdresse(location) ;
         }
 
         final LocationListener locationListener = new LocationListener() {
@@ -137,40 +138,43 @@ public class FicheActivity extends BaseActivity {
             }
         };
 
-        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListener);
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListener) ;
     }
 
     //Méthode permettant d'avoir l'adresse
     private void getAdresse(Location location) {
-        double latitude = location.getLatitude();
-        double longitude = location.getLongitude();
-        Geocoder maLocalisation = new Geocoder(getApplicationContext(), Locale.getDefault());
+
+        double latitude = location.getLatitude()    ;
+        double longitude = location.getLongitude()  ;
+        Geocoder maLocalisation = new Geocoder(getApplicationContext(), Locale.getDefault()) ;
         List<Address> localisation ;
+
         try {
             localisation = maLocalisation.getFromLocation(latitude, longitude, 1);
             if(localisation.size() == 1) {
                 adresseText.setText(localisation.get(0).getAddressLine(0) + ", " + localisation.get(0).getLocality() + ", " + localisation.get(0).getPostalCode()) ;
             }
-        } catch (IOException e1) {
-            e1.printStackTrace();
+        }
+        catch (IOException e1) {
+            e1.printStackTrace() ;
         }
     }
 
     //On récupère la liste des risques
     public void getRisques() {
 
-        final ArrayList<Risque> listeRisque = RisqueDAO.getListeRisque(getApplicationContext()) ;
+        final ArrayList<Risque> listeRisque = RisqueDAO.getListeRisque(this, false) ;
 
         if (!listeRisque.isEmpty()) {
-            listviewRisque = (ListView) findViewById(R.id.listView);
-            RisqueAdapter adapter = new RisqueAdapter(FicheActivity.this, listeRisque);
-            listviewRisque.setAdapter(adapter);
+            listviewRisque = (ListView) findViewById(R.id.listView) ;
+            RisqueAdapter adapter = new RisqueAdapter(FicheActivity.this, listeRisque) ;
+            listviewRisque.setAdapter(adapter) ;
 
             listviewRisque.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView parent, View view, int position, long id) {
                     if (view != null) {
-                        CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
-                        checkBox.setChecked(!checkBox.isChecked());
+                        CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox) ;
+                        checkBox.setChecked(!checkBox.isChecked()) ;
 
                         Risque unRisque = new Risque(listeRisque.get(position).getId(), listeRisque.get(position).getTitre(), listeRisque.get(position).getResume(), listeRisque.get(position).isSupprimer()) ;
 
@@ -187,23 +191,25 @@ public class FicheActivity extends BaseActivity {
 
     public void setFiche() {
 
-        SessionManager session = new SessionManager(getApplicationContext()) ;
+        SessionManager session = new SessionManager(this) ;
         String idUtilisateur = session.getIdUtilisateur() ;
 
-        SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        Date inputDate = null;
+        SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss") ;
+        Date inputDate = null ;
+
         try {
-            inputDate = fmt.parse(dateText.getText().toString());
-        } catch (ParseException e) {
-            e.printStackTrace();
+            inputDate = fmt.parse(dateText.getText().toString()) ;
+        }
+        catch (ParseException e) {
+            e.printStackTrace() ;
         }
 
         // Create the MySQL datetime string
-        fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String dateString = fmt.format(inputDate);
+        fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss") ;
+        String dateString = fmt.format(inputDate) ;
 
         //On récupère la liste des chantiers
-        ArrayList<Chantier> listeChantier = ChantierDAO.getListeChantier(getApplicationContext()) ;
+        ArrayList<Chantier> listeChantier = ChantierDAO.getListeChantier(this) ;
 
         //On récupère l'adresse de la géolocalisation dans un tableau
         String adresse[] = adresseText.getText().toString().split(",") ;
@@ -227,10 +233,12 @@ public class FicheActivity extends BaseActivity {
 
         //Si le chantier n'existe pas
         if(leChantier.getCode() == null) {
+
             //Récupérer le dernier id
-            String dernierId = ChantierDAO.getDernierIdChantier(getApplicationContext()) ;
+            String dernierId = ChantierDAO.getDernierIdChantier(this) ;
+
             if(dernierId != null && !dernierId.isEmpty()) {
-                dernierId = String.valueOf(Integer.parseInt(dernierId) + 1);
+                dernierId = String.valueOf(Integer.parseInt(dernierId) + 1) ;
             }
 
             //On divise le numéro de rue et la rue
@@ -240,31 +248,31 @@ public class FicheActivity extends BaseActivity {
 
             //Si le numéro de rue est renseigné
             if(rue[0].matches(".*\\d.*")){
-                leChantier.setNumRue(rue[0]) ;
-                leChantier.setRue(rue[1]) ;
+                leChantier.setNumRue(rue[0])    ;
+                leChantier.setRue(rue[1])       ;
             }
             else {
-                leChantier.setNumRue("0") ;
-                leChantier.setRue(adresse[0]) ;
+                leChantier.setNumRue("0")       ;
+                leChantier.setRue(adresse[0])   ;
             }
 
-            leChantier.setLibelle("Bla bla") ;
-            leChantier.setVille(adresse[1]) ;
-            leChantier.setCodePostal(adresse[2]) ;
-            leChantier.setSupprimer(false) ;
+            leChantier.setLibelle("Bla bla")        ;
+            leChantier.setVille(adresse[1])         ;
+            leChantier.setCodePostal(adresse[2])    ;
+            leChantier.setSupprimer(false)          ;
 
-            ChantierDAO.setUnChantier(getApplicationContext(), leChantier, true) ;
+            ChantierDAO.addChantier(this, leChantier, true) ;
         }
 
-        Utilisateur unUtilisateur = new Utilisateur() ;
-        unUtilisateur.setId(idUtilisateur) ;
+        Utilisateur unUtilisateur = new Utilisateur()   ;
+        unUtilisateur.setId(idUtilisateur)              ;
 
-        uneFiche.setUnChantier(leChantier) ;
-        uneFiche.setUnUtilisateur(unUtilisateur) ;
-        uneFiche.setDate(dateString) ;
-        uneFiche.setListeRisque(listeRisques);
+        uneFiche.setUnChantier(leChantier)          ;
+        uneFiche.setUnUtilisateur(unUtilisateur)    ;
+        uneFiche.setDate(dateString)                ;
+        uneFiche.setListeRisque(listeRisques)       ;
 
-        FicheDAO.setUneFiche(getApplicationContext(), uneFiche, true);
+        FicheDAO.addFiche(this, uneFiche, true) ;
     }
 
 }

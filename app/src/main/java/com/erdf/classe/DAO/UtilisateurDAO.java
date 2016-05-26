@@ -26,32 +26,28 @@ import java.util.Map;
  * Created by Radhan on 19/04/2016.
  */
 public class UtilisateurDAO {
-    private static String TAG = UtilisateurDAO.class.getSimpleName() ;
-    private static DatabaseHelper db ;
-    static String urlAllUtilisateurs = "http://comment-telecharger.eu/ERDF/getAllUtilisateurs.php" ;
-    static String urlSetUtilisateur =  "http://comment-telecharger.eu/ERDF/setUnUtilisateur.php" ;
+    private static String TAG = UtilisateurDAO.class.getSimpleName()                                ;
+    private static DatabaseHelper db                                                                ;
+    static String urlAllUtilisateurs = "http://comment-telecharger.eu/ERDF/getAllUtilisateurs.php"  ;
+    static String urlSetUtilisateur =  "http://comment-telecharger.eu/ERDF/setUnUtilisateur.php"    ;
 
     private UtilisateurDAO() {
 
     }
 
-    public static ArrayList<Utilisateur> getListeUtilisateur(Context unContext) {
-        // SQLite database handler
-        db = new DatabaseHelper(unContext) ;
-
-        return db.getAllUtilisateurs() ;
+    public static ArrayList<Utilisateur> getListeUtilisateur(Context pContext) {
+        db = new DatabaseHelper(pContext)   ;
+        return db.getAllUtilisateurs()      ;
     }
 
-    public static Utilisateur getUnUtilisateur(Context unContext, String code) {
-        // SQLite database handler
-        db = new DatabaseHelper(unContext) ;
-
-        return db.getUnUtilisateur(code) ;
+    public static Utilisateur getUtilisateur(Context pContext, String pCode) {
+        db = new DatabaseHelper(pContext)   ;
+        return db.getUtilisateur(pCode)     ;
     }
 
-    public static void setUnUtilisateur(final Context pContext, final Utilisateur unUtilisateur, boolean online) {
+    public static void addUtilisateur(final Context pContext, final Utilisateur pUtilisateur, boolean pOnline) {
 
-        if(online) {
+        if(pOnline) {
             StringRequest stringRequest = new StringRequest(Request.Method.POST, urlSetUtilisateur, new Response.Listener<String>() {
 
                 @Override
@@ -68,6 +64,7 @@ public class UtilisateurDAO {
                         else {
                             Toast.makeText(pContext, "Erreur lors de l'ajout", Toast.LENGTH_SHORT).show() ;
                         }
+
                     } catch (JSONException e) {
                         e.printStackTrace() ;
                     }
@@ -75,43 +72,41 @@ public class UtilisateurDAO {
             }, new Response.ErrorListener() {
 
                 @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(pContext, error.toString(), Toast.LENGTH_SHORT).show() ;
+                public void onErrorResponse(VolleyError pError) {
+                    Toast.makeText(pContext, "Erreur lors de l'ajout d'un utilisateur.\n" + pError.toString(), Toast.LENGTH_SHORT).show() ;
                 }
             })
             {
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
 
-                    Map<String,String> params = new HashMap<>() ;
-                    params.put("nom", unUtilisateur.getNom()) ;
-                    params.put("prenom", unUtilisateur.getPrenom());
-                    params.put("password", unUtilisateur.getUnCompte().getPassword());
-                    params.put("fonction", unUtilisateur.getUneFonction().getId()) ;
-                    params.put("mail", unUtilisateur.getMail()) ;
+                    Map<String,String> params = new HashMap<>()                         ;
+                    params.put("nom", pUtilisateur.getNom())                            ;
+                    params.put("prenom", pUtilisateur.getPrenom())                      ;
+                    params.put("password", pUtilisateur.getUnCompte().getPassword())    ;
+                    params.put("fonction", pUtilisateur.getUneFonction().getId())       ;
+                    params.put("mail", pUtilisateur.getMail())                          ;
 
-                    return params;
+                    return params ;
                 }
             };
 
             // On ajoute la requête à la file d'attente
-            ConnexionControleur.getInstance().addToRequestQueue(stringRequest);
+            ConnexionControleur.getInstance().addToRequestQueue(stringRequest) ;
         }
         else {
-            // SQLite database handler
-            db = new DatabaseHelper(pContext);
-
-            db.setUnUtilisateur(unUtilisateur);
+            db = new DatabaseHelper(pContext)   ;
+            db.addUtilisateur(pUtilisateur)     ;
         }
     }
 
-    public static void syncGetListeUtilisateur(final Context unContext) {
+    public static void syncGetListeUtilisateur(final Context pContext) {
 
         final JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, urlAllUtilisateurs, null, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
-                Log.d(TAG, response.toString());
+                Log.d(TAG, response.toString()) ;
 
                 try {
 
@@ -125,23 +120,23 @@ public class UtilisateurDAO {
 
                         boolean supprimerUti = oUtilisateur.getInt("use_supprimer") > 0 ;
                         Utilisateur unUtilisateur = new Utilisateur(oUtilisateur.getString("use_id"), oUtilisateur.getString("use_nom"), oUtilisateur.getString("use_prenom"), oUtilisateur.getString("use_mail"), uneFonction, supprimerUti) ;
-                        setUnUtilisateur(unContext, unUtilisateur, false) ;
+                        addUtilisateur(pContext, unUtilisateur, false) ;
                     }
 
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    e.printStackTrace() ;
                 }
             }
         }, new Response.ErrorListener() {
 
             @Override
-            public void onErrorResponse(VolleyError error) {
-
+            public void onErrorResponse(VolleyError pError) {
+                Toast.makeText(pContext, "Erreur de Synchronisation des utilisateurs.\n" + pError.toString(), Toast.LENGTH_SHORT).show() ;
             }
         });
 
         // On ajoute la requête à la file d'attente
-        ConnexionControleur.getInstance().addToRequestQueue(jsonObjReq);
+        ConnexionControleur.getInstance().addToRequestQueue(jsonObjReq) ;
     }
 
 }

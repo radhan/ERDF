@@ -12,18 +12,18 @@ import butterknife.InjectView;
 
 public class AccueilActivity extends BaseActivity {
 
-    @InjectView(R.id.tBienvenue) TextView bienvenueText ;
+    @InjectView(R.id.tBienvenue)    TextView bienvenueText ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_accueil);
+        super.onCreate(savedInstanceState) ;
+        setContentView(R.layout.activity_accueil) ;
 
         //NE PAS OUBLIER SI ON UTILISE ButterKnife
         ButterKnife.inject(this) ;
 
-        SessionManager session = new SessionManager(getApplicationContext()) ;
-        Utilisateur unUtilisateur = UtilisateurDAO.getUnUtilisateur(getApplicationContext(), session.getIdUtilisateur()) ;
+        SessionManager session = new SessionManager(this) ;
+        Utilisateur unUtilisateur = UtilisateurDAO.getUtilisateur(this, session.getIdUtilisateur()) ;
 
         bienvenueText.setText("Bienvenue " + unUtilisateur.getPrenom() + " " + unUtilisateur.getNom() + " !") ;
     }

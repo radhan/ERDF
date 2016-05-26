@@ -26,8 +26,8 @@ public class UserActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user);
+        super.onCreate(savedInstanceState) ;
+        setContentView(R.layout.activity_user) ;
 
         //NE PAS OUBLIER SI ON UTILISE ButterKnife
         ButterKnife.inject(this) ;
@@ -44,31 +44,31 @@ public class UserActivity extends BaseActivity {
     public void setUser() {
 
         //Creation de la fonction de l'utilisateur
-        Fonction uneFonction = new Fonction();
+        Fonction uneFonction = new Fonction() ;
 
         //On verfie le niveau du compte
         if(chxAdmin.isChecked()) {
-            uneFonction.setId("1");
+            uneFonction.setId("1") ;
         }
         else {
-            uneFonction.setId("2");
+            uneFonction.setId("2") ;
         }
 
         // Creation de l'utilisateur
-        Utilisateur user = new Utilisateur();
-        user.setNom(nomText.getText().toString());
-        user.setPrenom(prenomText.getText().toString());
-        user.setMail(emailText.getText().toString());
-        user.setUneFonction(uneFonction);
+        Utilisateur user = new Utilisateur()            ;
+        user.setNom(nomText.getText().toString())       ;
+        user.setPrenom(prenomText.getText().toString()) ;
+        user.setMail(emailText.getText().toString())    ;
+        user.setUneFonction(uneFonction)                ;
 
         //Creation du compte de l'utilisateur
-        Compte compte = new Compte();
+        Compte compte = new Compte()                    ;
         compte.setPassword(mdpText.getText().toString());
 
         //Insert de compte dans l'utilisateur
-        user.setUnCompte(compte);
+        user.setUnCompte(compte)                        ;
 
-        UtilisateurDAO.setUnUtilisateur(getApplicationContext(), user, true);
+        UtilisateurDAO.addUtilisateur(this, user, true) ;
     }
 
 }

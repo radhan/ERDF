@@ -2,6 +2,7 @@ package com.erdf.classe.DAO;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -20,43 +21,36 @@ import java.util.ArrayList;
  * Created by Radhan on 24/04/2016.
  */
 public class RisqueDAO {
-    private static String TAG = RisqueDAO.class.getSimpleName() ;
-    private static DatabaseHelper db ;
-    static String urlAllRisques = "http://comment-telecharger.eu/ERDF/getAllRisques.php" ;
+    private static String TAG = RisqueDAO.class.getSimpleName()                             ;
+    private static DatabaseHelper db                                                        ;
+    static String urlAllRisques = "http://comment-telecharger.eu/ERDF/getAllRisques.php"    ;
 
     private RisqueDAO() {
 
     }
 
-    public static ArrayList<Risque> getListeRisque(Context unContext, boolean fiches) {
-        // SQLite database handler
-        db = new DatabaseHelper(unContext) ;
-
-        return db.getAllRisques(fiches) ;
+    public static ArrayList<Risque> getListeRisque(Context pContext, boolean pFiches) {
+        db = new DatabaseHelper(pContext)   ;
+        return db.getAllRisques(pFiches)    ;
     }
 
-    public static Risque getUnRisque(Context unContext, String code, boolean fiches) {
-        // SQLite database handler
-        db = new DatabaseHelper(unContext) ;
-
-        return db.getUnRisque(code, fiches) ;
+    public static Risque getRisque(Context pContext, String pCode, boolean pFiches) {
+        db = new DatabaseHelper(pContext)   ;
+        return db.getRisque(pCode, pFiches) ;
     }
 
-    public static void setUnRisque(Context unContext, Risque unRisque) {
-        // SQLite database handler
-        db = new DatabaseHelper(unContext) ;
-
-        db.setUnRisque(unRisque) ;
+    public static void addRisque(Context pContext, Risque pRisque) {
+        db = new DatabaseHelper(pContext)   ;
+        db.addRisque(pRisque)               ;
     }
 
-    public static void syncGetListeRisque(final Context unContext) {
-
+    public static void syncGetListeRisque(final Context pContext) {
 
         final JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, urlAllRisques, null, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
-                Log.d(TAG, response.toString());
+                Log.d(TAG, response.toString()) ;
 
                 try {
 
@@ -65,23 +59,23 @@ public class RisqueDAO {
                         JSONObject oRisque = response.getJSONObject(Integer.toString(i)) ;
                         boolean supprimer = oRisque.getInt("ris_supprimer") > 0 ;
                         Risque unRisque = new Risque(oRisque.getString("ris_id"), oRisque.getString("ris_titre"), oRisque.getString("ris_resume"), supprimer);
-                        setUnRisque(unContext, unRisque) ;
+                        addRisque(pContext, unRisque) ;
                     }
 
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    e.printStackTrace() ;
                 }
             }
         }, new Response.ErrorListener() {
 
             @Override
-            public void onErrorResponse(VolleyError error) {
-
+            public void onErrorResponse(VolleyError pError) {
+                Toast.makeText(pContext, "Erreur de Synchronisation des risques.\n" + pError.toString(), Toast.LENGTH_SHORT).show() ;
             }
         });
 
         // On ajoute la requête à la file d'attente
-        ConnexionControleur.getInstance().addToRequestQueue(jsonObjReq);
+        ConnexionControleur.getInstance().addToRequestQueue(jsonObjReq) ;
     }
 
 }

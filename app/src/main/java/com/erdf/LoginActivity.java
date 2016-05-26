@@ -24,35 +24,35 @@ import butterknife.InjectView;
 public class LoginActivity extends Activity {
 
 
-    @InjectView(R.id.email) EditText userText;
-    @InjectView(R.id.password) EditText passwordText;
-    @InjectView(R.id.loginButton) Button loginButton;
+    @InjectView(R.id.email)         EditText userText       ;
+    @InjectView(R.id.password)      EditText passwordText   ;
+    @InjectView(R.id.loginButton)   Button loginButton      ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        super.onCreate(savedInstanceState) ;
+        setContentView(R.layout.activity_login) ;
 
         //Préférences de l'application - Utilisateur déjà connecté ou non
-        SessionManager session = new SessionManager(getApplicationContext());
+        SessionManager session = new SessionManager(this) ;
         if(session.isConnecte()) {
-            Intent intent = new Intent(this, AccueilActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            Log.i("LoginActivity", "Connexion - OK");
-            startActivity(intent);
-            finish();
+            Intent intent = new Intent(this, AccueilActivity.class) ;
+            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_CLEAR_TOP) ;
+            Log.i("LoginActivity", "Connexion - OK") ;
+            startActivity(intent) ;
+            finish() ;
         }
 
         //NE PAS OUBLIER SI ON UTILISE ButterKnife
-        ButterKnife.inject(this);
+        ButterKnife.inject(this) ;
 
         //On synchronise la bdd interne avec la bdd en ligne
-        FonctionDAO.syncGetListeFonction(this);
-        UtilisateurDAO.syncGetListeUtilisateur(this);
-        ChantierDAO.syncGetListeChantier(this);
-        RisqueDAO.syncGetListeRisque(this);
-        FicheDAO.syncGetListeFiche(this);
-        FicheRisqueDAO.syncGetListeFicheRisque(this) ;
+        FonctionDAO.syncGetListeFonction(this)          ;
+        UtilisateurDAO.syncGetListeUtilisateur(this)    ;
+        ChantierDAO.syncGetListeChantier(this)          ;
+        RisqueDAO.syncGetListeRisque(this)              ;
+        FicheDAO.syncGetListeFiche(this)                ;
+        FicheRisqueDAO.syncGetListeFicheRisque(this)    ;
 
         loginButton.setOnClickListener(new View.OnClickListener() {
 
@@ -67,13 +67,13 @@ public class LoginActivity extends Activity {
     public void login() {
 
         if (!validate()) {
-            return;
+            return ;
         }
 
-        String user = userText.getText().toString();
-        String password = passwordText.getText().toString();
+        String user = userText.getText().toString()         ;
+        String password = passwordText.getText().toString() ;
 
-        CompteDAO.Connexion(getApplicationContext(), user, password);
+        CompteDAO.Connexion(this, user, password)           ;
     }
 
 
@@ -83,27 +83,27 @@ public class LoginActivity extends Activity {
     }
 
     public boolean validate() {
-        boolean valid = true;
+        boolean valid = true ;
 
-        String user = userText.getText().toString();
-        String password = passwordText.getText().toString();
+        String user = userText.getText().toString()         ;
+        String password = passwordText.getText().toString() ;
 
         if (user.isEmpty()) {
-            userText.setError("Entrer un nom d'utilisateur valide");
-            valid = false;
+            userText.setError("Entrer un nom d'utilisateur valide") ;
+            valid = false ;
         }
         else {
-            userText.setError(null);
+            userText.setError(null) ;
         }
 
         if (password.isEmpty() || password.length() < 4) {
-            passwordText.setError("Entrer un mot de passe ayant au moins 4 caractères alphanumériques");
-            valid = false;
+            passwordText.setError("Entrer un mot de passe ayant au moins 4 caractères alphanumériques") ;
+            valid = false ;
         }
         else {
-            passwordText.setError(null);
+            passwordText.setError(null) ;
         }
 
-        return valid;
+        return valid ;
     }
 }

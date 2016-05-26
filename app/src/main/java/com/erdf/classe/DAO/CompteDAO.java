@@ -1,6 +1,5 @@
 package com.erdf.classe.DAO;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -26,9 +25,9 @@ import java.util.Map;
  * Created by Radhan on 24/04/2016.
  */
 public class CompteDAO {
-    private static String TAG = CompteDAO.class.getSimpleName() ;
-    private static DatabaseHelper db ;
-    static String urlConnexion = "http://comment-telecharger.eu/ERDF/connexion.php" ;
+    private static String TAG = CompteDAO.class.getSimpleName()                         ;
+    //private static DatabaseHelper db ;
+    static String urlConnexion = "http://comment-telecharger.eu/ERDF/connexion.php"     ;
 
     private CompteDAO() {
     }
@@ -41,6 +40,7 @@ public class CompteDAO {
             public void onResponse(String response) {
 
                 Log.d(TAG, response) ;
+
                 try {
 
                     JSONObject oJson = new JSONObject(response) ;
@@ -58,8 +58,8 @@ public class CompteDAO {
         }, new Response.ErrorListener() {
 
             @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.i(TAG, "Erreur Connexion : " + error.toString()) ;
+            public void onErrorResponse(VolleyError pError) {
+                Log.i(TAG, "Erreur Connexion : " + pError.toString()) ;
             }
         })
         {
@@ -67,31 +67,31 @@ public class CompteDAO {
             protected Map<String, String> getParams() throws AuthFailureError {
 
                 Map<String,String> params = new HashMap<>() ;
-                params.put("login", pLogin) ;
-                params.put("password", pPassword) ;
+                params.put("login", pLogin)                 ;
+                params.put("password", pPassword)           ;
 
-                return params;
+                return params ;
             }
         };
 
         // On ajoute la requête à la file d'attente
-        ConnexionControleur.getInstance().addToRequestQueue(stringRequest);
+        ConnexionControleur.getInstance().addToRequestQueue(stringRequest) ;
     }
 
     public static void onLoginSuccess(Context pContext, String pIdUtilisateur) {
-        SessionManager session = new SessionManager(pContext) ;
-        session.setLogin(true);
-        session.setIdUtilisateur(pIdUtilisateur);
+        SessionManager session = new SessionManager(pContext)   ;
+        session.setLogin(true)                                  ;
+        session.setIdUtilisateur(pIdUtilisateur)                ;
 
-        Intent intent = new Intent(pContext, FicheActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        pContext.startActivity(intent);
+        Intent intent = new Intent(pContext, FicheActivity.class) ;
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK) ;
+        pContext.startActivity(intent) ;
         //((Activity)pContext).finish();
 
-        Toast.makeText(pContext, "Vous êtes connecté !", Toast.LENGTH_LONG).show();
+        Toast.makeText(pContext, "Vous êtes connecté !", Toast.LENGTH_LONG).show() ;
     }
 
     public static void onLoginFailed(Context pContext) {
-        Toast.makeText(pContext, "Identifiants incorrect !", Toast.LENGTH_LONG).show();
+        Toast.makeText(pContext, "Identifiants incorrect !", Toast.LENGTH_LONG).show() ;
     }
 }
