@@ -57,6 +57,8 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
         if(uneFonction.getLibelle().equals("Administrateur")) {
             navigationView.getMenu().findItem(R.id.nav_gestion_utilisateur).setVisible(true)    ;
             navigationView.getMenu().findItem(R.id.nav_liste_fiches).setVisible(true)           ;
+            navigationView.getMenu().findItem(R.id.nav_liste_risques).setVisible(true)           ;
+            navigationView.getMenu().findItem(R.id.nav_gestion_risque).setVisible(true)           ;
         }
     }
 
@@ -109,6 +111,14 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
 
         }else if (id == R.id.nav_liste_fiches) {
             startActivity(new Intent(BaseActivity.this, ListeFicheActivity.class)) ;
+            finish() ;
+
+        }else if (id == R.id.nav_liste_risques) {
+            startActivity(new Intent(BaseActivity.this, ListeRisqueActivity.class)) ;
+            finish() ;
+
+        }else if (id == R.id.nav_ajouter_risque) {
+            startActivity(new Intent(BaseActivity.this, RisqueActivity.class)) ;
             finish() ;
 
         } else if (id == R.id.nav_deconnexion) {

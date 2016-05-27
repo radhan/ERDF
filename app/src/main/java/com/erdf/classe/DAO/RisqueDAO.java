@@ -4,10 +4,12 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.erdf.classe.SQLite.DatabaseHelper;
 import com.erdf.classe.metier.Risque;
 import com.erdf.classe.technique.ConnexionControleur;
@@ -16,6 +18,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Radhan on 24/04/2016.
@@ -24,6 +28,7 @@ public class RisqueDAO {
     private static String TAG = RisqueDAO.class.getSimpleName()                             ;
     private static DatabaseHelper db                                                        ;
     static String urlAllRisques = "http://comment-telecharger.eu/ERDF/getAllRisques.php"    ;
+    static String urlSetRisque = "http://comment-telecharger.eu/ERDF/setUnRisque.php"    ;
 
     private RisqueDAO() {
 
@@ -44,9 +49,53 @@ public class RisqueDAO {
         return db.getNbRisque()             ;
     }
 
-    public static void addRisque(Context pContext, Risque pRisque, boolean pOnline) {
+    public static void addRisque(final Context pContext,final Risque pRisque, boolean pOnline) {
         //Si c'est en ligne alors on ajoute à MySql
         if(pOnline) {
+
+
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, urlSetRisque, new Response.Listener<String>() {
+
+                @Override
+                public void onResponse(String response) {
+
+                    Log.d(TAG, response) ;
+                    try {
+
+                        JSONObject oJson = new JSONObject(response) ;
+                        if(oJson.getString("RESULTAT").equals("OK")) {
+                            Toast.makeText(pContext, "Ajout d'un Risque réussi", Toast.LENGTH_SHORT).show() ;
+                            syncGetListeRisque(pContext) ;
+                        }
+                        else {
+                            Toast.makeText(pContext, "Erreur lors de l'ajout", Toast.LENGTH_SHORT).show() ;
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace() ;
+                    }
+                }
+            }, new Response.ErrorListener() {
+
+                @Override
+                public void onErrorResponse(VolleyError pError) {
+                    Toast.makeText(pContext, "Erreur lors de l'ajout d'un risque.\n" + pError.toString(), Toast.LENGTH_SHORT).show() ;
+                }
+            })
+            {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+
+                    Map<String,String> params = new HashMap<>()                         ;
+                    params.put("titre", pRisque.getTitre())                            ;
+                    params.put("sstitre", pRisque.getResume())                      ;
+
+                    return params ;
+                }
+            };
+
+            // On ajoute la requête à la file d'attente
+            ConnexionControleur.getInstance().addToRequestQueue(stringRequest) ;
 
         }
         else {
