@@ -157,7 +157,7 @@ public class FicheDAO {
 
                         //On déclare l'objet chantier
                         boolean supprimerChantier = oFiche.getInt("cha_supprimer") > 0 ;
-                        Chantier unChantier = new Chantier(oFiche.getString("cha_code"), oFiche.getString("cha_libelle"), oFiche.getString("cha_nrue"), oFiche.getString("cha_rue"), oFiche.getString("cha_ville"), oFiche.getString("cha_codepo"), supprimerChantier);
+                        Chantier unChantier = new Chantier(oFiche.getString("cha_code"), oFiche.getString("cha_nrue"), oFiche.getString("cha_rue"), oFiche.getString("cha_ville"), oFiche.getString("cha_codepo"), supprimerChantier);
 
                         //On déclare l'objet fonction
                         boolean supprimerFonction = oFiche.getInt("fon_supprimer") > 0 ;

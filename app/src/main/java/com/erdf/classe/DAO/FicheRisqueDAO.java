@@ -81,6 +81,16 @@ public class FicheRisqueDAO {
         }
     }
 
+    public static void deleteFicheRisqueByFiche(final Context pContext, final FicheRisque pFicheRisque, boolean pOnline) {
+        //Si c'est en ligne alors on ajoute à MySql
+        if(pOnline) {
+
+        } else {
+            db = new DatabaseHelper(pContext)           ;
+            db.deleteFicheRisqueByFiche(pFicheRisque)   ;
+        }
+    }
+
     public static void deleteFicheRisqueByRisque(final Context pContext, final FicheRisque pFicheRisque, boolean pOnline) {
         //Si c'est en ligne alors on ajoute à MySql
         if(pOnline) {

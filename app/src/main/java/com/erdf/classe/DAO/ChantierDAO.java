@@ -93,7 +93,6 @@ public class ChantierDAO {
 
                     Map<String, String> params = new HashMap<>()        ;
                     params.put("code", pChantier.getCode())             ;
-                    params.put("libelle", pChantier.getLibelle())       ;
                     params.put("numRue", pChantier.getNumRue())         ;
                     params.put("rue", pChantier.getRue())               ;
                     params.put("ville", pChantier.getVille())           ;
@@ -150,7 +149,7 @@ public class ChantierDAO {
                     for(int i = 1; i < response.length() + 1; i++) {
                         JSONObject oChantier = response.getJSONObject(Integer.toString(i)) ;
                         boolean supprimer = oChantier.getInt("cha_supprimer") > 0 ;
-                        Chantier unChantier = new Chantier(oChantier.getString("cha_code"), oChantier.getString("cha_libelle"), oChantier.getString("cha_nrue"), oChantier.getString("cha_rue"), oChantier.getString("cha_ville"), oChantier.getString("cha_codepo"), supprimer) ;
+                        Chantier unChantier = new Chantier(oChantier.getString("cha_code"), oChantier.getString("cha_nrue"), oChantier.getString("cha_rue"), oChantier.getString("cha_ville"), oChantier.getString("cha_codepo"), supprimer) ;
                         addChantier(pContext, unChantier, false) ;
                     }
 

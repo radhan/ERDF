@@ -256,7 +256,6 @@ public class FicheActivity extends BaseActivity {
                 leChantier.setRue(adresse[0])   ;
             }
 
-            leChantier.setLibelle("Bla bla")        ;
             leChantier.setVille(adresse[1])         ;
             leChantier.setCodePostal(adresse[2])    ;
             leChantier.setSupprimer(false)          ;

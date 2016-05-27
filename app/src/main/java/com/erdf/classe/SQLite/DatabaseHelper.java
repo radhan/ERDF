@@ -47,7 +47,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // CHANTIER Table - column names
     private static final String KEY_CHANTIER_CODE       = "cha_code"        ;
-    private static final String KEY_CHANTIER_LIBELLE    = "cha_libelle"     ;
     private static final String KEY_CHANTIER_NUMRUE     = "cha_nrue"        ;
     private static final String KEY_CHANTIER_RUE        = "cha_rue"         ;
     private static final String KEY_CHANTIER_VILLE      = "cha_ville"       ;
@@ -95,7 +94,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Chantier table create statement
     private static final String CREATE_TABLE_CHANTIER = "CREATE TABLE " + TABLE_CHANTIER
             + "(" + KEY_CHANTIER_CODE + " VARCHAR(10) PRIMARY KEY, "
-            + KEY_CHANTIER_LIBELLE + " VARCHAR(100), "
             + KEY_CHANTIER_NUMRUE + " VARCHAR(15), "
             + KEY_CHANTIER_RUE + " VARCHAR(100), "
             + KEY_CHANTIER_VILLE + " VARCHAR(60), "
@@ -204,7 +202,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues()                      ;
         values.put(KEY_CHANTIER_CODE, pChantier.getCode())              ;
-        values.put(KEY_CHANTIER_LIBELLE, pChantier.getLibelle())        ;
         values.put(KEY_CHANTIER_NUMRUE, pChantier.getNumRue())          ;
         values.put(KEY_CHANTIER_RUE, pChantier.getRue())                ;
         values.put(KEY_CHANTIER_VILLE, pChantier.getVille())            ;
@@ -224,7 +221,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues()                      ;
         values.put(KEY_CHANTIER_CODE, pChantier.getCode())              ;
-        values.put(KEY_CHANTIER_LIBELLE, pChantier.getLibelle())        ;
         values.put(KEY_CHANTIER_NUMRUE, pChantier.getNumRue())          ;
         values.put(KEY_CHANTIER_RUE, pChantier.getRue())                ;
         values.put(KEY_CHANTIER_VILLE, pChantier.getVille())            ;
@@ -267,7 +263,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             if (cursor.getCount() > 0) {
 
                 unChantier.setCode(cursor.getString(cursor.getColumnIndex(KEY_CHANTIER_CODE)))              ;
-                unChantier.setLibelle(cursor.getString(cursor.getColumnIndex(KEY_CHANTIER_LIBELLE)))        ;
                 unChantier.setNumRue(cursor.getString(cursor.getColumnIndex(KEY_CHANTIER_NUMRUE)))          ;
                 unChantier.setRue(cursor.getString(cursor.getColumnIndex(KEY_CHANTIER_RUE)))                ;
                 unChantier.setVille(cursor.getString(cursor.getColumnIndex(KEY_CHANTIER_VILLE)))            ;
@@ -333,7 +328,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
                 Chantier unChantier = new Chantier() ;
                 unChantier.setCode(cursor.getString(cursor.getColumnIndex(KEY_CHANTIER_CODE)))              ;
-                unChantier.setLibelle(cursor.getString(cursor.getColumnIndex(KEY_CHANTIER_LIBELLE)))        ;
                 unChantier.setNumRue(cursor.getString(cursor.getColumnIndex(KEY_CHANTIER_NUMRUE)))          ;
                 unChantier.setRue(cursor.getString(cursor.getColumnIndex(KEY_CHANTIER_RUE)))                ;
                 unChantier.setVille(cursor.getString(cursor.getColumnIndex(KEY_CHANTIER_VILLE)))            ;

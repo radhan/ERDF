@@ -5,7 +5,6 @@ package com.erdf.classe.metier;
  */
 public class Chantier {
     private String code ;
-    private String libelle ;
     private String numRue ;
     private String rue ;
     private String ville ;
@@ -16,9 +15,8 @@ public class Chantier {
     public Chantier() {
     }
 
-    public Chantier(String code, String libelle, String numRue, String rue, String ville, String codePostal, boolean supprimer) {
+    public Chantier(String code, String numRue, String rue, String ville, String codePostal, boolean supprimer) {
         this.code = code;
-        this.libelle = libelle;
         this.numRue = numRue;
         this.rue = rue;
         this.ville = ville;
@@ -32,14 +30,6 @@ public class Chantier {
 
     public void setCode(String code) {
         this.code = code;
-    }
-
-    public String getLibelle() {
-        return libelle;
-    }
-
-    public void setLibelle(String libelle) {
-        this.libelle = libelle;
     }
 
     public String getNumRue() {
