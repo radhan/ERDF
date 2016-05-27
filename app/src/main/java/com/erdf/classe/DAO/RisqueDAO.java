@@ -39,9 +39,42 @@ public class RisqueDAO {
         return db.getRisque(pCode, pFiches) ;
     }
 
-    public static void addRisque(Context pContext, Risque pRisque) {
+    public static int getNbRisque(Context pContext) {
         db = new DatabaseHelper(pContext)   ;
-        db.addRisque(pRisque)               ;
+        return db.getNbRisque()             ;
+    }
+
+    public static void addRisque(Context pContext, Risque pRisque, boolean pOnline) {
+        //Si c'est en ligne alors on ajoute à MySql
+        if(pOnline) {
+
+        }
+        else {
+            db = new DatabaseHelper(pContext);
+            db.addRisque(pRisque);
+        }
+    }
+
+    public static void updateRisque(final Context pContext, final Risque pRisque, boolean pOnline) {
+        //Si c'est en ligne alors on ajoute à MySql
+        if(pOnline) {
+
+        }
+        else {
+            db = new DatabaseHelper(pContext)   ;
+            db.updateRisque(pRisque)            ;
+        }
+    }
+
+    public static void deleteChantier(final Context pContext, final Risque pRisque, boolean pOnline) {
+        //Si c'est en ligne alors on ajoute à MySql
+        if(pOnline) {
+
+        }
+        else {
+            db = new DatabaseHelper(pContext)   ;
+            db.deleteRisque(pRisque)            ;
+        }
     }
 
     public static void syncGetListeRisque(final Context pContext) {
@@ -59,7 +92,7 @@ public class RisqueDAO {
                         JSONObject oRisque = response.getJSONObject(Integer.toString(i)) ;
                         boolean supprimer = oRisque.getInt("ris_supprimer") > 0 ;
                         Risque unRisque = new Risque(oRisque.getString("ris_id"), oRisque.getString("ris_titre"), oRisque.getString("ris_resume"), supprimer);
-                        addRisque(pContext, unRisque) ;
+                        addRisque(pContext, unRisque, false) ;
                     }
 
                 } catch (JSONException e) {

@@ -45,6 +45,11 @@ public class UtilisateurDAO {
         return db.getUtilisateur(pCode)     ;
     }
 
+    public static int getNbUtilisateur(Context pContext) {
+        db = new DatabaseHelper(pContext)   ;
+        return db.getNbUtilisateur()        ;
+    }
+
     public static void addUtilisateur(final Context pContext, final Utilisateur pUtilisateur, boolean pOnline) {
 
         if(pOnline) {
@@ -97,6 +102,26 @@ public class UtilisateurDAO {
         else {
             db = new DatabaseHelper(pContext)   ;
             db.addUtilisateur(pUtilisateur)     ;
+        }
+    }
+
+    public static void updateUtilisateur(final Context pContext, final Utilisateur pUtilisateur, boolean pOnline) {
+        //Si c'est en ligne alors on ajoute à MySql
+        if(pOnline) {
+
+        } else {
+            db = new DatabaseHelper(pContext)   ;
+            db.updateUtilisateur(pUtilisateur)  ;
+        }
+    }
+
+    public static void deleteUtilisateur(final Context pContext, final Utilisateur pUtilisateur, boolean pOnline) {
+        //Si c'est en ligne alors on ajoute à MySql
+        if(pOnline) {
+
+        } else {
+            db = new DatabaseHelper(pContext)   ;
+            db.deleteUtilisateur(pUtilisateur)  ;
         }
     }
 

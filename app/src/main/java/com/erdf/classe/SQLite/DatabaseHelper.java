@@ -154,13 +154,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + "PRIMARY KEY(" + KEY_FICHE_RISQUE_FICHE + ", " + KEY_FICHE_RISQUE_RISQUE + "))" ;
 
     public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        super(context, DATABASE_NAME, null, DATABASE_VERSION) ;
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        // creating required tables
+        //On créer les tables
         db.execSQL(CREATE_TABLE_CHANTIER)       ;
         db.execSQL(CREATE_TABLE_RISQUE)         ;
         db.execSQL(CREATE_TABLE_FONCTION)       ;
@@ -172,7 +172,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // on upgrade drop older tables
+
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHANTIER)        ;
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_RISQUE)          ;
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_FONCTION)        ;
@@ -181,8 +181,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_COMPTE)          ;
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_FICHE_RISQUE)    ;
 
-        // create new tables
-        onCreate(db);
+        //On créer les nouvelles tables
+        onCreate(db) ;
     }
 
     //METHODES
@@ -212,11 +212,42 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_CHANTIER_SUPPRIMER, pChantier.isSupprimer())     ;
         values.put(KEY_CREATED_AT, getDateTime())                       ;
 
-        // insert row
+        //On insert la ligne
         db.insertWithOnConflict(TABLE_CHANTIER, null, values, SQLiteDatabase.CONFLICT_REPLACE) ;
         db.close() ;
 
         Log.d(TAG, "Un chantier a été ajouté !") ;
+    }
+
+    public void updateChantier(Chantier pChantier) {
+        SQLiteDatabase db = this.getWritableDatabase() ;
+
+        ContentValues values = new ContentValues()                      ;
+        values.put(KEY_CHANTIER_CODE, pChantier.getCode())              ;
+        values.put(KEY_CHANTIER_LIBELLE, pChantier.getLibelle())        ;
+        values.put(KEY_CHANTIER_NUMRUE, pChantier.getNumRue())          ;
+        values.put(KEY_CHANTIER_RUE, pChantier.getRue())                ;
+        values.put(KEY_CHANTIER_VILLE, pChantier.getVille())            ;
+        values.put(KEY_CHANTIER_CODEPOSTAL, pChantier.getCodePostal())  ;
+        values.put(KEY_CHANTIER_SUPPRIMER, pChantier.isSupprimer())     ;
+        values.put(KEY_CREATED_AT, getDateTime())                       ;
+
+        //On met à jour la ligne
+        db.update(TABLE_CHANTIER, values, KEY_CHANTIER_CODE + " = ?",
+                new String[]{String.valueOf(pChantier.getCode())}) ;
+        db.close() ;
+
+        Log.d(TAG, "Un chantier a été modifié !") ;
+    }
+
+    public void deleteChantier(Chantier pChantier) {
+        SQLiteDatabase db = this.getWritableDatabase() ;
+
+        db.delete(TABLE_CHANTIER, KEY_CHANTIER_CODE + " = ?",
+                new String[]{String.valueOf(pChantier.getCode())}) ;
+        db.close() ;
+
+        Log.d(TAG, "Un chantier a été supprimé !") ;
     }
 
     public Chantier getChantier(String pCode) {
@@ -326,6 +357,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return lesChantiers ;
     }
 
+    public int getNbChantier() {
+        SQLiteDatabase db = this.getReadableDatabase() ;
+
+        String countQuery = "SELECT * FROM " + TABLE_CHANTIER + " ;" ;
+
+        Cursor cursor = db.rawQuery(countQuery, null) ;
+        cursor.close() ;
+
+        //On retourne le nombre de lignes
+        return cursor.getCount();
+    }
+
     /*
         ------------------------------------------------------------------
                                     RISQUE
@@ -342,11 +385,39 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_RISQUE_SUPPRIMER, pRisque.isSupprimer())     ;
         values.put(KEY_CREATED_AT, getDateTime())                   ;
 
-        // insert row
+        //On insert la ligne
         db.insertWithOnConflict(TABLE_RISQUE, null, values, SQLiteDatabase.CONFLICT_REPLACE) ;
         db.close() ;
 
         Log.d(TAG, "Un risque a été ajouté !") ;
+    }
+
+    public void updateRisque(Risque pRisque) {
+        SQLiteDatabase db = this.getWritableDatabase() ;
+
+        ContentValues values = new ContentValues()                  ;
+        values.put(KEY_RISQUE_ID, pRisque.getId())                  ;
+        values.put(KEY_RISQUE_TITRE, pRisque.getTitre())            ;
+        values.put(KEY_RISQUE_RESUME, pRisque.getResume())          ;
+        values.put(KEY_RISQUE_SUPPRIMER, pRisque.isSupprimer())     ;
+        values.put(KEY_CREATED_AT, getDateTime())                   ;
+
+        //On met à jour la ligne
+        db.update(TABLE_RISQUE, values, KEY_RISQUE_ID + " = ?",
+                new String[]{String.valueOf(pRisque.getId())}) ;
+        db.close() ;
+
+        Log.d(TAG, "Un risque a été modifié !") ;
+    }
+
+    public void deleteRisque(Risque pRisque) {
+        SQLiteDatabase db = this.getWritableDatabase() ;
+
+        db.delete(TABLE_RISQUE, KEY_RISQUE_ID + " = ?",
+                new String[]{String.valueOf(pRisque.getId())}) ;
+        db.close() ;
+
+        Log.d(TAG, "Un risque a été supprimé !") ;
     }
 
     public Risque getRisque(String pCode, boolean pFiches) {
@@ -454,6 +525,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return lesRisques ;
     }
 
+    public int getNbRisque() {
+        SQLiteDatabase db = this.getReadableDatabase() ;
+
+        String countQuery = "SELECT * FROM " + TABLE_RISQUE + " ;" ;
+
+        Cursor cursor = db.rawQuery(countQuery, null) ;
+        cursor.close() ;
+
+        //On retourne le nombre de lignes
+        return cursor.getCount();
+    }
+
     /*
         ------------------------------------------------------------------
                                     FICHE
@@ -471,11 +554,40 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_FICHE_SUPPRIMER, pFiche.isSupprimer())               ;
         values.put(KEY_CREATED_AT, getDateTime())                           ;
 
-        // insert row
+        //On insert la ligne
         db.insertWithOnConflict(TABLE_FICHE, null, values, SQLiteDatabase.CONFLICT_REPLACE) ;
         db.close() ;
 
         Log.d(TAG, "Une fiche a été ajoutée !") ;
+    }
+
+    public void updateFiche(Fiche pFiche) {
+        SQLiteDatabase db = this.getWritableDatabase() ;
+
+        ContentValues values = new ContentValues()                          ;
+        values.put(KEY_FICHE_ID, pFiche.getId())                            ;
+        values.put(KEY_FICHE_CHANTIER, pFiche.getUnChantier().getCode())    ;
+        values.put(KEY_FICHE_UTI, pFiche.getUnUtilisateur().getId())        ;
+        values.put(KEY_FICHE_DATE, pFiche.getDate())                        ;
+        values.put(KEY_FICHE_SUPPRIMER, pFiche.isSupprimer())               ;
+        values.put(KEY_CREATED_AT, getDateTime())                           ;
+
+        //On met à jour la ligne
+        db.update(TABLE_FICHE, values, KEY_FICHE_ID + " = ?",
+                new String[]{String.valueOf(pFiche.getId())}) ;
+        db.close() ;
+
+        Log.d(TAG, "Une fiche a été modifiée !") ;
+    }
+
+    public void deleteFiche(Fiche pFiche) {
+        SQLiteDatabase db = this.getWritableDatabase() ;
+
+        db.delete(TABLE_FICHE, KEY_FICHE_ID + " = ?",
+                new String[]{String.valueOf(pFiche.getId())}) ;
+        db.close() ;
+
+        Log.d(TAG, "Une fiche a été supprimée !") ;
     }
 
     public Fiche getFiche(String pCode, boolean pRisques) {
@@ -588,6 +700,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return lesFiches ;
     }
 
+    public int getNbFiche() {
+        SQLiteDatabase db = this.getReadableDatabase() ;
+
+        String countQuery = "SELECT * FROM " + TABLE_FICHE + " ;" ;
+
+        Cursor cursor = db.rawQuery(countQuery, null) ;
+        cursor.close() ;
+
+        //On retourne le nombre de lignes
+        return cursor.getCount();
+    }
+
     /*
         ------------------------------------------------------------------
                                     FONCTION
@@ -603,7 +727,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_FONCTION_SUPPRIMER, pFonction.isSupprimer())     ;
         values.put(KEY_CREATED_AT, getDateTime())                       ;
 
-        // insert row
+        //On insert la ligne
         db.insertWithOnConflict(TABLE_FONCTION, null, values, SQLiteDatabase.CONFLICT_REPLACE) ;
         db.close() ;
 
@@ -619,7 +743,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_FONCTION_SUPPRIMER, pFonction.isSupprimer())     ;
         values.put(KEY_CREATED_AT, getDateTime())                       ;
 
-        // updating row
+        //On met à jour la ligne
         db.update(TABLE_FONCTION, values, KEY_FONCTION_ID + " = ?",
                 new String[]{String.valueOf(pFonction.getId() )}) ;
         db.close() ;
@@ -631,7 +755,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase() ;
 
         db.delete(TABLE_FONCTION, KEY_FONCTION_ID + " = ?",
-                new String[]{String.valueOf(pFonction.getId() )}) ;
+                new String[]{String.valueOf(pFonction.getId())}) ;
         db.close() ;
 
         Log.d(TAG, "Une fonction a été supprimée !") ;
@@ -708,7 +832,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return lesFonctions ;
     }
 
-    public int getFonctionsCount() {
+    public int getNbFonction() {
         SQLiteDatabase db = this.getReadableDatabase() ;
 
         String countQuery = "SELECT * FROM " + TABLE_FONCTION + " ;" ;
@@ -716,7 +840,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(countQuery, null) ;
         cursor.close() ;
 
-        // return count
+        //On retourne le nombre de lignes
         return cursor.getCount();
     }
 
@@ -738,11 +862,41 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_UTI_SUPPRIMER, pUtilisateur.isSupprimer())           ;
         values.put(KEY_CREATED_AT, getDateTime())                           ;
 
-        // insert row
+        //On insert la ligne
         db.insertWithOnConflict(TABLE_UTILISATEUR, null, values, SQLiteDatabase.CONFLICT_REPLACE) ;
         db.close() ;
 
         Log.d(TAG, "Un utilisateur a été ajouté !") ;
+    }
+
+    public void updateUtilisateur(Utilisateur pUtilisateur) {
+        SQLiteDatabase db = this.getWritableDatabase() ;
+
+        ContentValues values = new ContentValues()                          ;
+        values.put(KEY_UTI_ID, pUtilisateur.getId())                        ;
+        values.put(KEY_UTI_NOM, pUtilisateur.getNom())                      ;
+        values.put(KEY_UTI_PRENOM, pUtilisateur.getPrenom())                ;
+        values.put(KEY_UTI_EMAIL, pUtilisateur.getMail())                   ;
+        values.put(KEY_UTI_FONCTION, pUtilisateur.getUneFonction().getId()) ;
+        values.put(KEY_UTI_SUPPRIMER, pUtilisateur.isSupprimer())           ;
+        values.put(KEY_CREATED_AT, getDateTime())                           ;
+
+        //On met à jour la ligne
+        db.update(TABLE_UTILISATEUR, values, KEY_UTI_ID + " = ?",
+                new String[]{String.valueOf(pUtilisateur.getId())}) ;
+        db.close() ;
+
+        Log.d(TAG, "Un utilisateur a été modifié !") ;
+    }
+
+    public void deleteUtilisateur(Utilisateur pUtilisateur) {
+        SQLiteDatabase db = this.getWritableDatabase() ;
+
+        db.delete(TABLE_UTILISATEUR, KEY_UTI_ID + " = ?",
+                new String[]{String.valueOf(pUtilisateur.getId())}) ;
+        db.close() ;
+
+        Log.d(TAG, "Un utilisateur a été supprimé !") ;
     }
 
     public Utilisateur getUtilisateur(String pCode) {
@@ -825,6 +979,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return lesUtilisateurs ;
     }
 
+    public int getNbUtilisateur() {
+        SQLiteDatabase db = this.getReadableDatabase() ;
+
+        String countQuery = "SELECT * FROM " + TABLE_UTILISATEUR + " ;" ;
+
+        Cursor cursor = db.rawQuery(countQuery, null) ;
+        cursor.close() ;
+
+        //On retourne le nombre de lignes
+        return cursor.getCount();
+    }
+
     /*
         ------------------------------------------------------------------
                                     FICHE RISQUE
@@ -840,11 +1006,65 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_FICHE_RISQUE_SUPPRIMER, pFicheRisque.isSupprimer())      ;
         values.put(KEY_CREATED_AT, getDateTime())                               ;
 
-        // insert row
+        //On met à jour la ligne
         db.insertWithOnConflict(TABLE_FICHE_RISQUE, null, values, SQLiteDatabase.CONFLICT_REPLACE) ;
         db.close() ;
 
         Log.d(TAG, "Une fiche risque a été ajoutée !") ;
+    }
+
+    public void updateFicheRisqueByFiche(FicheRisque pFicheRisque) {
+        SQLiteDatabase db = this.getWritableDatabase() ;
+
+        ContentValues values = new ContentValues()                              ;
+        values.put(KEY_FICHE_RISQUE_FICHE, pFicheRisque.getUneFiche().getId())  ;
+        values.put(KEY_FICHE_RISQUE_RISQUE, pFicheRisque.getUnRisque().getId()) ;
+        values.put(KEY_FICHE_RISQUE_SUPPRIMER, pFicheRisque.isSupprimer())      ;
+        values.put(KEY_CREATED_AT, getDateTime())                               ;
+
+        //On met à jour la ligne
+        db.update(TABLE_FICHE_RISQUE, values, KEY_FICHE_RISQUE_FICHE + " = ?",
+                new String[]{String.valueOf(pFicheRisque.getUneFiche().getId())}) ;
+        db.close() ;
+
+        Log.d(TAG, "Une fiche risque a été modifiée !") ;
+    }
+
+    public void updateFicheRisqueByRisque(FicheRisque pFicheRisque) {
+        SQLiteDatabase db = this.getWritableDatabase() ;
+
+        ContentValues values = new ContentValues()                              ;
+        values.put(KEY_FICHE_RISQUE_FICHE, pFicheRisque.getUneFiche().getId())  ;
+        values.put(KEY_FICHE_RISQUE_RISQUE, pFicheRisque.getUnRisque().getId()) ;
+        values.put(KEY_FICHE_RISQUE_SUPPRIMER, pFicheRisque.isSupprimer())      ;
+        values.put(KEY_CREATED_AT, getDateTime())                               ;
+
+        //On met à jour la ligne
+        db.update(TABLE_FICHE_RISQUE, values, KEY_FICHE_RISQUE_RISQUE + " = ?",
+                new String[]{String.valueOf(pFicheRisque.getUnRisque().getId() )}) ;
+        db.close() ;
+
+        Log.d(TAG, "Une fiche risque a été modifiée !") ;
+    }
+
+    public void deleteFicheRisqueByFiche(FicheRisque pFicheRisque) {
+        SQLiteDatabase db = this.getWritableDatabase() ;
+
+        db.delete(TABLE_FICHE_RISQUE, KEY_FICHE_RISQUE_FICHE + " = ?",
+                new String[]{String.valueOf(pFicheRisque.getUneFiche().getId())}) ;
+        db.close() ;
+
+        Log.d(TAG, "Une fiche risque a été supprimée !") ;
+    }
+
+    public void deleteFicheRisqueByRisque(FicheRisque pFicheRisque) {
+        SQLiteDatabase db = this.getWritableDatabase() ;
+
+        db.delete(TABLE_FICHE_RISQUE, KEY_FICHE_RISQUE_RISQUE + " = ?",
+                new String[]{String.valueOf(pFicheRisque.getUnRisque().getId() )}) ;
+        db.close() ;
+
+        Log.d(TAG, "Une fiche risque a été supprimée !") ;
     }
 
     public ArrayList<FicheRisque> getFicheRisqueByFiche(String pCode) {
@@ -970,5 +1190,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         return lesFicheRisques ;
+    }
+
+    public int getNbFicheRisque() {
+        SQLiteDatabase db = this.getReadableDatabase() ;
+
+        String countQuery = "SELECT * FROM " + TABLE_FICHE_RISQUE + " ;" ;
+
+        Cursor cursor = db.rawQuery(countQuery, null) ;
+        cursor.close() ;
+
+        //On retourne le nombre de lignes
+        return cursor.getCount();
     }
 }

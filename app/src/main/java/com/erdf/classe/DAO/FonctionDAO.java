@@ -39,9 +39,40 @@ public class FonctionDAO {
         return db.getFonction(pCode)        ;
     }
 
-    public static void addFonction(Context pContext, Fonction pFonction) {
+    public static int getNbFonction(Context pContext) {
         db = new DatabaseHelper(pContext)   ;
-        db.addFonction(pFonction)           ;
+        return db.getNbFonction()           ;
+    }
+
+    public static void addFonction(Context pContext, Fonction pFonction, boolean pOnline) {
+        //Si c'est en ligne alors on ajoute à MySql
+        if(pOnline) {
+
+        }
+        else {
+            db = new DatabaseHelper(pContext);
+            db.addFonction(pFonction);
+        }
+    }
+
+    public static void updateFonction(final Context pContext, final Fonction pFonction, boolean pOnline) {
+        //Si c'est en ligne alors on ajoute à MySql
+        if(pOnline) {
+
+        } else {
+            db = new DatabaseHelper(pContext)   ;
+            db.updateFonction(pFonction)        ;
+        }
+    }
+
+    public static void deleteFonction(final Context pContext, final Fonction pFonction, boolean pOnline) {
+        //Si c'est en ligne alors on ajoute à MySql
+        if(pOnline) {
+
+        } else {
+            db = new DatabaseHelper(pContext)   ;
+            db.deleteFonction(pFonction)        ;
+        }
     }
 
     public static void syncGetListeFonction(final Context pContext) {
@@ -61,7 +92,7 @@ public class FonctionDAO {
                         boolean supprimer = oFonction.getInt("fon_supprimer") > 0           ;
                         Fonction uneFonction = new Fonction(oFonction.getString("fon_id"), oFonction.getString("fon_libelle"), supprimer) ;
 
-                        addFonction(pContext, uneFonction) ;
+                        addFonction(pContext, uneFonction, false) ;
                     }
 
                 } catch (JSONException e) {

@@ -34,7 +34,7 @@ public class ChantierDAO {
 
     }
 
-   public static ArrayList<Chantier> getListeChantier(Context pContext) {
+    public static ArrayList<Chantier> getListeChantier(Context pContext) {
         db = new DatabaseHelper(pContext)   ;
         return db.getAllChantiers()         ;
     }
@@ -47,6 +47,11 @@ public class ChantierDAO {
     public static String getDernierIdChantier(Context pContext) {
         db = new DatabaseHelper(pContext)   ;
         return db.getDernierIdChantier()    ;
+    }
+
+    public static int getNbChantier(Context pContext) {
+        db = new DatabaseHelper(pContext)   ;
+        return db.getNbChantier()    ;
     }
 
     public static void addChantier(final Context pContext, final Chantier pChantier, boolean pOnline) {
@@ -104,6 +109,30 @@ public class ChantierDAO {
         else {
             db = new DatabaseHelper(pContext)   ;
             db.addChantier(pChantier)           ;
+        }
+    }
+
+    public static void updateChantier(final Context pContext, final Chantier pChantier, boolean pOnline) {
+
+        //Si c'est en ligne alors on ajoute à MySql
+        if(pOnline) {
+
+        }
+        else {
+            db = new DatabaseHelper(pContext)   ;
+            db.updateChantier(pChantier)        ;
+        }
+    }
+
+    public static void deleteChantier(final Context pContext, final Chantier pChantier, boolean pOnline) {
+
+        //Si c'est en ligne alors on ajoute à MySql
+        if(pOnline) {
+
+        }
+        else {
+            db = new DatabaseHelper(pContext)   ;
+            db.deleteChantier(pChantier)        ;
         }
     }
 

@@ -47,6 +47,11 @@ public class FicheDAO {
         return db.getFiche(pCode, pRisques) ;
     }
 
+    public static int getNbFiche(Context pContext) {
+        db = new DatabaseHelper(pContext)   ;
+        return db.getNbFiche()              ;
+    }
+
     public static void addFiche(final Context pContext, final Fiche pFiche, boolean pOnline) {
 
         if(pOnline) {
@@ -108,6 +113,28 @@ public class FicheDAO {
         else {
             db = new DatabaseHelper(pContext)   ;
             db.addFiche(pFiche)                 ;
+        }
+    }
+
+    public static void updateFiche(final Context pContext, final Fiche pFiche, boolean pOnline) {
+        //Si c'est en ligne alors on ajoute à MySql
+        if(pOnline) {
+
+        }
+        else {
+            db = new DatabaseHelper(pContext)   ;
+            db.updateFiche(pFiche)              ;
+        }
+    }
+
+    public static void deleteFiche(final Context pContext, final Fiche pFiche, boolean pOnline) {
+        //Si c'est en ligne alors on ajoute à MySql
+        if(pOnline) {
+
+        }
+        else {
+            db = new DatabaseHelper(pContext)   ;
+            db.deleteFiche(pFiche)              ;
         }
     }
 

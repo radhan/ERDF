@@ -45,6 +45,11 @@ public class FicheRisqueDAO {
         return db.getFicheRisqueByRisque(pCode) ;
     }
 
+    public static int getNbFicheRisque(Context pContext) {
+        db = new DatabaseHelper(pContext)   ;
+        return db.getNbFicheRisque()        ;
+    }
+
     public static void addFicheRisque(final Context pContext, final FicheRisque pFicheRisque, boolean pOnline) {
 
         if(pOnline) {
@@ -53,6 +58,36 @@ public class FicheRisqueDAO {
         else {
             db = new DatabaseHelper(pContext)   ;
             db.addFicheRisque(pFicheRisque)     ;
+        }
+    }
+
+    public static void updateFicheRisqueByFiche(final Context pContext, final FicheRisque pFicheRisque, boolean pOnline) {
+        //Si c'est en ligne alors on ajoute à MySql
+        if(pOnline) {
+
+        } else {
+            db = new DatabaseHelper(pContext)           ;
+            db.updateFicheRisqueByFiche(pFicheRisque)   ;
+        }
+    }
+
+    public static void updateFicheRisqueByRisque(final Context pContext, final FicheRisque pFicheRisque, boolean pOnline) {
+        //Si c'est en ligne alors on ajoute à MySql
+        if(pOnline) {
+
+        } else {
+            db = new DatabaseHelper(pContext)           ;
+            db.updateFicheRisqueByRisque(pFicheRisque)  ;
+        }
+    }
+
+    public static void deleteFicheRisqueByRisque(final Context pContext, final FicheRisque pFicheRisque, boolean pOnline) {
+        //Si c'est en ligne alors on ajoute à MySql
+        if(pOnline) {
+
+        } else {
+            db = new DatabaseHelper(pContext)           ;
+            db.deleteFicheRisqueByRisque(pFicheRisque)  ;
         }
     }
 
